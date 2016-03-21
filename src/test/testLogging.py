@@ -92,7 +92,7 @@ class RunTests(unittest.TestCase):
                 CriticalMsg,
                 InfoMsg,
                ]
-        """
+        """ TODO FIXME - get a real unit test!
         for msg in msgs:
             print 'Testing:' + msg
             self.failUnless(msg in log_lines)
@@ -150,7 +150,7 @@ class RunTests(unittest.TestCase):
         os.kill(proc_collector.pid, signal.SIGINT)
 
 
-def genHappyPath(sep_char = utils.PAYLOAD_CONNECTOR,
+def gen_happy_path(sep_char = utils.PAYLOAD_CONNECTOR,
         key_val_sep = utils.KEY_VALUE_SEPARATOR):
     """
     WARNING: DO NOT LIGHTLY CHANGE THESE TEST LOGS! Unit test uses these!
@@ -168,7 +168,7 @@ def genHappyPath(sep_char = utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
-def genMissingData(sep_char = utils.PAYLOAD_CONNECTOR,
+def gen_missing_data(sep_char = utils.PAYLOAD_CONNECTOR,
         key_val_sep = utils.KEY_VALUE_SEPARATOR):
     """
     WARNING: DO NOT LIGHTLY CHANGE THESE TEST LOGS! Unit test uses these!
@@ -192,7 +192,7 @@ def genMissingData(sep_char = utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
-def genMixedData(sep_char = utils.PAYLOAD_CONNECTOR,
+def gen_mixed_data(sep_char = utils.PAYLOAD_CONNECTOR,
         key_val_sep = utils.KEY_VALUE_SEPARATOR):
     """
     WARNING: DO NOT LIGHTLY CHANGE THESE TEST LOGS! Unit test uses these!
@@ -302,7 +302,7 @@ class TestLogs2CSV(unittest.TestCase):
     # python -m unittest testLogging.TestLogs2CSV
     def testHappyPath_1(self):
         print 'testHappyPath'
-        testData = genHappyPath()
+        testData = gen_happy_path()
         lines = testData.split('\n')
 
         # Check the keyword header line in CSV
@@ -320,7 +320,7 @@ class TestLogs2CSV(unittest.TestCase):
 
     def testHappyPath_Warning(self):
         print 'testHappyPath_Warning'
-        testData = genHappyPath()
+        testData = gen_happy_path()
         lines = testData.split('\n')
 
         # Check the keyword header line in CSV
@@ -337,7 +337,7 @@ class TestLogs2CSV(unittest.TestCase):
 
     def testMissingData(self):
         print 'testMissingData'
-        testData = genMissingData()
+        testData = gen_missing_data()
         lines = testData.split('\n')
 
         # Check the keyword header line in CSV
@@ -355,7 +355,7 @@ class TestLogs2CSV(unittest.TestCase):
 
     def testMixedData(self):
         print 'testMixedData'
-        testData = genMixedData()
+        testData = gen_mixed_data()
         lines = testData.split('\n')
 
         # select only WARNING or higher
@@ -413,15 +413,14 @@ class TestISO8601(unittest.TestCase):
     def testUnixToISO8601_0(self):
         """ From unix time to external local ISO8601 """
 
-        dateStr = '2016-03-14T08:00:09.123456'
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
         # Generally obtain from time.time()
-        dateNow = 1457967609.123456  
-        datetimeNow = datetime.datetime.fromtimestamp(dateNow)
-        print 'datetimeNow:%s' % str(datetimeNow)
-        self.failUnless(str(datetimeNow) == '2016-03-14 08:00:09.123456')
+        date_now = 1457967609.123456  
+        date_time_now = datetime.datetime.fromtimestamp(date_now)
+        print 'date_time_now:%s' % str(date_time_now)
+        self.failUnless(str(date_time_now) == '2016-03-14 08:00:09.123456')
         fmt = '%Y-%m-%dT%H:%M:%S.%f'
-        nowStr = datetimeNow.strftime(fmt)
+        nowStr = date_time_now.strftime(fmt)
         print 'nowStr:%s' % nowStr
         self.failUnless(str(nowStr) == '2016-03-14T08:00:09.123456')
         nowTuple = datetime.datetime.strptime(nowStr, fmt)
@@ -435,7 +434,7 @@ class TestISO8601(unittest.TestCase):
         print 'secEpoch: %s' % secEpoch
         # date -d @1457967609.123456 +%FT%T.%N
         # 2016-03-14T08:00:09.123456000
-        self.failUnless(secEpoch == dateNow)
+        self.failUnless(secEpoch == date_now)
 
     def testUnixToISO8601_1(self):
         """ 
@@ -488,7 +487,7 @@ class TestISO8601(unittest.TestCase):
         """
         Simple test of time now.
         """
-        the_time = utils.timeNow()
+        the_time = utils.time_now()
         # Ignore the value as "the_time" always changes.
         self.failUnless(type(the_time) == type(1.0))
 
@@ -496,7 +495,7 @@ class TestISO8601(unittest.TestCase):
         """
         Simple test of the time now in ISO8601 format
         """
-        iso = utils.timeNowISO8601()
+        iso = utils.time_now_ISO8601()
         self.failUnless(type(iso) == type(''))
         
     def testISOError(self):
@@ -541,7 +540,7 @@ class TestLogs2JSON(unittest.TestCase):
     # python -m unittest testLogging.TestLogs2JSON
     def testLogs2JSON_HappyPath(self):
         print '\ntestLogs2JSON_HappyPath'
-        testData = genHappyPath()
+        testData = gen_happy_path()
         f = tempfile.NamedTemporaryFile(delete=True)
         f.write(testData)
         f.flush()
@@ -552,6 +551,7 @@ class TestLogs2JSON(unittest.TestCase):
 
         # Pretty print json
         py_internal = json.loads(json_data)
+
         """
         print json.dumps(py_internal, sort_keys=True, indent=4,
                 separators=(',', ':'))
@@ -566,7 +566,7 @@ class TestLogs2JSON(unittest.TestCase):
 
     def testLogs2JSON_Mixed(self):
         print '\ntestLogs2JSON_Missing'
-        testData = genMixedData()
+        testData = gen_mixed_data()
         f = tempfile.NamedTemporaryFile(delete=True)
         f.write(testData)
         f.flush()
@@ -612,19 +612,19 @@ def countKeyValueJSON(json_struct, key, value):
 class TestLogLevelsPriorities(unittest.TestCase):
     # python -m unittest testLogging.TestLogLevelsPriorities
     def testDebugLevel(self):
-        debugDict = utils.filterPriority('DEBUG')
+        debugDict = utils.filter_priority('DEBUG')
         self.failUnless('DEBUG' in debugDict)
         self.failUnless('CRITICAL' in debugDict)
 
     def testWarningLevel(self):
-        debugDict = utils.filterPriority('WARNING')
+        debugDict = utils.filter_priority('WARNING')
         self.failUnless('DEBUG' not in debugDict)
         self.failUnless('WARNING' in debugDict)
         self.failUnless('ERROR' in debugDict)
         self.failUnless('CRITICAL' in debugDict)
 
     def testERRORLevel_0(self):
-        debugDict = utils.filterPriority('ERROR')
+        debugDict = utils.filter_priority('ERROR')
         self.failUnless('DEBUG' not in debugDict)
         self.failUnless('INFO' not in debugDict)
         self.failUnless('WARNING' not in debugDict)
@@ -632,7 +632,7 @@ class TestLogLevelsPriorities(unittest.TestCase):
         self.failUnless('CRITICAL' in debugDict)
 
     def testCRITICALLevel_0(self):
-        debugDict = utils.filterPriority('CRITICAL')
+        debugDict = utils.filter_priority('CRITICAL')
         self.failUnless('DEBUG' not in debugDict)
         self.failUnless('INFO' not in debugDict)
         self.failUnless('WARNING' not in debugDict)
@@ -641,8 +641,8 @@ class TestLogLevelsPriorities(unittest.TestCase):
 
     def testErrorLevelJSON_1(self):
         print '\ntestErrorLevelJSON - filter to >= ERROR'
-        testData = genHappyPath()
-        testData += genMissingData();
+        testData = gen_happy_path()
+        testData += gen_missing_data();
 
         f = tempfile.NamedTemporaryFile(delete=True)
         f.write(testData)
@@ -682,7 +682,7 @@ class TestLogLevelsPriorities(unittest.TestCase):
 
     def testCRITICALLevel_BogusLevel(self):
         """Test an invalid logging level"""
-        bogusDict = utils.filterPriority('BOGUS')
+        bogusDict = utils.filter_priority('BOGUS')
         self.failUnless(bogusDict == utils.LOG_LEVELS.keys())
 
 

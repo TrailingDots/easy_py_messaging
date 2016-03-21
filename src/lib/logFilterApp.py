@@ -196,7 +196,7 @@ def main():
 
     # If a start date with no end date, make the end date now.
     if 'end' not in params.keys():
-        now_secs = utils.timeNow()
+        now_secs = utils.time_now()
         params['end_secs'] = now_secs
         params['end'] = utils.secondsToISO8601(now_secs)
 

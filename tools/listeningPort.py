@@ -8,26 +8,29 @@ import subprocess
 # Default ZeroMQ port
 PORT = 5570
 
+
 def listening(port, shortened, pid_only, proc_only):
-    p = subprocess.Popen('/usr/sbin/fuser %d/tcp' % port, 
+    proc = subprocess.Popen('/usr/sbin/fuser %d/tcp' % port,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT)
-    line = p.stdout.readline()
+    line = proc.stdout.readline()
     items = line.split()
     if len(items) == 0:
         print 'Port %d : Nobody listening' % port
         return 0
     pid = items[-1]
-    p.wait()
+    proc.wait()
 
     # "pid" now has the PID of the process listening to the port.
-    # Map that to a process name 
-    #procName = subprocess.Popen('ps x %s' % pid, shell=True,
-    out, err = subprocess.Popen('ps x | grep %s' % pid, 
+    # Map that to a process name.
+    # procName = subprocess.Popen('ps x %s' % pid, shell=True,
+    out, err = subprocess.Popen('ps x | grep %s' % pid,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT).communicate()
+    if len(err):
+        sys.stderr.write(err + '\n')
     out = out.splitlines()
     for line in out:
         items = line.split()
@@ -40,16 +43,21 @@ def listening(port, shortened, pid_only, proc_only):
         elif proc_only:
             sys.stdout.write('%s\n' % items[-1])
         else:
-            sys.stdout.write('Port %d : listening thru pid %s named %s\n' % \
+            sys.stdout.write('Port %d : listening thru pid %s named %s\n' %
                     (port, pid, items[-1]))
         return 1    # Indicate a found listener
-    return 0        # Nobody listening. fuser should have found this, but be careful.
+
+    # Nobody listening. fuser should have found this, but be careful.
+    return 0
+
 
 def usage():
+    """Write a usage statment and exit."""
+
     sys.stderr.write("""
     Give a port that defaults to ZeroMQ of 5570,
     list the processes that are listening to that port.
-   
+
     Use by:
       listening [--help] [--short] <port>
     e.g.:
@@ -64,7 +72,13 @@ def usage():
     \n""")
     sys.exit(1)
 
+
 def main():
+    """
+    Process run-time args.
+    Based on the args, run the program.
+    """
+
     import getopt
 
     try:
@@ -73,7 +87,7 @@ def main():
             ['help',     # Print usage msg, exit
              'short',    # Output is shortened
              'pid',      # Output only pid of listenig process
-             'proc'      # Output only process name of listening port
+             'proc',     # Output only process name of listening port
             ]
         )
     except getopt.GetoptError as err:
@@ -103,14 +117,12 @@ def main():
         else:
             port_int = PORT
     except ValueError as err:
-        sys.stderr.write('port number must be all numeric:%s\n' % str(remainder))
+        sys.stderr.write('port number must be all numeric:%s\n' %
+                str(remainder))
         return 2
     ret_code = listening(port_int, shortened, pid_only, proc_only)
     return ret_code
 
 if __name__ == '__main__':
-    status = main()
-    sys.exit(status)
-
-
+    sys.exit(main())
 

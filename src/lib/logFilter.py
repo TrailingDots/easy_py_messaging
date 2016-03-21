@@ -80,7 +80,7 @@ class LogFilter(object):
         self.filter_fcn = filter_fcn
         self.normalize_config()
         self.filter_level = log_filters['level']
-        self.filter_dict = utils.filterPriority(self.filter_level)
+        self.filter_dict = utils.filter_priority(self.filter_level)
         self.sep_char = log_filters['sep_char']
         self.key_val_sep = log_filters['key_val_sep']
         self.start_secs = log_filters['start_secs']
@@ -106,7 +106,7 @@ class LogFilter(object):
 
         if 'end' not in self.log_filters.keys():
             # No end time specified. Assume now
-            now_secs = utils.timeNow()
+            now_secs = utils.time_now()
             self.log_filters['end_secs'] = now_secs
             self.log_filters['end'] = utils.secondsToISO8601(now_secs)
         if 'end_secs' not in self.log_filters.keys():

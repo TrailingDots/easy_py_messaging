@@ -1,18 +1,17 @@
-# Miscellaneous utilities that are short routines
-# useful in multiple places.
-#
+"""
+  Miscellaneous utilities that are short routines
+  useful in multiple places.
+"""
 import sys
-import os
 import logging
-import logConfig
 import datetime
 import time
 
-class bcolors:
+class bcolors(object):
     """
     Simple names for highlighting colors.
     Use as:
-        print (bcolors.BGGREEN + 
+        print (bcolors.BGGREEN +
             ('proc_collector pid: %d' % proc_collector.pid) +
             bcolors.ENDC)
     """
@@ -30,9 +29,9 @@ class bcolors:
 # Remote loggers MUST use the routines in logComponents and use the
 # keys in LOG_LEVEL to determine valid log levels.
 LOG_LEVELS = {'DEBUG': logging.debug,
-              'INFO': logging.info, 
-              'WARNING': logging.warning, 
-              'ERROR': logging.error, 
+              'INFO': logging.info,
+              'WARNING': logging.warning,
+              'ERROR': logging.error,
               'CRITICAL': logging.critical}
 
 # Priority of logging. Used in filter routines.
@@ -43,7 +42,8 @@ LOG_PRIORITY = {
                 'ERROR': 3,
                 'CRITICAL': 4,
                 }
-def filterPriority(initial_level):
+
+def filter_priority(initial_level):
     """
     initial_level: a string representing the log level.
     Given an initial_level, answer a list of
@@ -55,11 +55,11 @@ def filterPriority(initial_level):
         return LOG_PRIORITY.keys()
     else:
         initial = LOG_PRIORITY[initial_level]
-        filteredPriorities = {}
+        filtered_priorities = {}
         for level, priority in LOG_PRIORITY.items():
             if priority >= initial:
-                filteredPriorities[level] = priority
-        return filteredPriorities
+                filtered_priorities[level] = priority
+        return filtered_priorities
 
 
 """
@@ -96,7 +96,7 @@ APPEND_TO_LOG = True
 # How time gets formatted
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
-def timeNow():
+def time_Now():
     """
     Returns a floating point number as seconds since
     start of the epoch. This number has microseconds in it,
@@ -108,11 +108,11 @@ def timeNow():
     """
     return time.time()
 
-def timeNowISO8601():
+def time_now_ISO8601():
     """
     Return the current time in ISO 8601 format
     """
-    secsStr = secondsToISO8601(timeNow())
+    secsStr = secondsToISO8601(time_now())
     return secsStr
 
 def secondsToISO8601(seconds):
@@ -129,8 +129,9 @@ def ISO8601ToSeconds(iso8601):
     convert to seconds.
     """
     try:
-        isoTuple = datetime.datetime.strptime(iso8601, TIME_FORMAT)
-        seconds = time.mktime(isoTuple.timetuple()) + isoTuple.microsecond/1000000.0
+        iso_tuple = datetime.datetime.strptime(iso8601, TIME_FORMAT)
+        seconds = time.mktime(iso_tuple.timetuple()) + \
+                iso_tuple.microsecond/1000000.0
     except ValueError as err:
         sys.stderr.write('%s: %s\n' % (str(err), str(iso8601)))
         return None

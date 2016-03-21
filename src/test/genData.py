@@ -21,8 +21,8 @@ def genHappyPath(sep_char = utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
-def genMissingData(sep_char = utils.PAYLOAD_CONNECTOR,
-        key_val_sep = utils.KEY_VALUE_SEPARATOR):
+def genMissingData(sep_char=utils.PAYLOAD_CONNECTOR,
+        key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
     Generate data with some emtpy values
     and key/value separator chars.
@@ -43,8 +43,8 @@ def genMissingData(sep_char = utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
-def genMixedData(sep_char = utils.PAYLOAD_CONNECTOR,
-        key_val_sep = utils.KEY_VALUE_SEPARATOR):
+def genMixedData(sep_char=utils.PAYLOAD_CONNECTOR,
+        key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
     Even in our simple Raspberry Pi hydroponic system,
     a bit of thought placed into logging concepts
@@ -180,7 +180,7 @@ datedFilter = """{
     }"""
 
 
-Filters = {
+filters = {
     'baseFilter': baseFilter,
     'csvFilter': csvFilter,
     'datedFilter': datedFilter,
@@ -188,18 +188,19 @@ Filters = {
 
 def genConfigs(filter_name):
     """Given a filter name, output the code for that filter."""
-    if filter_name not in Filters.keys():
+    if filter_name not in filters.keys():
         sys.stderr.write('Unknown config filter request: "%s"\n' % filter_name)
         sys.stderr.write('Please provide a proper filter name\n')
-        sys.stderr.write('Valid filter names: %s\n' % str(Filters.keys()))
+        sys.stderr.write('Valid filter names: %s\n' % str(filters.keys()))
         usage()
 
-    filter_code = Filters[filter_name]
+    filter_code = filters[filter_name]
     return filter_code
 
 
 def usage():
-    help = """
+    """Print help message and exit."""
+    help_str = """
 Usage: ./genData [--happy] [--missing] [--mixed] [--configs=<filter_name>]
 Generate various data files.
 No options writes all logs to stdout.
@@ -218,7 +219,7 @@ No options runs as if --happy, --missing and --mixed were all present.
                     csvFilter   = CSV file output of everything.
                     datedFilter = A date span with devices dropping out.
     """
-    sys.stderr.write(help)
+    sys.stderr.write(help_str)
     sys.exit(1)
 
 
