@@ -1,0 +1,16 @@
+# .coveagerc to control coverage.py
+[run]
+omit="../lib/logCollector.py ../lib/convDate.py time1.py genData.py"
+
+branch = True
+Parallel = True
+
+[report]
+ignore_errors = True
+omit="../lib/logCollector.py ../lib/convDate.py time1.py genData.py"
+
+[html]
+directory = coverage_html
+
+
+
