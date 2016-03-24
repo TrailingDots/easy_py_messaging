@@ -103,7 +103,11 @@ def run_JSON(params):
         # For now pass everything
         return log_entry_dict
 
-    lf = logFilter.LogFilterJSON(params, filter_fcn=filter_JSON)
+    try:
+        lf = logFilter.LogFilterJSON(params, filter_fcn=filter_JSON)
+    except Exception as err:
+        sys.stderr.write('Invalid configuration.')
+        return
     json_data = lf.log_file_2_JSON_handler(in_fh)
     out_fh.write(json_data)
     out_fh.write('\n')
@@ -217,7 +221,7 @@ def main():
     out_file = params.get('out_file', None)
     if out_file == None:
         params['out_file_handle'] = sys.stdout
-        params['out_file'] = 'sys.stdout'
+        params['out_file'] = '<sys.stdout>'
     else:
         try:
             fh = open(out_file, 'w')
@@ -226,6 +230,8 @@ def main():
             usage()
         params['out_file_handle'] = fh
 
+    if 'out_format' not in params:
+        params['out_format'] = 'JSON'
     if params['out_format'] == 'CSV':
         run_CSV(params)
     elif params['out_format'] == 'JSON':

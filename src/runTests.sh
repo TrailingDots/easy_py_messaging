@@ -68,7 +68,7 @@ ECHO "LIB_DIR=$LIB_DIR"
 export TOOLS_DIR=$BASE_DIR/../tools
 ECHO "TOOLS_DIR=$TOOLS_DIR"
 
-export TEST_DIR=$BASEDIR/test
+export TEST_DIR=$BASE_DIR/test
 ECHO "TEST_DIR=$TEST_DIR"
 
 export GEN_DATA=$TEST_DIR/genData.py
@@ -110,7 +110,7 @@ CMD "coverage run --branch --parallel-mode --source=../test,../$LIB_DIR testLogg
 CMD "echo last run status: $? "
 
 # Generate a "standard" log of data frequently used in testing.
-export DATA_LOG=$TEST_DIR/data.log
+export DATA_LOG=$TEST_DIR/data.data
 CMD "DATA_LOG=$DATA_LOG"
 CMD "$GEN_DATA >$DATA_LOG"
 
@@ -171,6 +171,26 @@ ECHO Expect ERRORs
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --CSV --level=ERROR "
 ECHO Expect ERRORs
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --JSON --level=ERROR "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./csv.conf --in-file=/dev/null --JSON --level=ERROR "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./happy.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./mixed.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad2.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad3.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end1 "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start1 "
 
 ECHO No infile. Reads from stdin
 cat happy.data | coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py 
@@ -256,4 +276,5 @@ CMD "coverage html -d .coverage_html  --omit=../lib/logCollector.py "
 
 ECHO Paste into browser for details: file://$PWD/.coverage_html/index.html
 
+CMD "cd $BASE_DIR"
 #(cd test; python testLogging.py)

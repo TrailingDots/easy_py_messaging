@@ -78,15 +78,17 @@ class LogFilter(object):
     def __init__(self, log_filters, filter_fcn = None):
         self.log_filters = log_filters
         self.filter_fcn = filter_fcn
-        self.normalize_config()
-        self.filter_level = log_filters['level']
-        self.filter_dict = utils.filter_priority(self.filter_level)
-        self.sep_char = log_filters['sep_char']
-        self.key_val_sep = log_filters['key_val_sep']
-        self.start_secs = log_filters['start_secs']
-        self.end_secs = log_filters['end_secs']
-        self.log_entry = ''
-        self.log_dict = {}
+        if self.normalize_config() != 0:
+            raise Exception('Bad configuration')
+        self.filter_level      = log_filters['level']
+        self.filter_dict       = utils.filter_priority(self.filter_level)
+        self.sep_char          = log_filters['sep_char']
+        self.payload_connector = log_filters['payload_connector']
+        self.key_val_sep       = log_filters['key_val_sep']
+        self.start_secs        = log_filters['start_secs']
+        self.end_secs          = log_filters['end_secs']
+        self.log_entry         = ''
+        self.log_dict          = {}
         # Current line number in input file.
         self.line_number = self.log_filters['line_number']
 
@@ -94,14 +96,28 @@ class LogFilter(object):
         """
         Some data may be missing. Verify a working set
         of parameters.
+
+        If OK, return 0, else 1
         """
+        # All values must be string!
+        for key in self.log_filters.keys():
+            if type(key) != str:
+                sys.stderr.write('Configuration: Key %s must be a string! Not %s\n' %
+                        (key, str(self.log_filters[key])))
+                return 1
+
         if 'start' not in self.log_filters.keys():
             self.log_filters['start'] = '1970-01-01T00:00:00.000'
         if 'start_secs' not in self.log_filters.keys():
+            if type(self.log_filters['start']) != str:
+                sys.stderr.write('Configuration: Invalid start time:"%s"\n' % self.log_filters['start'])
+                return 1
+
             start_secs = utils.ISO8601ToSeconds(self.log_filters['start'])
             if start_secs == None:
-                sys.stderr.write('Configuraton: Invalid start time:"%s"\n' % self.log_filters['start'])
-                sys.exit(1)
+                sys.stderr.write('Configuration: Invalid start time:"%s"\n' % self.log_filters['start'])
+                return 1
+
             self.log_filters['start_secs'] = start_secs
 
         if 'end' not in self.log_filters.keys():
@@ -110,11 +126,19 @@ class LogFilter(object):
             self.log_filters['end_secs'] = now_secs
             self.log_filters['end'] = utils.secondsToISO8601(now_secs)
         if 'end_secs' not in self.log_filters.keys():
+            if type(self.log_filters['end']) != str:
+                sys.stderr.write('Configuration: Invalid end time:"%s"\n' % self.log_filters['start'])
+                return 1
             end_secs = utils.ISO8601ToSeconds(self.log_filters['end'])
             if end_secs == None:
-                sys.stderr.write('Configuraton: Invalid end time:"%s"\n' % self.log_filters['end'])
-                sys.exit(1)
+                sys.stderr.write('Configuration: Invalid end time:"%s"\n' % self.log_filters['end'])
+                return 1
             self.log_filters['end_secs'] = end_secs
+
+        if self.log_filters['end_secs'] <= self.log_filters['start_secs']:
+            sys.stderr.write('end time <= start time. start=%s, end=%s\n' %
+                    self.log_filters['start'], self.log_filters['end'])
+            return 1
 
         if 'sep_char' not in self.log_filters.keys():
             self.log_filters['sep_char'] = utils.SEPARATION_CHAR
@@ -128,6 +152,8 @@ class LogFilter(object):
 
         if 'line_number' not in self.log_filters.keys():
             self.log_filters['line_number'] = 0
+
+        return 0
 
 
 
@@ -179,7 +205,7 @@ class LogFilter(object):
         """
         Parse the payload.
         """
-        items = payload.split(self.sep_char)
+        items = payload.split(self.payload_connector)
         for item in items:
             if len(item) == 0:
                 # Ignore empty item.

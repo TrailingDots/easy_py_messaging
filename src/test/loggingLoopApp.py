@@ -19,29 +19,35 @@ def my_sleep(secs):
 class ClientTask(threading.Thread):
     """ClientTask"""
     def __init__(self, id_name, iterations):
+        global zmq
+        global timeit
         self.context = None
         self.id_name = id_name
         self.iterations = int(iterations)
+
+        # WTF! Why do I have to do this????
+        self.timeit = timeit
+        self.zmq = zmq
         threading.Thread.__init__(self)
 
     def run(self):
-        self.context = zmq.Context()
+        self.context = self.zmq.Context()
         socket = self.context.socket(zmq.DEALER)
         identity = u'worker-%s' % self.id_name
         socket.identity = identity.encode('ascii')
         socket.connect(logConfig.APP_SOCKET)
         print('loggingApp: Client %s started' % (identity))
-        poll = zmq.Poller()
-        poll.register(socket, zmq.POLLIN)
+        poll = self.zmq.Poller()
+        poll.register(socket, self.zmq.POLLIN)
 
-        start_time = timeit.default_timer()
+        start_time = self.timeit.default_timer()
 
         for reqs in range(self.iterations):
-            thisMsg = 'request #%d' % reqs
-            #print('Req #%d sent "%s"' % (reqs, thisMsg))
-            socket.send_string(thisMsg)
+            this_msg = 'request #%d' % reqs
+            #print('Req #%d sent "%s"' % (reqs, this_msg))
+            socket.send_string(this_msg)
 
-        elapsed = timeit.default_timer() - start_time
+        elapsed = self.timeit.default_timer() - start_time
         print '%d logs, elapsed time: %f' % (self.iterations, elapsed)
         print '%d messages per second' % int(self.iterations/elapsed)
 

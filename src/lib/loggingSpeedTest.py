@@ -6,12 +6,9 @@
 """
 import loggingClientTask
 import os
-import sys
 import platform
-import zmq
 import apiLoggerInit
 import logging
-import utils
 from utils import bcolors
 import timeit
 
@@ -22,7 +19,6 @@ def exiting(exit_msg):
 import signal
 def signalHandler(signum, frame):
     print ('loggingSpeedTask: signalHandler called with %d\n' % (signum))
-    #sys.exit(0)
 
 signal.signal(signal.SIGTERM, signalHandler)
 signal.signal(signal.SIGHUP, signalHandler)
