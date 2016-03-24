@@ -8,6 +8,7 @@ import loggingClientTask
 import os
 import sys
 import platform
+import zmq
 import apiLoggerInit
 import logging
 import utils

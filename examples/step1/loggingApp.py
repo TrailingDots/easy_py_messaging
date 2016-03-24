@@ -11,7 +11,7 @@ import platform
 
 # The final app will not have this sys.path line.
 # It must be here for demo purposes only!
-sys.path.append('../../lib')
+sys.path.append('../../src/lib')
 
 import loggingClientTask
 import apiLoggerInit
@@ -48,7 +48,9 @@ appLog.info('Starting endless logs. Ctl-C to stop this')
 ndx = 0
 while True:
     ndx += 1
-    appLog.info('ndx=%d' % ndx)
+    msg = 'ndx=%d' % ndx
+    print msg
+    appLog.info(msg)
     time.sleep(1)   # Don't flood the logging service
 
 # Should never get here

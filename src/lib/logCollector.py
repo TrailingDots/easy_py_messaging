@@ -35,9 +35,9 @@ class LogCollectorTask(object):
     class should exist. The LogCollectorTask collects logs
     from the logging client task.
     """
-    def __init__(self, id):
-        self.id = id
-        self.context = zmq.Context()
+    def __init__(self, context, id_name):
+        self.id_name = id_name
+        self.context = context
         apiLoggerInit.loggerInit('logCol1')
         self.frontend = self.context.socket(zmq.ROUTER)
 
@@ -159,15 +159,16 @@ def main():
             usage()
             continue
 
-    id = ''
+    id_name = ''
     if len(sys.argv) > 0:
-        id = sys.argv[0]
+        id_name = sys.argv[0]
     if log_filename:
         # A log filename MUST be supplied for an append
         logConfig.APPEND_TO_LOG = append
         logConfig.LOG_FILENAME = log_filename
 
-    server = LogCollectorTask(id)
+    context = zmq.Context()
+    server = LogCollectorTask(context, id_name)
     server.run()
 
     server.join()

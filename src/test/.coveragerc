@@ -1,6 +1,6 @@
 # .coveagerc to control coverage.py
 [run]
-omit="../lib/logCollector.py ../lib/convDate.py time1.py genData.py"
+omit="../lib/logCollector.py ../junk genData.py"
 
 branch = True
 Parallel = True

@@ -25,11 +25,11 @@ def listening(port, shortened, pid_only, proc_only):
     # "pid" now has the PID of the process listening to the port.
     # Map that to a process name.
     # procName = subprocess.Popen('ps x %s' % pid, shell=True,
-    out, err = subprocess.Popen('ps x | grep %s' % pid,
+    out, err = subprocess.Popen('/usr/bin/ps x | /usr/bin/grep %s' % pid,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT).communicate()
-    if len(err):
+    if err and len(err):
         sys.stderr.write(err + '\n')
     out = out.splitlines()
     for line in out:

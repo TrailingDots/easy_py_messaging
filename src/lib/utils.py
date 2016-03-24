@@ -29,6 +29,7 @@ class bcolors(object):
 # Remote loggers MUST use the routines in logComponents and use the
 # keys in LOG_LEVEL to determine valid log levels.
 LOG_LEVELS = {'DEBUG': logging.debug,
+              'CMD': logging.info,      # logging has no command!
               'INFO': logging.info,
               'WARNING': logging.warning,
               'ERROR': logging.error,
@@ -37,10 +38,11 @@ LOG_LEVELS = {'DEBUG': logging.debug,
 # Priority of logging. Used in filter routines.
 LOG_PRIORITY = {
                 'DEBUG': 0,
-                'INFO': 1,
-                'WARNING': 2,
-                'ERROR': 3,
-                'CRITICAL': 4,
+                'CMD': 1,
+                'INFO': 2,
+                'WARNING': 3,
+                'ERROR': 4,
+                'CRITICAL': 5,
                 }
 
 def filter_priority(initial_level):
@@ -63,8 +65,8 @@ def filter_priority(initial_level):
 
 
 """
-A log message contains a date, a log level and a payload
-separated by the separation character.
+  A log message contains a date, a log level and a payload
+  separated by the separation character.
 """
 SEPARATION_CHAR = '\t'
 
@@ -96,7 +98,7 @@ APPEND_TO_LOG = True
 # How time gets formatted
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
-def time_Now():
+def time_now():
     """
     Returns a floating point number as seconds since
     start of the epoch. This number has microseconds in it,

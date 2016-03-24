@@ -160,6 +160,7 @@ def gen_happy_path(sep_char = utils.PAYLOAD_CONNECTOR,
     """
     testData = ''
     testData += '2016-03-10T11:00:39.697\tDEBUG\ta=b&temp=34.5&item=Good Stuff\n'
+    testData += '2016-03-10T11:00:39.697\tCMD\ta=b&temp=34.5&item=Good Stuff\n'
     testData += '2016-03-10T11:01:39.697\tWARNING\ta=b&temp=74.5&item=cool\n'
     testData += '2016-03-10T11:01:39.697\tERROR\ta=blah&temp=999&item=cool\n'
     testData += '2016-03-10T11:02:39.697\tDEBUG\ta=b&temp=82.5&item=funny\n'
@@ -184,6 +185,7 @@ def gen_missing_data(sep_char = utils.PAYLOAD_CONNECTOR,
     # key=value=value problem(?)
     testData += '2016-03-10T11:02:39.697\tDEBUG\ta=b=c&temp=82.5&item=funny\n'
     testData += '2016-03-10T11:03:39.697\tCRITICAL\ta=&temp=99.34.5&item=Stupid Stuff\n'
+    testData += '2016-03-10T11:02:39.697\tCMD\ta=b=c&temp=82.5&item=funny\n'
     # & at end of line
     testData += '2016-03-10T11:03:39.697\tCRITICAL\t=b&temp=99.34.5&item=Stupid Stuff&\n'
     # duplicated keyword "temp"
@@ -329,11 +331,11 @@ class TestLogs2CSV(unittest.TestCase):
 
         self.failUnless('date' in log_dict)
         self.failUnless('level' in log_dict)
-        self.failUnless(log_dict['level'] == 'WARNING')
+        self.failUnless(log_dict['level'] == 'CMD')
         self.failUnless('a' in log_dict)
         self.failUnless(log_dict['a'] == 'b')
         self.failUnless('item' in log_dict)
-        self.failUnless(log_dict['item'] == 'cool')
+        self.failUnless(log_dict['item'] == 'Good Stuff')
 
     def testMissingData(self):
         print 'testMissingData'
@@ -560,9 +562,9 @@ class TestLogs2JSON(unittest.TestCase):
         self.failUnless(py_internal[0]['level'] == 'DEBUG')
         self.failUnless(py_internal[0]['temp'] == '34.5')
 
-        self.failUnless(py_internal[1]['level'] == 'WARNING')
-        self.failUnless(py_internal[1]['temp'] == '74.5')
-        self.failUnless(py_internal[1]['item'] == 'cool')
+        self.failUnless(py_internal[1]['level'] == 'CMD')
+        self.failUnless(py_internal[1]['temp'] == '34.5')
+        self.failUnless(py_internal[1]['item'] == 'Good Stuff')
 
     def testLogs2JSON_Mixed(self):
         print '\ntestLogs2JSON_Missing'

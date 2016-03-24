@@ -17,7 +17,7 @@ def usage():
     sys.stderr.write('--end=<iso8601 end date>     # end date   iso formatted\n')
     sys.stderr.write('     If start with no end, continue to present time.\n')
     sys.stderr.write('--level=LEVEL      # Handle only from LEVEL up.\n')
-    sys.stderr.write('     DEBUG,INFO,WARNING,ERROR,CRITICAL are the levels.\n')
+    sys.stderr.write('     DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL are the levels.\n')
     sys.stderr.write('--JSON             # output format is JSON (default)\n')
     sys.stderr.write('--CSV              # Output format is CSV\n')
     sys.stderr.write('--help             # This message\n')
@@ -150,7 +150,8 @@ def main():
                 usage()
         elif opt in ['--level']:
             if arg not in utils.LOG_LEVELS:
-                sys.stderr('%s: Invalid log level. Use: DEBUG,INFO,WARNING,ERROR,CRITICAL\n' % arg)
+                sys.stderr.write(('%s: Invalid log level. '
+                    'Use: DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL\n') % arg)
                 usage()
             params['level'] = arg
             continue
