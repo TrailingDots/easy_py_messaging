@@ -2,7 +2,6 @@
 import sys
 sys.path.append('./')
 sys.path.append('../lib')
-import utils
 import logFilter
 
 
@@ -45,10 +44,14 @@ def run_CSV(params):
         """
         return log_dict
 
+    try:
+        csv_filter = logFilter.LogFilterCSV(params, filter_fcn=filter_CSV)
+    except Exception as err:
+        sys.stderr.write('Invalid configuration file:%s\n' % err)
+        return 1
+
     in_fh = params['in_file_handle']
     out_fh = params['out_file_handle']
-
-    csv_filter = logFilter.LogFilterCSV(params, filter_fcn=filter_CSV)
 
     in_lines = in_fh.read()
     lines = in_lines.split('\n')
@@ -88,8 +91,6 @@ def run_JSON(params):
     The JSON contains an array of objects.
     Each object expresses a single line of data.
     """
-    in_fh = params['in_file_handle']
-    out_fh = params['out_file_handle']
 
     def filter_JSON(log_entry_dict, line_number):
         """An example: only host=hydro1 gets returned.
@@ -106,8 +107,10 @@ def run_JSON(params):
     try:
         lf = logFilter.LogFilterJSON(params, filter_fcn=filter_JSON)
     except Exception as err:
-        sys.stderr.write('Invalid configuration.')
+        sys.stderr.write('Invalid configuration: %s\n' % err)
         return
+    in_fh = params['in_file_handle']
+    out_fh = params['out_file_handle']
     json_data = lf.log_file_2_JSON_handler(in_fh)
     out_fh.write(json_data)
     out_fh.write('\n')
@@ -125,8 +128,8 @@ def main():
             ['config=',     # config file
              'in-file=',    # input log file.
              'out-file=',   # Output file
-             'end-date=',   # iso8601 end date
-             'start-date=', # iso8601 start date
+             'end=',        # iso8601 end date
+             'start=',      # iso8601 start date
              'level=',      # filter from this level up
              'JSON',        # Output is JSON (default)
              'CSV',         # Output is CSV
@@ -145,6 +148,8 @@ def main():
 
         elif opt in ['--config']:
             try:
+                # The config file MUST be read now as further
+                # command line args may overwrite settings.
                 conf_fh = open(arg, 'r')
                 config_lines = conf_fh.read()
                 # Evaluate the contents of config_lines
@@ -153,10 +158,6 @@ def main():
                 sys.stderr.write(str(err))
                 usage()
         elif opt in ['--level']:
-            if arg not in utils.LOG_LEVELS:
-                sys.stderr.write(('%s: Invalid log level. '
-                    'Use: DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL\n') % arg)
-                usage()
             params['level'] = arg
             continue
 
@@ -176,21 +177,11 @@ def main():
             params['out_file'] = arg
             continue
 
-        elif opt in ['--start-date']:
-            sd = utils.ISO8601ToSeconds(arg)
-            if sd == None:
-                sys.stderr.write('--start-date:"%s" is not a valid ISO8601 date' % arg)
-                usage()
-            params['start_secs'] = sd
+        elif opt in ['--start']:
             params['start'] = arg
             continue
 
-        elif opt in ['--end-date']:
-            sd = utils.ISO8601ToSeconds(arg)
-            if sd == None:
-                sys.stderr.write('--end-date:"%s" is not a valid ISO8601 date' % arg)
-                usage()
-            params['end_secs'] = sd
+        elif opt in ['--end']:
             params['end'] = arg
             continue
 
@@ -198,37 +189,6 @@ def main():
             # Should never happen. getopt should catch this!
             sys.stderr.write('Unknown option:' + opt + '\n')
             usage()
-
-    # If a start date with no end date, make the end date now.
-    if 'end' not in params.keys():
-        now_secs = utils.time_now()
-        params['end_secs'] = now_secs
-        params['end'] = utils.secondsToISO8601(now_secs)
-
-    # Verify input and output files.
-    in_file = params.get('in_file', None)
-    if in_file == None:
-        params['in_file_handle'] = sys.stdin
-        params['in_file'] = 'sys.stdin'
-    else:
-        try:
-            fh = open(in_file, 'r')
-        except IOError as err:
-            sys.stderr.write('--in-file: "%s": %s\n' % (in_file, str(err)))
-            usage()
-        params['in_file_handle'] = fh
-
-    out_file = params.get('out_file', None)
-    if out_file == None:
-        params['out_file_handle'] = sys.stdout
-        params['out_file'] = '<sys.stdout>'
-    else:
-        try:
-            fh = open(out_file, 'w')
-        except IOError as err:
-            sys.stderr.write('--out-file: "%s": %s\n' % (out_file, str(err)))
-            usage()
-        params['out_file_handle'] = fh
 
     if 'out_format' not in params:
         params['out_format'] = 'JSON'

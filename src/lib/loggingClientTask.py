@@ -41,17 +41,11 @@ class LoggingClientClass(threading.Thread):
 
     def run(self):
         self.context = zmq.Context()
-        if self.context is None:
-            import pdb; pdb.set_trace()
         self.socket = self.context.socket(zmq.DEALER)
-        if self.socket is None:
-            import pdb; pdb.set_trace()
         identity = u'%s' % str(self.id)
         self.socket.identity = identity.encode('ascii')
         self.socket.connect(logConfig.APP_SOCKET)
         self.poll = zmq.Poller()
-        if self.poll is None:
-            import pdb; pdb.set_trace()
         self.poll.register(self.socket, zmq.POLLIN)
 
     def send_string(self, astr):
@@ -112,7 +106,8 @@ def main():
     logging.basicConfig(level=logging.NOTSET)   # Log everything
     client = LoggingClientClass(platform.node())
     if client is None:
-        import pdb; pdb.set_trace()
+        sys.stderr.write('Cannot create LoggingClientClass!\n');
+        sys.exit(1)
     client.start()
 
     # All the log levels in the remote logger

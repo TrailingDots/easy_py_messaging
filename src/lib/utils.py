@@ -131,6 +131,8 @@ def ISO8601ToSeconds(iso8601):
     convert to seconds.
     """
     try:
+        if iso8601 == None:
+            import pdb; pdb.set_trace()
         iso_tuple = datetime.datetime.strptime(iso8601, TIME_FORMAT)
         seconds = time.mktime(iso_tuple.timetuple()) + \
                 iso_tuple.microsecond/1000000.0

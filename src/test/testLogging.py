@@ -308,7 +308,11 @@ class TestLogs2CSV(unittest.TestCase):
         lines = testData.split('\n')
 
         # Check the keyword header line in CSV
-        csv = logFilter.LogFilterCSV(logFilter.LogFilters)
+        try:
+            csv = logFilter.LogFilterCSV({})
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
         csv.parse_log_entry(lines[0])
         print csv.log_keys()     # Sorted keys matching data
 
@@ -326,7 +330,11 @@ class TestLogs2CSV(unittest.TestCase):
         lines = testData.split('\n')
 
         # Check the keyword header line in CSV
-        csv = logFilter.LogFilterCSV(logFilter.LogFilters)
+        try:
+            csv = logFilter.LogFilterCSV({})
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
         log_dict = csv.parse_log_entry(lines[1])
 
         self.failUnless('date' in log_dict)
@@ -343,7 +351,11 @@ class TestLogs2CSV(unittest.TestCase):
         lines = testData.split('\n')
 
         # Check the keyword header line in CSV
-        lf = logFilter.LogFilterCSV(logFilter.LogFilters)
+        try:
+            lf = logFilter.LogFilterCSV({})
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
         log_dict = lf.parse_log_entry(lines[0])
 
         self.failUnless('date' in log_dict)
@@ -363,7 +375,11 @@ class TestLogs2CSV(unittest.TestCase):
         # select only WARNING or higher
         log_filters = logFilter.LogFilters.copy()   # don't zap original!
         log_filters['level'] = 'WARNING'
-        lf = logFilter.LogFilterCSV(log_filters)
+        try:
+            lf = logFilter.LogFilterCSV(log_filters)
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
 
         log_dict = lf.parse_log_entry(lines[0])
         self.failUnless(log_dict == None)
@@ -547,7 +563,12 @@ class TestLogs2JSON(unittest.TestCase):
         f.write(testData)
         f.flush()
 
-        lf = logFilter.LogFilterJSON(logFilter.LogFilters)
+        try:
+            lf = logFilter.LogFilterJSON({})
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
+
         json_data = lf.log_file_2_JSON(f.name)
         f.close()
 
@@ -576,7 +597,11 @@ class TestLogs2JSON(unittest.TestCase):
         # Filter out to WARNING and above.
         log_filters = logFilter.LogFilters.copy()
         log_filters['level'] = 'WARNING'
-        lf = logFilter.LogFilterJSON(log_filters)
+        try:
+            lf = logFilter.LogFilterJSON(log_filters)
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
         json_data = lf.log_file_2_JSON(f.name)
         f.close()
 
@@ -594,7 +619,11 @@ class TestLogs2JSON(unittest.TestCase):
     def testLogs2JSON_Bogus_filename(self):
         print '\ntestLogs2JSON_Bogus_filename'
         log_filters = logFilter.LogFilters.copy()
-        lf = logFilter.LogFilterJSON(log_filters)
+        try:
+            lf = logFilter.LogFilterJSON(log_filters)
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return 1
         result = lf.log_file_2_JSON('/QQQ/ZZZ.bogus')
         self.failUnless(result == None)
 
@@ -652,7 +681,11 @@ class TestLogLevelsPriorities(unittest.TestCase):
 
         log_filters = logFilter.LogFilters.copy()
         log_filters['level'] = 'ERROR'
-        lf = logFilter.LogFilterJSON(log_filters)
+        try:
+            lf = logFilter.LogFilterJSON(log_filters)
+        except Exception as err:
+            sys.stderr.write('Invalid configuration file:%s\n' % err)
+            return
         json_data = lf.log_file_2_JSON(f.name)
         f.close()
 

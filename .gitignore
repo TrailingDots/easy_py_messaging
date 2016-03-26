@@ -15,6 +15,7 @@ PYLINT
 *cover*
 .coverage
 *coverage*
-.coverage_html/
+src/test/.coverage_html
+src/test/.coverage
 *typescript*
 

@@ -184,13 +184,19 @@ CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./b
 ECHO Expecte ERRORS 
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad3.conf "
 ECHO Expecte ERRORS 
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start.conf "
 ECHO Expecte ERRORS 
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end.conf "
 ECHO Expecte ERRORS 
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end1 "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end1.conf "
 ECHO Expecte ERRORS 
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start1 "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start1.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad_start.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad_end.conf "
+ECHO Expecte ERRORS 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./end_before_start.conf "
 
 ECHO No infile. Reads from stdin
 cat happy.data | coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py 
