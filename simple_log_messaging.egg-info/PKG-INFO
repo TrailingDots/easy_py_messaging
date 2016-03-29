@@ -1,0 +1,17 @@
+Metadata-Version: 1.1
+Name: simple-log-messaging
+Version: 1.0.0
+Summary: A simple ZeroMQ based logger for distristributed Raspberry Pi systems
+Home-page: http://github.com/trailingdots/simple_log_messaging
+Author: Cecil McGregor
+Author-email: TrailingDots@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7

@@ -1,0 +1,12 @@
+COPYING
+COPYING.LESSER
+MANIFEST.in
+setup.cfg
+setup.py
+simple_log_messaging.egg-info/PKG-INFO
+simple_log_messaging.egg-info/SOURCES.txt
+simple_log_messaging.egg-info/dependency_links.txt
+simple_log_messaging.egg-info/entry_points.txt
+simple_log_messaging.egg-info/not-zip-safe
+simple_log_messaging.egg-info/requires.txt
+simple_log_messaging.egg-info/top_level.txt

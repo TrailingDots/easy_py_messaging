@@ -1,0 +1,5 @@
+[console_scripts]
+listeningPort = tools:listeningPort
+logCollector = src.lib:logCollector
+loggingFilterApp = src.lib:loggingFilterApp
+
