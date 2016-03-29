@@ -33,7 +33,7 @@ See the INSTALL file included with the distribution.
 Extensive documentation is provided with the distribution. Refer to
 docs/RaspPiLOgger.html.
 
-Git repository: http://github.com/trailingdots/rasppilogger
+Git repository: http://github.com/trailingdots/simple_log_messaging
 
 ## License
 
