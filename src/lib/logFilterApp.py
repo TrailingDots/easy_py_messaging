@@ -6,27 +6,27 @@ import logFilter
 
 
 def usage():
-    sys.stderr.write('logs2JSON [--out-file=outfile] [--in-file=infile]\n' + \
-            '\t[--start=<ISO8601 start date>] [--end=>iso8601 end date]\n' + \
-            '\t[--JSON] [--CSV] [--help]\n' + \
+    sys.stderr.write('logs2JSON [--out-file=outfile] [--in-file=infile]\n' +
+            '\t[--start=<ISO8601 start date>] [--end=>iso8601 end date]\n' +
+            '\t[--JSON] [--CSV] [--help]\n' +
             '\t[--level=<level name>]')
     sys.stderr.write('--out-file=output file # output goes here\n')
     sys.stderr.write('--in-file=input file   # output goes here\n')
     sys.stderr.write('--start=<iso8601 start date> # start date iso formatted\n')
     sys.stderr.write('--end=<iso8601 end date>     # end date   iso formatted\n')
     sys.stderr.write('     If start with no end, continue to present time.\n')
-    sys.stderr.write('--level=LEVEL      # Handle only from LEVEL up.\n')
+    sys.stderr.write('--level=LEVEL   # Handle only from LEVEL up.\n')
     sys.stderr.write('     DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL are the levels.\n')
-    sys.stderr.write('--JSON             # output format is JSON (default)\n')
-    sys.stderr.write('--CSV              # Output format is CSV\n')
-    sys.stderr.write('--help             # This message\n')
+    sys.stderr.write('--JSON          # output format is JSON (default)\n')
+    sys.stderr.write('--CSV           # Output format is CSV\n')
+    sys.stderr.write('--help          # This message\n')
     sys.exit(1)
 
 
 def run_CSV(params):
     """
     Output format is CSV.
-    Write a header line with a list of keywords from the 
+    Write a header line with a list of keywords from the
     first line of input.
     Then write the data lines with just the values.
     """
@@ -63,11 +63,10 @@ def run_CSV(params):
     # Process header line
     header_line = lines[0]
     csv = csv_filter.parse_log_entry(header_line)
-    if csv != None:
+    if csv is not None:
         out_fh.write(csv_filter.log_keys() + '\n')
     else:
-        # TODO FIXME Suppose the 1st line gets filtered out?
-        sys.stderr.write('ERROR: Invalid header line ignored for CSV file:"%s"' % \
+        sys.stderr.write('ERROR: Invalid header line ignored for CSV file:"%s"' %
                 header_line)
 
     line_number = 0
@@ -75,7 +74,7 @@ def run_CSV(params):
         line_number += 1
         line = line.strip('\n')
         csv = csv_filter.parse_log_entry(line)
-        if csv != None:
+        if csv is not None:
             # Input line is acceptable
             # If csv == None, csv_filter eliminated the line.
             out_fh.write(csv_filter.log_data() + '\n')
@@ -137,10 +136,10 @@ def main():
             ]
         )
     except getopt.GetoptError as err:
-        sys.stderr.write( str(err) + '\n' )
+        sys.stderr.write(str(err) + '\n')
         usage()
 
-    params = logFilter.LogFilters;
+    params = logFilter.LogFilters
 
     for opt, arg in opts:
         if opt in ['--help']:
@@ -203,5 +202,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 

@@ -37,7 +37,7 @@ class LogComponents(object):
         """
         msg_list = msg.split(utils.SEPARATION_CHAR)
         if len(msg_list) < 2:
-            # On missing parts of a message, assume an invalid 
+            # On missing parts of a message, assume an invalid
             # log contains debug messages.
             msg_list.insert(0, 'DEBUG')
         logLevel = msg_list[0].upper()
@@ -55,5 +55,4 @@ class LogComponents(object):
         msg = self.level + utils.SEPARATION_CHAR + \
               self.payload
         return msg
-
 

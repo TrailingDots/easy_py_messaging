@@ -20,7 +20,10 @@
 # inability of coverage to handle subprocesses properly!
 # Much time was spent attempting to encapsulate the repetitious
 # nature of these test into python scripts. 
-
+#
+# TODO:
+#   Provide stricter checking of these commands!
+#
 
 # Uncomment next two lines for debugging and tracing of this script.
 #set -x
@@ -83,6 +86,12 @@ rm $(find . -name '.coverge.*' -type f)
 ECHO Remove test/.coverage_html/*
 (cd test; rm -rf .coverage_html)
 
+# From all the python scripts, run pyflakes, pep8 and pylint.
+PY_FILES=`find $BASE_DIR -name '*.py' | grep -v junk`
+CMD "pyflakes $PY_FILES "
+CMD "pep8 $PY_FILES "
+CMD "pylint $PY_FILES "
+
 #
 ECHO Before starting, make sure the logCollector is running.
 CMD "$TOOLS_DIR/listeningPort.py 5570"
@@ -111,9 +120,8 @@ CMD "echo last run status: $? "
 
 # Generate a "standard" log of data frequently used in testing.
 export DATA_LOG=$TEST_DIR/data.data
-CMD "DATA_LOG=$DATA_LOG"
 CMD "$GEN_DATA >$DATA_LOG"
-
+$GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
 ECHO Need to get a timed alarm in case the collector does not start.
 ECHO Problems with logCollector - Need to get a proper term to close the coverage files.
@@ -126,7 +134,7 @@ CMD "coverage run --branch --parallel-mode $LIB_DIR/loggingClientTask.py "
 CMD "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py  "
 CMD "coverage run --branch --parallel-mode ./loggingLoopApp.py 10   "
 CMD "coverage run --branch --parallel-mode ./testLogging.py "
-CMD "coverage run --branch --parallel-mode $GEN_DATA >/dev/null "
+CMD "coverage run --branch --parallel-mode $GEN_DATA "
 CMD "coverage run --branch --parallel-mode $GEN_DATA --happy   "
 CMD "coverage run --branch --parallel-mode $GEN_DATA --missing "
 CMD "coverage run --branch --parallel-mode $GEN_DATA --mixed   "
@@ -202,12 +210,12 @@ ECHO No infile. Reads from stdin
 cat happy.data | coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py 
 
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/dev/null --in-file=$DATA_LOG --JSON "
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start-date=1970-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start-date=1970-01-01T00:00:00.000 --end-date=2020-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start=1970-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start=1970-01-01T00:00:00.000 --end=2020-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
 ECHO 
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end-date=2020-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end=2020-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
 ECHO Syntax error on end date
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end-date=2017-01-01:00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end=2017-01-01:00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
 ECHO Permission denied on output file.
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/ --in-file=$DATA_LOG --JSON "
 ECHO Permission denied on input file.
@@ -222,17 +230,18 @@ CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/
 ECHO Filter on dates as well.
 ECHO These test depend on the dates as set in ./test/getData.py and the $DATA_LOG file
 ECHO start only
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start-date=2016-03-14T08:00:00.000 "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 "
 ECHO Syntax Error for start only
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start-date=2016-03-14:08:00:00.000 "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14:08:00:00.000 "
 ECHO start and end dates
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start-date=2016-03-14T08:00:00.000 end=2016-03-14T08:05:15.876 "
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 end=2016-03-14T08:05:15.876 "
 
 ECHO Log Filter with configuration file. Notice in-file override
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf --in-file=mixed.data "
 
 ECHO Log Filter with configuration file. Read from stdin
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf < happy.data "
+coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf < happy.data 
 
 ECHO Log Filter with invalid configuration file. Has bad syntax
 CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=bad --in-file=mixed.data "

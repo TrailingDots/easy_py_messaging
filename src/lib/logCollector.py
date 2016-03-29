@@ -22,7 +22,7 @@ def signalUSR1Handler(signum, frame):
     """
     When a USR1 signal arrives, the NOISY debugging switch
     get toggles. This allows a dynamic way to trace incoming
-    log messages. 
+    log messages.
         kill -USR1  1234    # 1234 is the pid of logCollector.
     """
     logConfig.NOISY = not logConfig.NOISY
@@ -66,7 +66,7 @@ class LogCollectorTask(object):
         except zmq.ZMQError as err:
             sys.stderr.write('ZMQError: %s\n' % err)
             sys.stderr.write('Please kill other instances of this program.\n')
-            sys.stderr.write('Or: another program may be using %s\n' % \
+            sys.stderr.write('Or: another program may be using %s\n' %
                     str(logConfig.COLL_SOCKET))
             sys.exit(1)
 
@@ -93,7 +93,6 @@ class LogCollectorTask(object):
         # Should never get here. This code stops with SIGINT or SIGTERM.
         self.frontend.close()
         self.context.term()
-
 
 
 def usage():

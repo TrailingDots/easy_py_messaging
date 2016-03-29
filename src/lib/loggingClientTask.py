@@ -6,7 +6,6 @@
 # Log entries are simply made up.
 #
 
-import os
 import sys
 import zmq
 import threading
@@ -17,8 +16,8 @@ import logConfig
 import platform
 import apiLoggerInit
 import logging
-import utils
 import logComponents
+
 
 class LoggingClientClass(threading.Thread):
     """
@@ -27,22 +26,25 @@ class LoggingClientClass(threading.Thread):
     """
 
     def __init__(self, id_name):
-        """id = name of this class. These names appear in
+        """
+        id_name = These names appear in
                 the log entry as an indentifier of the source
                 of the log entry.
         """
 
         self.context = None
-        self.id = id_name
+        self.id_name = str(id_name)
         self.socket = None
         self.poll = None
         self.reqs = 0       # Count of messages
+        logging.basicConfig(level=logging.NOTSET)   # Log everything
+        apiLoggerInit.loggerInit(self.id_name)
         threading.Thread.__init__(self)
 
     def run(self):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.DEALER)
-        identity = u'%s' % str(self.id)
+        identity = u'%s' % str(self.id_name)
         self.socket.identity = identity.encode('ascii')
         self.socket.connect(logConfig.APP_SOCKET)
         self.poll = zmq.Poller()
@@ -54,7 +56,13 @@ class LoggingClientClass(threading.Thread):
                False for failure.
         """
         try:
+            dummy = 0
             while self.socket is None:  # TODO FIXME Potential hand!!!
+                dummy += 1
+                if dummy > 200:
+                    # Sometimes the socket "disappears" for awhile.
+                    sys.stderr.write('Cannot get self.socket!')
+                    raise Exception('Cannot obtain self.socket')
                 time.sleep(0.1)
             self.socket.send_string(astr)
         except zmq.ZMQError as err:
@@ -93,7 +101,6 @@ class LoggingClientClass(threading.Thread):
         return self._compose_msg('CRITICAL', payload)
 
 
-
 def main():
     """
     Simply send strings of logs to the logCollector.
@@ -103,10 +110,9 @@ def main():
     # Standard initialization
     # =========================
     apiLoggerInit.loggerInit('loggingClientTask')
-    logging.basicConfig(level=logging.NOTSET)   # Log everything
     client = LoggingClientClass(platform.node())
     if client is None:
-        sys.stderr.write('Cannot create LoggingClientClass!\n');
+        sys.stderr.write('Cannot create LoggingClientClass!\n')
         sys.exit(1)
     client.start()
 
@@ -114,9 +120,9 @@ def main():
     REMOTE_LOG_LEVELS = {
         'DEBUG': client.debug,
         'CMD': client.cmd,
-        'INFO': client.info, 
-        'WARNING': client.warning, 
-        'ERROR': client.error, 
+        'INFO': client.info,
+        'WARNING': client.warning,
+        'ERROR': client.error,
         'CRITICAL': client.critical}
 
     info_msg = 'status=1,msg=info,reason=nothing important'
@@ -130,16 +136,16 @@ def main():
     # messages to exist in the log files after logging.
     for key, fcn in REMOTE_LOG_LEVELS.items():
         fcn('thru=%s,level=%s,using=REMOTE_LOG_LEVELS' % (key, key))
-        
+
     client.warning('type=client,' + warning_msg)
     client.error('type=client,' + error_msg)
     client.debug('type=client,' + debug_msg)
     client.critical('type=client,' + critical_msg)
     client.info('type=client,' + info_msg)
 
-    client.info('type=logging,' + 'Does logging.info(), etc. still work?')
-    client.warning('type=logging,' + 'Once again - using pure logging.')
-    client.warning('type=logging,' + 'Notice no "host=..." on tagged onto the logs.')
+    client.info('type=logging,Does logging.info(), etc. still work?')
+    client.warning('type=logging,Once again - using pure logging.')
+    client.warning('type=logging,Notice no "host=..." on tagged onto the logs.')
 
     client.warning('type=logging,' + warning_msg)
     client.error('type=logging,' + error_msg)
@@ -153,5 +159,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 

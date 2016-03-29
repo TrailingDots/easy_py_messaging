@@ -47,7 +47,7 @@ class RunTests(unittest.TestCase):
                            '-t']
         proc_collector = subprocess.Popen(argv_collector)
         print ' '.join(argv_collector)
-        print (bcolors.BGGREEN + 
+        print (bcolors.BGGREEN +
             ('proc_collector pid: %d' % proc_collector.pid) +
             bcolors.ENDC)
 
@@ -56,8 +56,8 @@ class RunTests(unittest.TestCase):
         print 'starting loggingClientTask:' + ' '.join(argv_client)
         proc_app = subprocess.Popen(argv_client,
             stderr=subprocess.STDOUT)
-        print (bcolors.BGGREEN + 
-                ('proc_app pid: %d' % proc_app.pid) + 
+        print (bcolors.BGGREEN +
+                ('proc_app pid: %d' % proc_app.pid) +
                 bcolors.ENDC)
 
         # Allow some time to process.
@@ -79,18 +79,18 @@ class RunTests(unittest.TestCase):
 
         # Junk messages. The output logs will be inspected for
         # the presense of these messages.
-        WarningMsg = 'msg=Warning,a=n,stuff=yuck,floor=ceiling'
-        ErrorMsg = 'status=3,warn=continue,babble=yes,reason=testing'
-        DebugMsg= 'msg=debug,details=yes'
-        CriticalMsg = 'msg=critical,reason=meltdown'
-        InfoMsg = 'status=1,msg=info,reason=nothing important'
+        warning_msg = 'msg=Warning,a=n,stuff=yuck,floor=ceiling'
+        error_msg = 'status=3,warn=continue,babble=yes,reason=testing'
+        debug_msg = 'msg=debug,details=yes'
+        critical_msg = 'msg=critical,reason=meltdown'
+        info_msg = 'status=1,msg=info,reason=nothing important'
 
         # FIXME TODO - make this a real unit test!
-        msgs = [WarningMsg,
-                ErrorMsg,
-                DebugMsg,
-                CriticalMsg,
-                InfoMsg,
+        msgs = [warning_msg,
+                error_msg,
+                debug_msg,
+                critical_msg,
+                info_msg,
                ]
         """ TODO FIXME - get a real unit test!
         for msg in msgs:
@@ -119,7 +119,7 @@ class RunTests(unittest.TestCase):
                           '-t']
         proc_collector = subprocess.Popen(argv_collector)
         print ' '.join(argv_collector)
-        print (bcolors.BGGREEN + 
+        print (bcolors.BGGREEN +
             ('proc_collector pid: %d' % proc_collector.pid) +
             bcolors.ENDC)
 
@@ -131,8 +131,8 @@ class RunTests(unittest.TestCase):
         speed_app_args = ['python', abs_path_app, '456']
         speed_app = subprocess.Popen(speed_app_args)
         print ' '.join(speed_app_args)
-        print (bcolors.BGGREEN + 
-                ('speed_app pid: %d' % speed_app.pid) + 
+        print (bcolors.BGGREEN +
+                ('speed_app pid: %d' % speed_app.pid) +
                 bcolors.ENDC)
 
         # Allow some time to process.
@@ -150,8 +150,8 @@ class RunTests(unittest.TestCase):
         os.kill(proc_collector.pid, signal.SIGINT)
 
 
-def gen_happy_path(sep_char = utils.PAYLOAD_CONNECTOR,
-        key_val_sep = utils.KEY_VALUE_SEPARATOR):
+def gen_happy_path(sep_char=utils.PAYLOAD_CONNECTOR,
+        key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
     WARNING: DO NOT LIGHTLY CHANGE THESE TEST LOGS! Unit test uses these!
 
@@ -169,8 +169,8 @@ def gen_happy_path(sep_char = utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
-def gen_missing_data(sep_char = utils.PAYLOAD_CONNECTOR,
-        key_val_sep = utils.KEY_VALUE_SEPARATOR):
+def gen_missing_data(sep_char=utils.PAYLOAD_CONNECTOR,
+        key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
     WARNING: DO NOT LIGHTLY CHANGE THESE TEST LOGS! Unit test uses these!
 
@@ -194,8 +194,8 @@ def gen_missing_data(sep_char = utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
-def gen_mixed_data(sep_char = utils.PAYLOAD_CONNECTOR,
-        key_val_sep = utils.KEY_VALUE_SEPARATOR):
+def gen_mixed_data(sep_char=utils.PAYLOAD_CONNECTOR,
+        key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
     WARNING: DO NOT LIGHTLY CHANGE THESE TEST LOGS! Unit test uses these!
 
@@ -221,14 +221,14 @@ def gen_mixed_data(sep_char = utils.PAYLOAD_CONNECTOR,
     get sent to the logger to monitor and track events
     in these systems.
 
-    Assume "hydro1" and "hydro2" are systems in a remote 
-    hydroponics garden with various measurement 
-    instrumentations. This remote system logs to a 
+    Assume "hydro1" and "hydro2" are systems in a remote
+    hydroponics garden with various measurement
+    instrumentations. This remote system logs to a
     desktop inside the home.
 
     Commands the remote uses to start pumps and switchs
     get logged as well. This used "cmd=true&pump1=ON&host=hydro1"
-    meaning this is a command that turns pump1 on and 
+    meaning this is a command that turns pump1 on and
     the host is hydro1.
 
     Generate data that would look like more ordinary
@@ -253,7 +253,7 @@ def gen_mixed_data(sep_char = utils.PAYLOAD_CONNECTOR,
               A reply sends the tag of the command. Optionally the entire
               original command may populate the command.
               cmd=rep&tag=xyz&host=hygro1
-          
+
     Devices in this example:
       pump01 = A water pump to maintain proper levels.
       water01 = A flotation switch that detects water levels too high or too low.
@@ -286,7 +286,7 @@ def gen_mixed_data(sep_char = utils.PAYLOAD_CONNECTOR,
     testData += '2016-03-14T08:10:00.000\tINFO\tdevice=water01&state=OK&pump01=OFF&temp04=70.1&temp03=69.0&host=hydro1\n'
     testData += '2016-03-14T08:10:00.000\tINFO\tdevice=pump01&device=temp04&temp=70.1&temp03=69.0&host=hydro1\n'
     testData += '2016-03-14T08:10:00.000\tINFO\tdevice=pump01&device=temp03&temp=69.0&host=hydro1\n'
-    # 
+    #
     # BROKEN - FIXME - need one device per request! "circulation" is a macro
     # Normal circulation started on command. Notice multiple devices turned on.
     testData += '2016-03-14T08:12:14.734\tINFO\tcmd=req&tag=circulation&water01=OK&pump01=ON&circulation=ON&host=hydro1\n'
@@ -421,56 +421,56 @@ class TestISO8601(unittest.TestCase):
         date --date='2000-01-01 UTC' +%s
         946684800
     To convert such an unwieldy number of seconds back to a more readable form, use
-    a command like this: 
+    a command like this:
         date -d @946684800 +"%F %T %z"
         1999-12-31 19:00:00 -0500
-    Often it is better to output UTC-relative date and time: 
+    Often it is better to output UTC-relative date and time:
         date -u -d '1970-01-01 946684800 seconds' +"%Y-%m-%d %T %z"
         2000-01-01 00:00:00 +0000
-    """    
+    """
     def testUnixToISO8601_0(self):
         """ From unix time to external local ISO8601 """
 
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
         # Generally obtain from time.time()
-        date_now = 1457967609.123456  
+        date_now = 1457967609.123456
         date_time_now = datetime.datetime.fromtimestamp(date_now)
         print 'date_time_now:%s' % str(date_time_now)
         self.failUnless(str(date_time_now) == '2016-03-14 08:00:09.123456')
         fmt = '%Y-%m-%dT%H:%M:%S.%f'
-        nowStr = date_time_now.strftime(fmt)
-        print 'nowStr:%s' % nowStr
-        self.failUnless(str(nowStr) == '2016-03-14T08:00:09.123456')
-        nowTuple = datetime.datetime.strptime(nowStr, fmt)
-        print 'nowTuple:%s' % str(nowTuple)
-        self.failUnless(str(nowTuple) == '2016-03-14 08:00:09.123456')
-        print 'microsecond:%s' % nowTuple.microsecond
-        seconds = time.mktime(nowTuple.timetuple())
+        now_str = date_time_now.strftime(fmt)
+        print 'now_str:%s' % now_str
+        self.failUnless(str(now_str) == '2016-03-14T08:00:09.123456')
+        now_tuple = datetime.datetime.strptime(now_str, fmt)
+        print 'now_tuple:%s' % str(now_tuple)
+        self.failUnless(str(now_tuple) == '2016-03-14 08:00:09.123456')
+        print 'microsecond:%s' % now_tuple.microsecond
+        seconds = time.mktime(now_tuple.timetuple())
         print 'seconds:%s' % str(seconds)
-        secEpoch = time.mktime(nowTuple.timetuple()) + 1.0e-6*nowTuple.microsecond
-        secEpoch = seconds + nowTuple.microsecond/1000000.0
-        print 'secEpoch: %s' % secEpoch
+        sec_epoch = time.mktime(now_tuple.timetuple()) + 1.0e-6*now_tuple.microsecond
+        sec_epoch = seconds + now_tuple.microsecond/1000000.0
+        print 'sec_epoch: %s' % sec_epoch
         # date -d @1457967609.123456 +%FT%T.%N
         # 2016-03-14T08:00:09.123456000
-        self.failUnless(secEpoch == date_now)
+        self.failUnless(sec_epoch == date_now)
 
     def testUnixToISO8601_1(self):
-        """ 
-        From unix time to external local ISO8601 
-        
+        """
+        From unix time to external local ISO8601
+
         User needs to convert internal unix floating point
         seconds into an ISO 8601 string.
         """
 
-        dateStr = '2016-03-14T08:00:09.123456'
+        date_str = '2016-03-14T08:00:09.123456'
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
 
         # Generally obtain from time.time()
         secsNow = 1457967609.123456  # Unix time in seconds
 
         # Convert to ISO 8601
-        secStr = utils.secondsToISO8601(secsNow)
-        self.failUnless(dateStr == secStr)
+        secStr = utils.seconds_to_ISO8601(secsNow)
+        self.failUnless(date_str == secStr)
 
     def testISO8601ToSecs(self):
         """
@@ -479,13 +479,13 @@ class TestISO8601(unittest.TestCase):
         App reads DATE field from log file and converts to
         internal unix floating point seconds in local time.
         """
-        dateStr = '2016-03-14T08:00:09.123456'
+        date_str = '2016-03-14T08:00:09.123456'
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
 
         # Generally obtain from time.time()
         secsNow = 1457967609.123456  # Unix time in seconds
 
-        secs = utils.ISO8601ToSeconds(dateStr)
+        secs = utils.ISO8601_to_seconds(date_str)
         self.failUnless(secs == secsNow)
 
     def testISO8601ToSecsErrors(self):
@@ -495,10 +495,10 @@ class TestISO8601(unittest.TestCase):
         App reads DATE field from log file and converts to
         internal unix floating point seconds in local time.
         """
-        dateStr = '2016-03-14T:11:00:09.123456'
+        date_str = '2016-03-14T:11:00:09.123456'
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
 
-        secs = utils.ISO8601ToSeconds(dateStr)
+        secs = utils.ISO8601_to_seconds(date_str)
         self.failUnless(secs == None)
 
     def testTimeNow(self):
@@ -515,42 +515,42 @@ class TestISO8601(unittest.TestCase):
         """
         iso = utils.time_now_ISO8601()
         self.failUnless(type(iso) == type(''))
-        
+
     def testISOError(self):
         """
         Test error conditions.
         Pass in bogus ISO8601 formats. Should get None seconds
         """
-        seconds = utils.ISO8601ToSeconds('2016-XX-01T00:00:00.000')
+        seconds = utils.ISO8601_to_seconds('2016-XX-01T00:00:00.000')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-99-01T00:00:00.000')
+        seconds = utils.ISO8601_to_seconds('2016-99-01T00:00:00.000')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-03-01T30:00:00.000')
+        seconds = utils.ISO8601_to_seconds('2016-03-01T30:00:00.000')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-03-01X00:00:00.000')
+        seconds = utils.ISO8601_to_seconds('2016-03-01X00:00:00.000')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-03-01T00:61:00.000')
+        seconds = utils.ISO8601_to_seconds('2016-03-01T00:61:00.000')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-03-01T00:00:00.abc')
+        seconds = utils.ISO8601_to_seconds('2016-03-01T00:00:00.abc')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-03-01T00:00:00')
+        seconds = utils.ISO8601_to_seconds('2016-03-01T00:00:00')
         self.failUnless(seconds == None)
 
-        seconds = utils.ISO8601ToSeconds('2016-03-01T00:00')
+        seconds = utils.ISO8601_to_seconds('2016-03-01T00:00')
         self.failUnless(seconds == None)
 
         # No leading 0's - OK
-        seconds = utils.ISO8601ToSeconds('2016-3-01T00:00:00.000')
+        seconds = utils.ISO8601_to_seconds('2016-3-01T00:00:00.000')
         self.failUnless(seconds != None)
 
         # No leading 0's - OK
-        seconds = utils.ISO8601ToSeconds('2016-3-1T0:0:0.0')
+        seconds = utils.ISO8601_to_seconds('2016-3-1T0:0:0.0')
         self.failUnless(seconds != None)
 
 
@@ -643,32 +643,32 @@ def countKeyValueJSON(json_struct, key, value):
 class TestLogLevelsPriorities(unittest.TestCase):
     # python -m unittest testLogging.TestLogLevelsPriorities
     def testDebugLevel(self):
-        debugDict = utils.filter_priority('DEBUG')
-        self.failUnless('DEBUG' in debugDict)
-        self.failUnless('CRITICAL' in debugDict)
+        debug_dict = utils.filter_priority('DEBUG')
+        self.failUnless('DEBUG' in debug_dict)
+        self.failUnless('CRITICAL' in debug_dict)
 
     def testWarningLevel(self):
-        debugDict = utils.filter_priority('WARNING')
-        self.failUnless('DEBUG' not in debugDict)
-        self.failUnless('WARNING' in debugDict)
-        self.failUnless('ERROR' in debugDict)
-        self.failUnless('CRITICAL' in debugDict)
+        debug_dict = utils.filter_priority('WARNING')
+        self.failUnless('DEBUG' not in debug_dict)
+        self.failUnless('WARNING' in debug_dict)
+        self.failUnless('ERROR' in debug_dict)
+        self.failUnless('CRITICAL' in debug_dict)
 
     def testERRORLevel_0(self):
-        debugDict = utils.filter_priority('ERROR')
-        self.failUnless('DEBUG' not in debugDict)
-        self.failUnless('INFO' not in debugDict)
-        self.failUnless('WARNING' not in debugDict)
-        self.failUnless('ERROR' in debugDict)
-        self.failUnless('CRITICAL' in debugDict)
+        debug_dict = utils.filter_priority('ERROR')
+        self.failUnless('DEBUG' not in debug_dict)
+        self.failUnless('INFO' not in debug_dict)
+        self.failUnless('WARNING' not in debug_dict)
+        self.failUnless('ERROR' in debug_dict)
+        self.failUnless('CRITICAL' in debug_dict)
 
     def testCRITICALLevel_0(self):
-        debugDict = utils.filter_priority('CRITICAL')
-        self.failUnless('DEBUG' not in debugDict)
-        self.failUnless('INFO' not in debugDict)
-        self.failUnless('WARNING' not in debugDict)
-        self.failUnless('ERROR' not in debugDict)
-        self.failUnless('CRITICAL' in debugDict)
+        debug_dict = utils.filter_priority('CRITICAL')
+        self.failUnless('DEBUG' not in debug_dict)
+        self.failUnless('INFO' not in debug_dict)
+        self.failUnless('WARNING' not in debug_dict)
+        self.failUnless('ERROR' not in debug_dict)
+        self.failUnless('CRITICAL' in debug_dict)
 
     def testErrorLevelJSON_1(self):
         print '\ntestErrorLevelJSON - filter to >= ERROR'

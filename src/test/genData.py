@@ -6,20 +6,20 @@ import sys
 sys.path.append('../lib')
 import utils
 
-def genHappyPath(sep_char = utils.PAYLOAD_CONNECTOR,
-        key_val_sep = utils.KEY_VALUE_SEPARATOR):
+def genHappyPath(sep_char=utils.PAYLOAD_CONNECTOR,
+        key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
     Generate happy path data with  payload separator
     and key/value separator chars.
     """
-    testData = ''
-    testData += '2016-03-10T11:00:39.697\tDEBUG\ta=b&temp=34.5&item=Good Stuff\n'
-    testData += '2016-03-10T11:01:39.697\tWARNING\ta=b&temp=74.5&item=cool\n'
-    testData += '2016-03-10T11:02:39.697\tDEBUG\ta=b&temp=82.5&item=funny\n'
-    testData += '2016-03-10T11:03:39.697\tCRITICAL\ta=b&temp=99.34.5&item=Stupid Stuff'
-    testData = testData.replace('=', key_val_sep)
-    testData = testData.replace('&', sep_char)
-    return testData
+    test_data = ''
+    test_data += '2016-03-10T11:00:39.697\tDEBUG\ta=b&temp=34.5&item=Good Stuff\n'
+    test_data += '2016-03-10T11:01:39.697\tWARNING\ta=b&temp=74.5&item=cool\n'
+    test_data += '2016-03-10T11:02:39.697\tDEBUG\ta=b&temp=82.5&item=funny\n'
+    test_data += '2016-03-10T11:03:39.697\tCRITICAL\ta=b&temp=99.34.5&item=Stupid Stuff'
+    test_data = test_data.replace('=', key_val_sep)
+    test_data = test_data.replace('&', sep_char)
+    return test_data
 
 def genMissingData(sep_char=utils.PAYLOAD_CONNECTOR,
         key_val_sep=utils.KEY_VALUE_SEPARATOR):
@@ -27,21 +27,21 @@ def genMissingData(sep_char=utils.PAYLOAD_CONNECTOR,
     Generate data with some emtpy values
     and key/value separator chars.
     """
-    testData = ''
+    test_data = ''
     # Good line
-    testData += '2016-03-10T11:00:39.697\tDEBUG\ta=b&temp=&item=Good Stuff\n'
+    test_data += '2016-03-10T11:00:39.697\tDEBUG\ta=b&temp=&item=Good Stuff\n'
     # Doubled &&
-    testData += '2016-03-10T11:01:39.697\tWARNING\ta=b&&item=cool\n'
+    test_data += '2016-03-10T11:01:39.697\tWARNING\ta=b&&item=cool\n'
     # key=value=value problem(?)
-    testData += '2016-03-10T11:02:39.697\tDEBUG\ta=b=c&temp=82.5&item=funny\n'
-    testData += '2016-03-10T11:03:39.697\tCRITICAL\ta=&temp=99.34.5&item=Stupid Stuff\n'
+    test_data += '2016-03-10T11:02:39.697\tDEBUG\ta=b=c&temp=82.5&item=funny\n'
+    test_data += '2016-03-10T11:03:39.697\tCRITICAL\ta=&temp=99.34.5&item=Stupid Stuff\n'
     # & at end of line
-    testData += '2016-03-10T11:03:39.697\tCRITICAL\t=b&temp=99.34.5&item=Stupid Stuff&\n'
+    test_data += '2016-03-10T11:03:39.697\tCRITICAL\t=b&temp=99.34.5&item=Stupid Stuff&\n'
     # duplicated keyword "temp"
-    testData += '2016-03-10T11:03:39.697\tCRITICAL\ta=b&temp=99.34.5&temp=999.999&item=Stupid Stuff&\n'
-    testData = testData.replace('=', key_val_sep)
-    testData = testData.replace('&', sep_char)
-    return testData
+    test_data += '2016-03-10T11:03:39.697\tCRITICAL\ta=b&temp=99.34.5&temp=999.999&item=Stupid Stuff&\n'
+    test_data = test_data.replace('=', key_val_sep)
+    test_data = test_data.replace('&', sep_char)
+    return test_data
 
 def genMixedData(sep_char=utils.PAYLOAD_CONNECTOR,
         key_val_sep=utils.KEY_VALUE_SEPARATOR):
@@ -110,45 +110,45 @@ def genMixedData(sep_char=utils.PAYLOAD_CONNECTOR,
     have dropped, power lost, wiring problems, ...
     """
 
-    testData = ''
+    test_data = ''
     # A periodic reading of water and temperature from several instruments
-    testData += '2016-03-14T08:00:00.000\tINFO\tdevice=water01&state=OFF&host=hydro1\n'
-    testData += '2016-03-14T08:00:00.000\tINFO\tdevice=tempIN&temp=72.3&host=hydro1\n'
-    testData += '2016-03-14T08:00:00.000\tINFO\tdevice=tempOUT&temp=69.2&host=hydro1\n'
+    test_data += '2016-03-14T08:00:00.000\tINFO\tdevice=water01&state=OFF&host=hydro1\n'
+    test_data += '2016-03-14T08:00:00.000\tINFO\tdevice=tempIN&temp=72.3&host=hydro1\n'
+    test_data += '2016-03-14T08:00:00.000\tINFO\tdevice=tempOUT&temp=69.2&host=hydro1\n'
     # Water level has gone too low
-    testData += '2016-03-14T08:00:07.325\tERROR\tdevice=water01&state=LOW&host=hydro1\n'
+    test_data += '2016-03-14T08:00:07.325\tERROR\tdevice=water01&state=LOW&host=hydro1\n'
     # Pump started to raise water level. A command was sent
     # pump01 request to start.
-    testData += '2016-03-14T08:00:09.876\tINFO\tcmd=req&tag=xyz=pump01&state=ON&host=hydro1\n'
+    test_data += '2016-03-14T08:00:09.876\tINFO\tcmd=req&tag=xyz=pump01&state=ON&host=hydro1\n'
     # Command started, remote sends reply. Note use of "tag"
-    testData += '2016-03-14T08:00:09.876\tINFO\tcmd=rep&tag=xyz&host=hydro1\n'
+    test_data += '2016-03-14T08:00:09.876\tINFO\tcmd=rep&tag=xyz&host=hydro1\n'
     # Water level back to normal and turn pump1 off.
-    testData += '2016-03-14T08:05:05.325\tINFO\tdevice=water01&state=OK&host=hydro1\n'
+    test_data += '2016-03-14T08:05:05.325\tINFO\tdevice=water01&state=OK&host=hydro1\n'
     # Pump turns off
-    testData += '2016-03-14T08:05:15.876\tINFO\tcmd=req&tag=abc&pump01=OFF&host=hydro1\n'
+    test_data += '2016-03-14T08:05:15.876\tINFO\tcmd=req&tag=abc&pump01=OFF&host=hydro1\n'
     # Pump starting to off state.
-    testData += '2016-03-14T08:05:15.876\tINFO\tcmd=rep&tag=abc&host=hydro1\n'
+    test_data += '2016-03-14T08:05:15.876\tINFO\tcmd=rep&tag=abc&host=hydro1\n'
     # Periodic temperature readings
     # More likely would be one reading per device.
-    testData += '2016-03-14T08:10:00.000\tINFO\tdevice=water01&state=OK&pump01=OFF&temp04=70.1&temp03=69.0&host=hydro1\n'
-    testData += '2016-03-14T08:10:01.000\tINFO\tdevice=pump01&device=temp04&temp=70.1&temp03=69.0&host=hydro1\n'
-    testData += '2016-03-14T08:10:02.000\tINFO\tdevice=pump01&device=temp03&temp=69.0&host=hydro1\n'
+    test_data += '2016-03-14T08:10:00.000\tINFO\tdevice=water01&state=OK&pump01=OFF&temp04=70.1&temp03=69.0&host=hydro1\n'
+    test_data += '2016-03-14T08:10:01.000\tINFO\tdevice=pump01&device=temp04&temp=70.1&temp03=69.0&host=hydro1\n'
+    test_data += '2016-03-14T08:10:02.000\tINFO\tdevice=pump01&device=temp03&temp=69.0&host=hydro1\n'
     # pump03, pump04 and fan02 have suddenly stopped working! Notice UNKNOWN state.
-    testData += '2016-03-14T08:10:04.000\tERROR\tdevice=pump03&state=UNKNOWN&host=hydro1\n'
-    testData += '2016-03-14T08:10:04.121\tERROR\tdevice=fan02&state=UNKNOWN&host=hydro1\n'
-    testData += '2016-03-14T08:10:04.425\tERROR\tdevice=pump04&state=UNKNOWN&host=hydro1\n'
+    test_data += '2016-03-14T08:10:04.000\tERROR\tdevice=pump03&state=UNKNOWN&host=hydro1\n'
+    test_data += '2016-03-14T08:10:04.121\tERROR\tdevice=fan02&state=UNKNOWN&host=hydro1\n'
+    test_data += '2016-03-14T08:10:04.425\tERROR\tdevice=pump04&state=UNKNOWN&host=hydro1\n'
     # 
     # BROKEN - FIXME - need one device per request! "circulation" is a macro
     # Normal circulation started on command. Notice multiple devices turned on.
-    testData += '2016-03-14T08:12:14.734\tINFO\tcmd=req&tag=circulation&water01=OK&pump01=ON&circulation=ON&host=hydro1\n'
+    test_data += '2016-03-14T08:12:14.734\tINFO\tcmd=req&tag=circulation&water01=OK&pump01=ON&circulation=ON&host=hydro1\n'
     # Circulation started
-    testData += '2016-03-14T08:12:14.734\tINFO\tcmd=rep&tag=circulation&&host=hydro1\n'
+    test_data += '2016-03-14T08:12:14.734\tINFO\tcmd=rep&tag=circulation&&host=hydro1\n'
     # Normal circulation finished. Simply status indicating state of devices.
-    testData += '2016-03-14T08:22:14.739\tINFO\twater01=OK&pump01=OFF&circulation=OFF&host=hydro1\n'
+    test_data += '2016-03-14T08:22:14.739\tINFO\twater01=OK&pump01=OFF&circulation=OFF&host=hydro1\n'
 
-    testData = testData.replace('=', key_val_sep)
-    testData = testData.replace('&', sep_char)
-    return testData
+    test_data = test_data.replace('=', key_val_sep)
+    test_data = test_data.replace('&', sep_char)
+    return test_data
 
 
 baseFilter = """{

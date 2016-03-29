@@ -4,43 +4,39 @@
     log controller to get a speed test in terms
     of max logs per second.
 """
-import loggingClientTask
 import os
 import platform
-import apiLoggerInit
-import logging
-from utils import bcolors
 import timeit
+import loggingClientTask
 
-import atexit
-def exiting(exit_msg):
-    print(exit_msg + '\n')
 
+
+# Allow Ctrl-C to kill this program.
 import signal
-def signalHandler(signum, frame):
-    print ('loggingSpeedTask: signalHandler called with %d\n' % (signum))
-
-signal.signal(signal.SIGTERM, signalHandler)
-signal.signal(signal.SIGHUP, signalHandler)
+signal.signal(signal.SIGTERM, signal.SIG_DFL)
+signal.signal(signal.SIGHUP, signal.SIG_DFL)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 def main():
-    print bcolors.BGRED + \
-        ('>>> loggingSpeedTest: pid %d' % os.getpid()) + \
-        bcolors.ENDC
-    atexit.register(exiting, 'loggingSpeedTest')
-    apiLoggerInit.loggerInit('loggingSpeedTest')
-    logging.basicConfig(level=logging.NOTSET)   # Log everything
+    """
+    Create and start a simple logger with the current platform's node
+    name.
+    """
     client = loggingClientTask.LoggingClientClass(platform.node())
     client.start()
 
+    # Time the sending of 100,000 messages to the remote logger.
     startTime = timeit.default_timer()
+
+    # Send the messages
     iterations = 100000
     for ndx in range(iterations):
         client.info('ndx=%d' % ndx)
+
     elapsed = timeit.default_timer() - startTime
     client.info('%d logs, elapsed time: %f' % (iterations, elapsed))
-    client.info('Timed at %d messages per second' % int(iterations/elapsed))
+    client.info('Timed at %d messages per second' % 
+            int(iterations/elapsed))
     print '%d logs, elapsed time: %f' % (iterations, elapsed)
     print '%d messages per second' % int(iterations/elapsed)
 

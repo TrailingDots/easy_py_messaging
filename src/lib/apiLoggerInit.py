@@ -13,6 +13,7 @@ import logConfig
 
 ALREADY_INITED = False  # Allow multiple calls without penalty
 
+
 def loggerInit(appName):
     """
     Initialize the logger, but only once.

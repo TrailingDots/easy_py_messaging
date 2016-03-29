@@ -13,8 +13,6 @@ import utils
 
 # The parameters controlling log filtering.
 LogFilters = {
-        #'in_file_handle': sys.stdin,   # Default input is stdin
-        #'out_file_handle': sys.stdout, # Default: stdout
         #'level': 'DEBUG',              # Default: All logs entries
         #'out_format': 'JSON',          # Default format
         #'out_file': None,              # Printable output filename
@@ -22,6 +20,7 @@ LogFilters = {
         #'start': None,                 # start and end dates.
         #'end': None,
 }
+
 
 class LogFilter(object):
     """
@@ -55,7 +54,7 @@ class LogFilter(object):
     for outputting or None indicating this
     entry gets ignored.
 
-    If filter_fcn == None, then nothing will 
+    If filter_fcn == None, then nothing will
     gets called.
 
     A user should examine the relevant entries in
@@ -70,12 +69,14 @@ class LogFilter(object):
     be ignored.
     """
 
-    def __init__(self, log_filters, filter_fcn = None):
+    def __init__(self, log_filters, filter_fcn=None):
         self.log_filters = log_filters
         self.filter_fcn = filter_fcn
         self.filter_dict       = {}
         self.log_entry         = ''
         self.log_dict          = {}
+        self.log_seconds       = 0
+        self.line_number       = 0
         if self.normalize_config() != 0:
             raise Exception('Bad configuration')
 
@@ -89,42 +90,44 @@ class LogFilter(object):
         # All values must be string!
         for key in self.log_filters.keys():
             if type(self.log_filters[key]) != str:
-                sys.stderr.write('Configuration: Key %s must be a string! Not %s\n' %
-                        (key, str(self.log_filters[key])))
+                sys.stderr.write(
+                    'Configuration: Key %s must be a string! Not %s\n' %
+                    (key, str(self.log_filters[key])))
                 return 1
 
         # Verify input file.
         in_file = self.log_filters.get('in_file', None)
-        if in_file == None:
+        if in_file is None:
             self.log_filters['in_file_handle'] = sys.stdin
             self.log_filters['in_file'] = 'sys.stdin'
         else:
             try:
-                fh = open(in_file, 'r')
+                file_handle = open(in_file, 'r')
             except IOError as err:
-                sys.stderr.write('--in-file="%s": %s\n' % (in_file, str(err)))
+                sys.stderr.write('--in-file="%s": %s\n' %
+                        (in_file, str(err)))
                 return 1
-            self.log_filters['in_file_handle'] = fh
+            self.log_filters['in_file_handle'] = file_handle
 
         # Verify output file.
         out_file = self.log_filters.get('out_file', None)
-        if out_file == None:
+        if out_file is None:
             self.log_filters['out_file_handle'] = sys.stdout
             self.log_filters['out_file'] = '<sys.stdout>'
         else:
             try:
-                fh = open(out_file, 'w')
+                file_handle = open(out_file, 'w')
             except IOError as err:
-                sys.stderr.write('--out-file="%s": %s\n' % (out_file, str(err)))
+                sys.stderr.write('--out-file="%s": %s\n' %
+                        (out_file, str(err)))
                 return 1
-            self.log_filters['out_file_handle'] = fh
-
+            self.log_filters['out_file_handle'] = file_handle
 
         if 'start' not in self.log_filters:
             # No start date. Use start of epoch.
             self.log_filters['start'] = '1970-01-01T00:00:00.000'
-        start_date = utils.ISO8601ToSeconds(self.log_filters['start'])
-        if start_date == None:
+        start_date = utils.ISO8601_to_seconds(self.log_filters['start'])
+        if start_date is None:
             sys.stderr.write('--start="%s" is not a valid ISO8601 date\n' % 
                     self.log_filters['end'])
             return 1
@@ -134,11 +137,11 @@ class LogFilter(object):
             # No end time specified. Assume now.
             now_secs = utils.time_now()
             self.log_filters['end_secs'] = now_secs
-            self.log_filters['end'] = utils.secondsToISO8601(now_secs)
+            self.log_filters['end'] = utils.seconds_to_ISO8601(now_secs)
         else:
-            end_secs = utils.ISO8601ToSeconds(self.log_filters['end'])
+            end_secs = utils.ISO8601_to_seconds(self.log_filters['end'])
             if end_secs == None:
-                sys.stderr.write('--end="%s" is not a valid ISO8601 date\n' % 
+                sys.stderr.write('--end="%s" is not a valid ISO8601 date\n' %
                         self.log_filters['end'])
                 return 1
             self.log_filters['end_secs'] = end_secs
@@ -151,20 +154,22 @@ class LogFilter(object):
         if 'sep_char' not in self.log_filters.keys():
             self.log_filters['sep_char'] = utils.SEPARATION_CHAR
         if 'key_val_sep' not in self.log_filters.keys():
-            self.log_filters['key_val_sep'] = utils.KEY_VALUE_SEPARATOR
+            self.log_filters['key_val_sep'] = \
+                    utils.KEY_VALUE_SEPARATOR
         if 'payload_connector' not in self.log_filters.keys():
-            self.log_filters['payload_connector'] = utils.PAYLOAD_CONNECTOR
+            self.log_filters['payload_connector'] = \
+                    utils.PAYLOAD_CONNECTOR
 
         if 'level' not in self.log_filters.keys():
             self.log_filters['level'] = 'DEBUG' # Pass all logs
-        self.filter_dict       = utils.filter_priority(self.log_filters['level'])
+        self.filter_dict = \
+                utils.filter_priority(self.log_filters['level'])
 
         if 'line_number' not in self.log_filters.keys():
             self.log_filters['line_number'] = 0
         self.line_number = self.log_filters['line_number']
 
         return 0
-
 
 
     def parse_log_entry(self, log_entry):
@@ -181,7 +186,7 @@ class LogFilter(object):
         try:
             date, level, payload = self.log_entry.split('\t')
         except ValueError as err:
-            sys.stderr.write('ERROR: "%s", line#%d, Log line: "%s"\n' % \
+            sys.stderr.write('ERROR: "%s", line#%d, Log line: "%s"\n' %
                     (str(err), self.line_number, self.log_entry))
             self.log_dict = {'ERROR': '"""' + str(err) + '"""',
                     'LOG': str(self.log_entry)}
@@ -194,9 +199,9 @@ class LogFilter(object):
             return None     # This level to be ignored.
 
         self.log_dict['date'] = date
-        self.log_seconds = utils.ISO8601ToSeconds(date)
+        self.log_seconds = utils.ISO8601_to_seconds(date)
         date_within = self.within_dates(self.log_seconds)
-        if date_within != True:  # date_with could be False or None
+        if date_within is not True:  # date_with could be False or None
             return None
 
         self.parse_payload(payload)
@@ -219,13 +224,14 @@ class LogFilter(object):
                 # Ignore empty item.
                 # An example:    name=value&&name1=value1
                 # The double '&&' results in an empty item.
-                continue    
+                continue
             try:
                 key, value = item.split(self.log_filters['key_val_sep'])
             except ValueError as err:
-                sys.stderr.write(('ERROR: "%s", line#:%d, ' + \
-                        'key=value: "%s" Line:%s\n') % \
-                        (str(err), self.line_number, item, self.log_entry))
+                sys.stderr.write(('ERROR: "%s", line#:%d, ' +
+                        'key=value: "%s" Line:%s\n') %
+                        (str(err), self.line_number,
+                            item, self.log_entry))
                 continue    # Ignore this entry
             # Duplicate keys get ignored.
             self.log_dict[key] = value
@@ -263,9 +269,9 @@ class LogFilterCSV(LogFilter):
         A typical log entry would be:
             2016-03-10T09:01:22.808\tINFO\tinside=65.2,patio=73.2,sun=79.3,host=brass
 
-        This gets displayed without the tabs appearing:
+        This gets displayed without the tabs:
             2016-03-10T09:01:22.808 INFO inside=65.2,patio=73.2,sun=79.3,host=brass
-        
+
         Each field gets separated by tabs.
 
         The "host=brass" at the end of the payload gets appened automatically
@@ -279,7 +285,7 @@ class LogFilterCSV(LogFilter):
         different data for the same column.
 
     """
-        
+
     def __init__(self, log_filters, filter_fcn=None):
         super(LogFilterCSV, self).__init__(log_filters, filter_fcn)
 
@@ -294,7 +300,7 @@ class LogFilterCSV(LogFilter):
             output += key + ','
         output = output[:-1]
         return output
-        
+
     def log_data(self):
         """
         Create a single data entry and return it
@@ -319,19 +325,19 @@ class LogFilterJSON(LogFilter):
     """
 
     def __init__(self, log_filters, filter_fcn=None):
-        super(LogFilterJSON, self).__init__( log_filters, filter_fcn)
+        super(LogFilterJSON, self).__init__(log_filters, filter_fcn)
 
     def log_2_JSON(self):
-        # Return the data dictionary as JSON. 
+        # Return the data dictionary as JSON.
         return json.dumps(self.log_dict)
 
-    def log_file_2_JSON_handler(self, fh):
+    def log_file_2_JSON_handler(self, file_handle):
         """
         Same as logFileToJSON except a file
         handle gets passed instead of a filename.
         """
         outline = '['
-        for line in fh:
+        for line in file_handle:
             self.log_dict = {}    # Wipe out previous values
             self.line_number += 1
             try:
@@ -342,7 +348,7 @@ class LogFilterJSON(LogFilter):
                 # Bad input. Lower levels have already reported.
                 continue    # Ignore.
             # This log level is to low to consider if == None
-            if self.log_dict == None:
+            if self.log_dict is None:
                 continue
             outline += json.dumps(self.log_dict) + ','
 
@@ -354,7 +360,7 @@ class LogFilterJSON(LogFilter):
         """
         Given a log filename of logging data, return
         an array of log dictionaries. Each log entry
-        becomes a JSON dictioary.
+        becomes a JSON dictionary.
 
         filter_fcn = filtering function to determine
         if and what gets output. The signature:
@@ -363,7 +369,7 @@ class LogFilterJSON(LogFilter):
         dictionary that will be converted to JSON
         for outputting or None indicating this
         entry gets ignored.
-        If filter_fcn == None, then nothing will 
+        If filter_fcn == None, then nothing will
         gets called.
 
         Return: array of JSON objects.
@@ -371,10 +377,9 @@ class LogFilterJSON(LogFilter):
         Errors: Invalid filename returns None
         """
         try:
-            fh = open(filename, 'r')
+            file_handle = open(filename, 'r')
         except IOError as err:
             sys.stderr.write('%s: %s\n' % (filename, str(err)))
             return None
-        return self.log_file_2_JSON_handler(fh)
-
+        return self.log_file_2_JSON_handler(file_handle)
 

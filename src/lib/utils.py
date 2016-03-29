@@ -7,6 +7,7 @@ import logging
 import datetime
 import time
 
+
 class bcolors(object):
     """
     Simple names for highlighting colors.
@@ -44,6 +45,7 @@ LOG_PRIORITY = {
                 'ERROR': 4,
                 'CRITICAL': 5,
                 }
+
 
 def filter_priority(initial_level):
     """
@@ -98,6 +100,7 @@ APPEND_TO_LOG = True
 # How time gets formatted
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
+
 def time_now():
     """
     Returns a floating point number as seconds since
@@ -110,14 +113,16 @@ def time_now():
     """
     return time.time()
 
+
 def time_now_ISO8601():
     """
     Return the current time in ISO 8601 format
     """
-    secsStr = secondsToISO8601(time_now())
-    return secsStr
+    secs_str = seconds_to_ISO8601(time_now())
+    return secs_str
 
-def secondsToISO8601(seconds):
+
+def seconds_to_ISO8601(seconds):
     """
     Given time in seconds, return an ISO 8601 string
     representation of that time.
@@ -125,14 +130,13 @@ def secondsToISO8601(seconds):
     timeDT = datetime.datetime.fromtimestamp(seconds)
     return timeDT.strftime(TIME_FORMAT)
 
-def ISO8601ToSeconds(iso8601):
+
+def ISO8601_to_seconds(iso8601):
     """
     Given an ISO 8601 string in our format,
     convert to seconds.
     """
     try:
-        if iso8601 == None:
-            import pdb; pdb.set_trace()
         iso_tuple = datetime.datetime.strptime(iso8601, TIME_FORMAT)
         seconds = time.mktime(iso_tuple.timetuple()) + \
                 iso_tuple.microsecond/1000000.0
@@ -141,6 +145,4 @@ def ISO8601ToSeconds(iso8601):
         return None
 
     return seconds
-
-
 

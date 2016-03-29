@@ -97,36 +97,37 @@
 
         </ul>
 
-        <p>Few programmers appreciate the benefits of logging.
-        And even fewer consider how logging can ease their burdens
-        in finding and solving problems on live systems.</p>
+        <p>Few programmers appreciate the benefits of logging.  And even fewer
+        consider how logging can ease their burdens in finding and solving
+        problems on both development and live systems.</p>
 
-        <p>As a result of poor logging or a lack of logging, developers
-        create a quandry when faced with inevitable problems.</p>
-
-        <p>By taking time and thought to implement a decent logging philosophy
-        developers can greatly simplify their efforts in understanding
-        problems and discovering solutions.</li>
+        <p>As a result of poor logging or the lack of logging, developers
+        create a quandry when faced with inevitable problems.  By taking time
+        and thought to implement a decent logging philosophy developers can
+        greatly simplify their efforts in understanding problems and
+        discovering solutions.</li>
 
         <p>Logs have been around as long as computers and form the
         core of many distributed and real-time applications.</p>
 
-        <p>As the price of credit card sized computers continues
-        to fall, distributed systems will proliferate.</p>
+        <p>As the price of credit card sized computers and their
+        associated instrumenteation continues
+        to fall, distributed systems will continue to proliferate.
+        Connecting these systems together raises problems of debugging
+        and tracking. Logging supplies a significant contribution towards
+        a viable solution.</p>
         
-        <p>Distributed computing rely on logs to maintain a useful view of both
-        hardware and software. As a cross cutting concern, logging remains
-        along with security as a necessity for a modern system.</p>
+        <p>Distributed computing can rely on logs to maintain a useful view of
+        both hardware and software. As a cross cutting concern, logging remains
+        along with security a necessity for a modern systems.</p>
         
-        <p>Once a Raspberry Pi system has been installed and starts
-        working, new and different ideas frequently require
-        both software and hardware upgrades. Perhaps some of these
-        upgrades would be easier with the addition of another
-        Raspberry Pi system? This could hold especially true
-        for those creationg involving hardware expansion. The existing
-        system works fine, but upgrades threaten the stability
-        of the existing system. After all, you've likely contributed
-        a significant effort.</p>
+        <p>Once a Raspberry Pi system has been installed and starts working,
+        new and different ideas frequently require both software and hardware
+        upgrades. Perhaps some of these upgrades would be easier with the
+        addition of another Raspberry Pi system? This could hold especially
+        true for those creations involving hardware expansion. The existing
+        system works fine, but upgrades threaten the stability of the existing
+        system. After all, you've likely contributed a significant effort.</p>
 
         <p>Consider implementing another Raspberry Pi system for those
         enhancements. As even more ideas pop up, could a convenient way to
@@ -150,9 +151,19 @@
         function well. You've spent a fair amount of time and now you want
         another system with new ideas implemented from lessons on the original
         prototype.  The existing system works fine, so changing it has little
-        appeal: "If it's not broke, don't fix it!" The new system, however, can
+        appeal: "If it ain't broke, don't fix it!" The new system, however, can
         absorb all that new hardware and software that's been bubbling though
         your mind.</p>
+
+        <h2>The Primary Goal</h2>
+
+        <p>The primary goal is to provide a useful and <i>easy</i> to use
+        logging system that will work well with proposed enhancements
+        for controlling and monitoring distributed Raspberry Pis
+        or similar systems. This package provides general purpose
+        software capable of providing solid logging capabilitiies
+        for almost any system!</p>
+
 
         <h1>The Necessity of Logging</h1>
 
@@ -177,9 +188,9 @@
         entertainment. A clatch of logs supplies nutritious food for forensic
         debugging.</p>
 
-        <p>This project offers a logging server capable of collectin
+        <p>This project offers a logging server capable of collecting
         logs from multiple sources and storing them into a text file or
-        a database system.</p>
+        database system. The initial release saves only to a text file.</p>
 
         <h2>Logging within a Single System</h2>
 

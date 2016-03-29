@@ -13,7 +13,7 @@ LOG_FILENAME = None
 # Set to True to handle JSON logs.
 # Using a database such as MongoDB allows
 # trivial storage with JSON.
-# Future: CSV, key=value&key1=value1&..., 
+# Future: CSV, key=value&key1=value1&...,
 # Default is "key=value&"
 DATA_FORMAT = 'DEFAULT'
 # ============ End of FUTURE =====================
