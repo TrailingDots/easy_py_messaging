@@ -42,7 +42,7 @@ class RunTests(unittest.TestCase):
         print 'starting collector'
         argv_collector = ['python',
                            abs_path_server,
-                           '--file',
+                           '--log-file',
                            log_filename,
                            '-t']
         proc_collector = subprocess.Popen(argv_collector)
@@ -114,7 +114,7 @@ class RunTests(unittest.TestCase):
         print 'starting collector'
         argv_collector = ['python',
                           abs_path_server,
-                          '--file',
+                          '--log_file',
                           log_filename,
                           '-t']
         proc_collector = subprocess.Popen(argv_collector)
@@ -740,7 +740,7 @@ def suite():
 if __name__ == '__main__':
 
     # Standard way to initialize for logging
-    apiLoggerInit.loggerInit('testLogging')
+    apiLoggerInit.loggerInit()
     #ch = logging.StreamHandler(sys.stdout)
     #log = logging.getLogger('')
     #log.addHandler(ch)

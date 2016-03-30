@@ -44,9 +44,6 @@ ECHO () {
     echo "ECHO ${BASH_LINENO[0]}: $*"
 }
 
-echo Run pyflakes on all python code
-CMD "pyflakes $(find . -name '*.py' -type f)"
-
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
 export COVERAGE_PROCESS_START=$PWD/.coveragerc
@@ -87,10 +84,10 @@ ECHO Remove test/.coverage_html/*
 (cd test; rm -rf .coverage_html)
 
 # From all the python scripts, run pyflakes, pep8 and pylint.
-PY_FILES=`find $BASE_DIR -name '*.py' | grep -v junk`
-CMD "pyflakes $PY_FILES "
-CMD "pep8 $PY_FILES "
-CMD "pylint $PY_FILES "
+#PY_FILES=`find $BASE_DIR -name '*.py' | grep -v junk`
+#CMD "pyflakes $PY_FILES "
+#CMD "pep8 $PY_FILES "
+#CMD "pylint $PY_FILES "
 
 #
 ECHO Before starting, make sure the logCollector is running.

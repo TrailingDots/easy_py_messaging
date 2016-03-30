@@ -109,7 +109,7 @@ def main():
     # =========================
     # Standard initialization
     # =========================
-    apiLoggerInit.loggerInit('loggingClientTask')
+    apiLoggerInit.loggerInit()
     client = LoggingClientClass(platform.node())
     if client is None:
         sys.stderr.write('Cannot create LoggingClientClass!\n')

@@ -251,10 +251,9 @@ def main():
     if len(sys.argv) > 0:
         id_name = sys.argv[0]
 
-    logConfig.LOG_FILENAME  = config_dict['log_file']
     logConfig.APPEND_TO_LOG = config_dict['append']
-    logConfig.NOISY = True    # Echo message to console
     logConfig.LOG_FILENAME  = config_dict['log_file']
+    logConfig.NOISY         = config_dict['noisy']
     logConfig.PORT          = config_dict['port']
 
     context = zmq.Context()

@@ -61,6 +61,6 @@ def loggerInit():
 
 if __name__ == '__main__':
     logConfig.TESTING = True
-    loggerInit('testing APILoggerInit')
+    loggerInit()
     # Call again to make sure the init flag works.
-    loggerInit('testing APILoggerInit-again')
+    loggerInit()
