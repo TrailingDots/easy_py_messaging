@@ -1,0 +1,7 @@
+{
+    "append":   True,
+    "log_file": './notes.log',
+    "noisy":    false,
+    "port":     5570,
+}
+
