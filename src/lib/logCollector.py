@@ -15,7 +15,7 @@ import logComponents
 
 
 def exiting(exit_msg):
-    print('logCollector: atexit:' + exit_msg)
+    print('logCollector: exiting:' + exit_msg)
 
 
 def signalUSR1Handler(signum, frame):
@@ -38,7 +38,7 @@ class LogCollectorTask(object):
     def __init__(self, context, id_name):
         self.id_name = id_name
         self.context = context
-        apiLoggerInit.loggerInit('logCol1')
+        apiLoggerInit.loggerInit()
         self.frontend = self.context.socket(zmq.ROUTER)
 
     def signal_handler(self, signum, frame):
@@ -95,6 +95,55 @@ class LogCollectorTask(object):
         self.context.term()
 
 
+def load_config(config_filename=None):
+    """
+     Read the config file is any. Look in the current
+     directory for .logcollectorrc . 
+     If not there, look in $HOME/.logcollectorrc
+     Any user flags will override config file settings.
+    """
+    def parse_config(file_handle):
+        # Got a config file. Load and return
+        config_lines = file_handle.read()
+        config_params = eval(config_lines)
+        return config_params
+
+    def try_to_load_config(filename):
+        try:
+            file_handle = open(filename, 'r')
+        except IOError as err:
+            return None
+        if file_handle:
+            return parse_config(file_handle)
+
+    config_dict = {}
+
+    dir_config = None
+    home_config = None
+    if config_filename is None:
+        config_filename = apiLoggerInit.DEFAULT_COLLECTOR_CONFIG_FILE
+        dir_config = './' + config_filename
+        home_config = os.getenv('HOME') + '/' + config_filename
+    else:
+        # User provided config filename.
+        param_dict = try_to_load_config(config_filename)
+        return param_dict
+
+    file_handle = None
+    param_dict = try_to_load_config(dir_config)
+    if param_dict is not None:
+        return param_dict
+
+    param_dict = try_to_load_config(home_config)
+    return param_dict
+
+
+def load_config_file(config_filename):
+    """
+    User has requested a specific configuration filename to be loaded.
+    """
+    return load_config(config_filename)
+
 def usage():
     print 'logCollector [--file=logFilename] [-a] [-t]'
     print '     logFilename = name of file to place logs'
@@ -121,12 +170,15 @@ def main():
 
     try:
         opts, args = getopt.gnu_getopt(
-            sys.argv[1:], 'ahnt',
-            ['file=',   # output file instead of stdiout
-             'a',       # Log file to be appended to file
-             'noisy',   # Noisy - messages printed to console as well as on a file.
-             't',       # Log file to be emptied
-             'help',    # help message
+            sys.argv[1:], 'ahnqt',
+            ['log_file=',   # output file instead of stdiout
+             'log-file=',   # output file instead of stdiout
+             'port=',       # Port to listen for msgs. Default in logConfig.
+             'config=',     # Config filename to load.
+             'noisy',       # Noisy - messages printed to console as well as on a file.
+             'quiet',       # NOT Noisy - messages not printed to console
+             'trunc',       # Log file to be truncated
+             'help',        # help message
             ]
         )
     except getopt.GetoptError as err:
@@ -134,24 +186,61 @@ def main():
         usage()
         return 1
 
+    # Read the config file is any. Look in the current
+    # directory for .logcollectorrc . 
+    # If not there, look in $HOME/.logcollectorrc
+    # Any user flags will override config file settings.
+    config_dict = load_config()
+
     log_filename = None  # Default for log is stdout
     append = True
+    config_filename = None  # Load and parse this config file instead of .logcollectorrc
+
+    if config_dict is None:
+        config_dict = {
+            "append":True,          # Append logs to existing log file
+            "log_file":'logs.log',  # Name of log file (could be absolute filename)
+            "port":5570,            # Port to receive logs
+            "noisy":False           # Silent. Toggle with Ctrl-D
+        }
+
+    return_dict = {}        # User provided config dict - if any.
     for opt, arg in opts:
         if opt in ['-h', '--help']:
             usage()
             continue
         elif opt in ['-a']:
-            append = True   # Append to log file
+            config_dict['append'] = True
             continue
         elif opt in ['-n', '--noisy']:
-            logConfig.NOISY = True    # Echo message to console
+            config_dict['noisy'] = True
             continue
-        elif opt in ['-t']:
-            append = False  # Truncate the log file
+        elif opt in ['-q', '--quiet']:
+            config_dict['noisy'] = False
             continue
-        elif opt in ['--file']:
-            # TODO: This does  NOT work!!! FIXME BUG
-            log_filename = arg
+        elif opt in ['-t', '--trunc']:
+            config_dict['append'] = False
+            continue
+        elif opt in ['--log-file', '--log_file']:
+            config_dict['log_file'] = arg
+            continue
+        elif opt in ['--config']:
+            return_dict = load_config_file(arg)
+            if not return_dict:
+                usage()
+            # Set whatever values read from config file.
+            # If not provided, use the defaults.
+            config_dict['append']   = return_dict.get('append', config_dict['append'])
+            config_dict['log_file'] = return_dict.get('log_file', config_dict['log_file'])
+            config_dict['port']     = return_dict.get('port', config_dict['port'])
+            config_dict['noisy']    = return_dict.get('noisy', config_dict['noisy'])
+            continue
+        elif opt in ['--port']:
+            try:
+                port = int(arg)
+            except ValueError as err:
+                sys.strerr.write('Port must be numeric: %s' % str(err))
+                usage()
             continue
         else:
             print 'Unknown option:' + opt
@@ -161,10 +250,12 @@ def main():
     id_name = ''
     if len(sys.argv) > 0:
         id_name = sys.argv[0]
-    if log_filename:
-        # A log filename MUST be supplied for an append
-        logConfig.APPEND_TO_LOG = append
-        logConfig.LOG_FILENAME = log_filename
+
+    logConfig.LOG_FILENAME  = config_dict['log_file']
+    logConfig.APPEND_TO_LOG = config_dict['append']
+    logConfig.NOISY = True    # Echo message to console
+    logConfig.LOG_FILENAME  = config_dict['log_file']
+    logConfig.PORT          = config_dict['port']
 
     context = zmq.Context()
     server = LogCollectorTask(context, id_name)

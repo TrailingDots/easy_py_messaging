@@ -25,7 +25,7 @@ class LoggingClientClass(threading.Thread):
     this class and call to send log messages to the server.
     """
 
-    def __init__(self, id_name):
+    def __init__(self, id_name=platform.node()):
         """
         id_name = These names appear in
                 the log entry as an indentifier of the source
@@ -38,7 +38,7 @@ class LoggingClientClass(threading.Thread):
         self.poll = None
         self.reqs = 0       # Count of messages
         logging.basicConfig(level=logging.NOTSET)   # Log everything
-        apiLoggerInit.loggerInit(self.id_name)
+        apiLoggerInit.loggerInit()
         threading.Thread.__init__(self)
 
     def run(self):
