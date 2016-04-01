@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
     A setuptools based setup module.
 """
@@ -20,8 +21,9 @@ setup_args = dict(
         packages=find_packages(exclude=['test', 'doc', 'examples']),
         entry_points= {
             'console_scripts': [
-                'logCollector=src.lib:logCollector',
-                'loggingFilterApp=src.lib:loggingFilterApp',
+                'logCollector=lib:logCollector',
+                'loggingFilterApp=lib:loggingFilterApp',
+                'logCmd=lib:logCmd',
                 'listeningPort=tools:listeningPort'
             ]
         },
@@ -37,13 +39,4 @@ setup_args = dict(
         ],
 )
 
-"""
-for 'setuptools' in sys.modules:
-    setup_args['zip_safe'] = False
-    pypy = 'PyPy' in sys.version
-    if pypy:
-        setup_args['install_requires'] = [
-            'py',
-        ]
-"""
 setup(**setup_args)

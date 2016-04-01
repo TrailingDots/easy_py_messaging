@@ -32,7 +32,7 @@ class ClientTask(threading.Thread):
 
     def run(self):
         self.context = self.zmq.Context()
-        socket = self.context.socket(zmq.DEALER)
+        socket = self.context.socket(self.zmq.DEALER)
         identity = u'worker-%s' % self.id_name
         socket.identity = identity.encode('ascii')
         socket.connect(logConfig.APP_SOCKET)

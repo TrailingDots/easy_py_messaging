@@ -15,17 +15,22 @@
 #   091730  = 9:16 Hours 30 seconds. This is in 24 hour notation.
 #
 
+#set -x             # Uncomment for debugging
+#PS4='$LINENO: '    # Uncomment for debugging
+
+
 ############# Clean up excess work files
 
-# Get rid of any stray log files.
-find . -name '*.log' | xargs /usr/bin/rm
+# Get rid of any stray log files. Ignore any error messages.
+/usr/bin/rm $(find . -name '*.log') 2> /dev/null
 
 # Get rid of generated python files
-find . -name '*.pyc' | xargs /usr/bin/rm
+/usr/bin/rm $(find . -name '*.pyc' ) 2> /dev/null
+/usr/bin/rm $(find . -name '*.pyo' )  2> /dev/null
 
 # Coverage files not needed. Ignore any "missing operand" msgs.
-find . -name .coverage_html | xargs /usr/bin/rm -rf
-find . -name .coverage      | xargs /usr/bin/rm -rf
+/usr/bin/rm -rf $(find . -name .coverage_html -type d) 2> /dev/null
+/usr/bin/rm $(find . -name .coverage  -type f) 2> /dev/null
 
 ############# Backup everything left
 

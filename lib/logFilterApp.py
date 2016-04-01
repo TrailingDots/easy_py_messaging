@@ -48,7 +48,7 @@ def run_CSV(params):
         csv_filter = logFilter.LogFilterCSV(params, filter_fcn=filter_CSV)
     except Exception as err:
         sys.stderr.write('Invalid configuration file:%s\n' % err)
-        return 1
+        usage()
 
     in_fh = params['in_file_handle']
     out_fh = params['out_file_handle']
@@ -107,7 +107,7 @@ def run_JSON(params):
         lf = logFilter.LogFilterJSON(params, filter_fcn=filter_JSON)
     except Exception as err:
         sys.stderr.write('Invalid configuration: %s\n' % err)
-        return
+        usage()
     in_fh = params['in_file_handle']
     out_fh = params['out_file_handle']
     json_data = lf.log_file_2_JSON_handler(in_fh)
@@ -149,7 +149,11 @@ def main():
             try:
                 # The config file MUST be read now as further
                 # command line args may overwrite settings.
-                conf_fh = open(arg, 'r')
+                try:
+                    conf_fh = open(arg, 'r')
+                except IOError as err:
+                    sys.stderr.write('ERROR:%s' % str(err))
+                    usage()
                 config_lines = conf_fh.read()
                 # Evaluate the contents of config_lines
                 params = eval(config_lines)

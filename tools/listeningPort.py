@@ -45,10 +45,10 @@ def listening(port, shortened, pid_only, proc_only):
         else:
             sys.stdout.write('Port %d : listening thru pid %s named %s\n' %
                     (port, pid, items[-1]))
-        return 1    # Indicate a found listener
+        return 0    # Indicate a found listener
 
     # Nobody listening. fuser should have found this, but be careful.
-    return 0
+    return 1
 
 
 def usage():
@@ -67,8 +67,8 @@ def usage():
         <port> <pid of listener> <process name of listener>
 
     Return codes:
-      0 = Nobody listening to <port>
-      1 = Someone is listening. stdout has details.
+      0 = Someone is listening. stdout has details.
+      !0 = Nobody listening to <port> or invalid cmd line args.
     \n""")
     sys.exit(1)
 

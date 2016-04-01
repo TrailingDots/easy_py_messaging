@@ -42,7 +42,10 @@ class LogCollectorTask(object):
         self.frontend = self.context.socket(zmq.ROUTER)
 
     def signal_handler(self, signum, frame):
-        print 'custom handler, signum:"%s"' % signum
+        SIGNALS_TO_NAMES_DICT = dict((getattr(signal, n), n) \
+            for n in dir(signal) if n.startswith('SIG') and '_' not in n )
+        sys.stderr.write("logCollector terminated by signal %s" % 
+                SIGNALS_TO_NAMES_DICT[signum])
         self.frontend.close()
         self.context.term()
         sys.exit(1)
