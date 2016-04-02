@@ -1,6 +1,12 @@
 [console_scripts]
 listeningPort = tools:listeningPort
-logCmd = src.lib:logCmd
-logCollector = src.lib:logCollector
-loggingFilterApp = src.lib:loggingFilterApp
+logCmd = lib:logCmd
+logCollector = lib:logCollector
+logFilterApp = lib:logFilterApp
+
+[scripts]
+listeningPort = tools:listeningPort
+logCmd = lib:logCmd
+logCollector = lib:logCollector
+logFilterApp = lib:logFilterApp
 

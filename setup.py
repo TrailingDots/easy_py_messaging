@@ -10,19 +10,45 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
+project = 'simple_log_messaging'
+
+"""
+packages=find_packages(where='./' + project, 
+    include=['runtests.sh', 'test', 'tools', 'lib', 'docs']),
+"""
+
 setup_args = dict(
-        name='simple_log_messaging',
+        name=project,
+        package_dir={'': './'},
         version='1.0.0',
         description='A simple ZeroMQ based logger for distristributed Raspberry Pi systems',
-        url='http://github.com/trailingdots/simple_log_messaging',
+        url='http://github.com/trailingdots/' + project,
         author='Cecil McGregor',
         author_email='TrailingDots@gmail.com',
         install_requires=['pyzmq', 'zmq'],
-        packages=find_packages(exclude=['test', 'doc', 'examples']),
+        package_data={
+            # Misc text files
+            '': ['*.conf', '*.data', '*.md', '*.html', '*.css'],
+        },
+        packages=find_packages(),
+        #packages=find_packages(where='./' + project, 
+        #    include=['runtests.sh', 'test', 'tools', 'lib', 'docs']),
+        scripts = [
+            project + '/lib/logCollector',
+            project + '/lib/logFilterApp',
+            project + '/lib/logCmd',
+            project + '/tools/listeningPort'
+        ],
         entry_points= {
+            'scripts': [
+                'logCollector=lib:logCollector',
+                'logFilterApp=lib:logFilterApp',
+                'logCmd=lib:logCmd',
+                'listeningPort=tools:listeningPort'
+            ],
             'console_scripts': [
                 'logCollector=lib:logCollector',
-                'loggingFilterApp=lib:loggingFilterApp',
+                'logFilterApp=lib:logFilterApp',
                 'logCmd=lib:logCmd',
                 'listeningPort=tools:listeningPort'
             ]

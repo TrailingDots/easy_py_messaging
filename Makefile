@@ -1,7 +1,7 @@
 PYTHON=`which python`
 DESTDIR=/
 PROJECT=simple_log_messaging
-BUILDDIR=$(CURDIR)/debian/$(PROJECT)
+BUILDDIR=$(CURDIR)/$(PROJECT)
 
 # $(PYTHON) setup.py build
 # Generate a distributable package.
@@ -22,7 +22,7 @@ source:
 	$(PYTHON) setup.py sdist $(COMPIE)
 
 test:
-	(cd src; ./runTests.sh)
+	(cd $(PROJECT); ./runTests.sh)
 
 install:
 	$(PYTHON) setup.py install --root $(DESTDIR) $(COMPILE)
@@ -31,17 +31,16 @@ buildrpm:
 	$(PYTHON) setup.py bdist_rpm --post-install=rpm/postinstall --pre-uninstall=rpm/preuninstall
 
 wc:
-	./tools/wc.sh
+	$(PROJECT)/tools/wc.sh
 
 backup:
-	./tools/backup.sh
+	$(PROJECT)/tools/backup.sh
 
 clean:
 	$(PYTHON) setup.py clean
-	rm -rf build/ dist/
+	rm -rf build/ dist/ $(PROJECT).egg-info/
 	find . -name '*.pyc' -delete
 	find . -name '*.pyo' -delete
 	find . -name typescript -delete
-
 
 
