@@ -1,7 +1,0 @@
-2016-03-10T11:00:39.697	DEBUG	a=b,temp=,item=Good Stuff
-2016-03-10T11:01:39.697	WARNING	a=b,,item=cool
-2016-03-10T11:02:39.697	DEBUG	a=b=c,temp=82.5,item=funny
-2016-03-10T11:03:39.697	CRITICAL	a=,temp=99.34.5,item=Stupid Stuff
-2016-03-10T11:03:39.697	CRITICAL	=b,temp=99.34.5,item=Stupid Stuff,
-2016-03-10T11:03:39.697	CRITICAL	a=b,temp=99.34.5,temp=999.999,item=Stupid Stuff,
-

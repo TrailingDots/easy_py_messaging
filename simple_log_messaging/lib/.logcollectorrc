@@ -1,7 +1,0 @@
-{
-    "append":   True,
-    "log_file": './logs.log',
-    "noisy":    False,
-    "port":     5570,
-}
-

@@ -12,45 +12,38 @@ here = path.abspath(path.dirname(__file__))
 
 project = 'simple_log_messaging'
 
-"""
-packages=find_packages(where='./' + project, 
-    include=['runtests.sh', 'test', 'tools', 'lib', 'docs']),
-"""
-
 setup_args = dict(
         name=project,
         package_dir={'': './'},
         version='1.0.0',
         description='A simple ZeroMQ based logger for distristributed Raspberry Pi systems',
         url='http://github.com/trailingdots/' + project,
-        author='Cecil McGregor',
+        author='Trailing Dots',
         author_email='TrailingDots@gmail.com',
         install_requires=['pyzmq', 'zmq'],
         package_data={
             # Misc text files
             '': ['*.conf', '*.data', '*.md', '*.html', '*.css'],
         },
-        packages=find_packages(),
-        #packages=find_packages(where='./' + project, 
-        #    include=['runtests.sh', 'test', 'tools', 'lib', 'docs']),
-        scripts = [
-            project + '/lib/logCollector',
-            project + '/lib/logFilterApp',
-            project + '/lib/logCmd',
-            project + '/tools/listeningPort'
-        ],
+        packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
+        #scripts = [
+        #    project + '/bin/logCollector',
+        #    project + '/bin/logFilterApp',
+        #    project + '/bin/logCmd',
+        #    project + '/bin/listeningPort'
+        #],
         entry_points= {
-            'scripts': [
-                'logCollector=lib:logCollector',
-                'logFilterApp=lib:logFilterApp',
-                'logCmd=lib:logCmd',
-                'listeningPort=tools:listeningPort'
-            ],
+            #'scripts': [
+            #    'logCollector=bin:logCollector',
+            #    'logFilterApp=bin:logFilterApp',
+            #    'logCmd=bin:logCmd',
+            #    'listeningPort=bin:listeningPort'
+            #],
             'console_scripts': [
-                'logCollector=lib:logCollector',
-                'logFilterApp=lib:logFilterApp',
-                'logCmd=lib:logCmd',
-                'listeningPort=tools:listeningPort'
+                'logCollector=bin:logCollector',
+                'logFilterApp=bin:logFilterApp',
+                'logCmd=bin:logCmd',
+                'listeningPort=bin:listeningPort'
             ]
         },
         zip_safe=False,
