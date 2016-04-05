@@ -1,0 +1,12 @@
+In the process of writing a python ZeroMQ based logging systems,
+I am encountering a nasty bug that I don't understand.
+Specifically, trying to send a message with self.socket.send_string()
+sometimes fails with self.socket == None.
+
+The particular test case sends 10,000 messages per i nvocation.
+When the invocations loop, about 6 per 100 cases bomb with
+self.socket == None.
+
+I thought I understood that each thread needs its own context,
+but somehow I missing something.
+

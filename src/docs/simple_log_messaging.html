@@ -1,0 +1,692 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Simple Log Messaging: Distributed Logs for Raspberry Pi</title>
+        <script src="./javascript/toc.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/article.css" type="text/css" />
+    </head>
+
+    <body onload="generateTOC(document.getElementById('toc'));">
+
+        <div id="toc"></div>
+
+        <h1>Simple Distributed Logging</h1>
+
+        <p>Logging can provide substantial benefits for both developers and
+        users.  The fact that developers remain mostly unaware of these
+        benefits presents problems. Proper logging can ease a wide variety of
+        problems.</p>
+
+        <p>This code provides a solution to centralizing logs from multiple
+        nodes.  With the inevitable rise of distributed systems literally
+        everywhere, a centralized log viewpoint offers an in-depth view for
+        problem solving.</p>
+
+        <p>Few programmers appreciate the benefits of logging.  And even fewer
+        consider how logging can ease their burdens in finding and solving
+        problems on both development and live systems.</p>
+
+        <p>Benefits to users similarly get short shrift. Users require
+        insights into their systems that logging can frequently provide.
+        Informed developers implement user oriented logging as a natural
+        course of action.</p>
+
+        <ul>
+
+            <li><b>A LONG LIST OF MISC STATEMENTS</b></li>
+
+            <li>A run-time replacement for debuggers.</li>
+
+            <li>An opportunity to clarify operational systems; a lens into
+            current system details.</li>
+
+            <li>An easy way to provide monitoring for multiple 
+            systems such as Raspberry Pi or Arduinos.</li>
+
+            <li>Tracking of remote systems in an orderly manner that
+            facilitates data mining techniques.</li>
+
+            <li>A small and simple to use technique easily downloaded
+            and installed. The use in current applications should
+            present few problems.</li>
+
+            <li>Increased awareness of problems.</li>
+
+            <li>Fast detection of outages and system problems.</li>
+
+            <li>A centralized repository for system information.</li>
+
+            <li>An invaluable tool to detect problems on installed
+            systems.</li>
+
+            <li>A aid to understanding the flow of control of an
+            application. Non-trivial systems with multiple SOCs
+            provide fertile grounds for timing and dependency problems.</li>
+
+            <li>An aid for debugging before a system gets shipped.
+            Logs can significantly enhance other development tools.</li>
+
+            <li>By logging every request, analysis can provide busiest times,
+            most commonly used commands, etc.</li>
+
+            <li>After-the-fact forensic analysis relies on decent logging
+            to discover and solve problems.</li>
+
+            <li>Careful: Logging can become an addiction whose value is rarely
+            justified.  For every situation where you can log gratuitously,
+            it's better to collect targeted information and send it where you
+            need it to go.</li>
+
+            <li>If your app crashes, any buffered information is lost. If
+            logs are sent to a logging task, that logging task can likely report
+            up the last log reported.</li>
+
+            <li>At first you may have only an inkling of what logs
+            provide valuable information. Only after use and analysis
+            will clarity emerge.</li>
+
+            <li>Appreciating the significance of logging takes practive.</li>
+
+            <li>Capturing stack traces. Multi-line output may special loging
+            consideration.</li>
+
+            <li>Profiling information. By tracking the various states of
+            a running system, bottlenecks may present themselves.</li>
+
+            <li>(Future) Dynamically modify the log level: turn DEBUG on and off at will.</li>
+
+            <li>Write logging code anticipating that you may one day have to
+            debug a situation where ALL you have is the log file, and doing it
+            right may be the difference between getting fired and getting
+            promoted.</li>
+
+            <li>When problems arise on a running system, logs are likely your
+            <i>only</i> information source. The assist in reproducing erroneous
+            cases. If you can reproduce it, you can find a way to debug
+            it.</li>
+
+        </ul>
+
+        <p>As a result of poor logging or the lack of logging, developers
+        create a quandry when faced with inevitable problems.  By taking time
+        and thought to implement a decent logging philosophy developers can
+        greatly simplify their efforts in understanding problems and
+        discovering solutions.</li>
+
+        <p>Logs have been around as long as computers and form the
+        core of many distributed and real-time applications.</p>
+
+        <p>Distributed computing can rely on logs to maintain a useful view of
+        both hardware and software. As a cross cutting concern, logging remains
+        along with security a necessity for a modern systems.</p>
+        
+        <h2>Specifically Target: Raspberry Pi Systems</h2>
+
+        <p>As the price of credit card sized computers and their associated
+        instrumenteation continues to fall, distributed systems will continue
+        to proliferate.  Connecting these systems together raises problems of
+        debugging and tracking. Logging supplies a significant contribution
+        towards a viable solution.</p>
+        
+        <p>Once a Raspberry Pi system has been installed and starts working,
+        new and different ideas frequently require both software and hardware
+        upgrades. Perhaps some of these upgrades would be easier with the
+        addition of another Raspberry Pi system? This could hold especially
+        true for those creations involving hardware expansion. The existing
+        system works fine, but upgrades threaten the stability of the existing
+        system. After all, you've likely expended a significant effort.</p>
+
+        <p>Consider implementing another Raspberry Pi system for those
+        enhancements. As even more ideas pop up, could a convenient way to
+        expand involve adding even more Raspberry Pi systems? With the cost of
+        hardware dropping dramatically, how much effort would you care to
+        devote to integrating those changes in software? If you are like most
+        people, upgrading software can represent a serious investment of both
+        time and money. How much easier would a new Raspberry Pi board
+        represent?<p>
+
+        <p>Suppose your home automation system has been growing. You started
+        with the interior of your house. Now you want to expand to your
+        backyard and perhaps even to your front yard. Are three system on the
+        horizon? One for the interior, one for the front and one for the back?
+        What about one system to rule them all? Do you relish running all that
+        new wiring when those boards could use wifi instead? Or have you become
+        so device crazy that the GPIO cannot handle all those inputs and you
+        <i>must</i> use more systems.</p>
+
+        <p>Another example would be that hydroponics system that has started to
+        function well. You've spent a fair amount of time and now you want
+        another system with new ideas implemented from lessons on the original
+        prototype.  The existing system works fine, so changing it has little
+        appeal: "If it ain't broke, don't fix it!" The new system, however, can
+        absorb all that new hardware and software that's been bubbling though
+        your mind.</p>
+
+        <h2>The Primary Goal</h2>
+
+        <p>The primary goal is to provide a useful and <i>easy</i> to use
+        logging system that will work well with proposed enhancements
+        for controlling and monitoring distributed Raspberry Pis
+        or similar systems. This package provides general purpose
+        software capable of providing solid logging capabilitiies
+        for almost any system!</p>
+
+
+        <h1>The Necessity of Logging</h1>
+
+        <p>Observing behavior in a distributed system presents a problem. Do
+        pumps operate on schedule? How about maintaining water levels?  Does
+        the lighting operate as scheduled? Does the temperature remain within
+        range? If something goes wrong, how long until your notice that
+        problem? And, more importantly, how do you debug that misbehaving
+        system?</p>
+
+        <p>Logging offers a major opportunity to observe all this
+        and more.</p>
+
+        <p>Good, really good logging remains an elusive target.  Most
+        developers seem content with either the bare minmum or with flooding a
+        system with lots and lots of useless debug garbage.</p>
+
+        <p>Proper logging of a running process provides <i>the</i>
+        primary view into your running proceses. Without this
+        log view only guessing remains.</p>
+
+        <p>Debugging distributed systems can provide hours of frustrating
+        entertainment. A clatch of logs supplies nutritious food for forensic
+        debugging.</p>
+
+
+        <p>This project offers a logging server capable of collecting
+        logs from multiple sources and storing them into a text file or
+        database system. The initial release saves only to a text file.</p>
+
+        <h2>Still Using Print Statements?</h2>
+
+        <p>Did I say logging as a debugging tool in development? Why yes,
+        I did.</p>
+
+        <p>Many noodies seem satisfied with the ubiquitous "print"
+        statements. Their console output becomes cluttered with
+        tons of disorganized, ulfiltered output.</p>
+
+        <h2>Logging within a Single System</h2>
+
+        <p>The logging solution extends beautifully to multiple
+        systems. However, a single system
+        cannot use logging to great advantage. Starting with
+        a single system with easy logging greatly simplifies
+        expansion to larger systems. That single system can become a
+        wealth of information for further implementations.</p>
+
+        <p>The proposed RaspPiLogger solution can even live as
+        a thread within a single process! The degree of flexibility
+        offered along with ease of implementation allows this
+        solution to shine!</p>
+
+        <h2>Benefits of the RaspPiLogger</h2>
+
+        <p>The RaspPiLogger greatly eases the problem of tracking what happens
+        in your SOC systems. It provides a central logging system that collects
+        logs from one or more application and stores them into either a simple
+        text file or a database. The messaging speed has been demonstrated to
+        be great for all but the m ost demanding applications.</p>
+
+        <p>The API has been simplified so that even noobies
+        should not have trouble in using the code. Only one IP
+        address and one port need be specified.</p> 
+
+        <p>The process generating the logs can reside on the same
+        node as the logger.
+        Alternatively the process creating the logs can run on a system
+        removed from the logging system.</p>
+
+        <p>A separate logging process presents a much stronger resource
+        than a thread of the application task. If the application were to
+        crash, the last few logs may be buffered and lost in the crash.
+        If a separate logging task would used, it would receive those 
+        last few logs and post them to your logging repository.</p>
+
+        <p>This local vs. remote flexibility opens the possibility
+        of storing logs on a desktop in your home while monitoring
+        SOC computers in your garden, backyard, garage or other
+        places of interest. The remote systems could crash and the
+        logging system will assist in debugging that crash. Your
+        crashed system may or may not have information necessary
+        to fixing that crash.</p>
+
+        <p>As the various parts of the RaspPiLogging system are presented, the
+        necessary debugging techniques will also be explained. When I am
+        learning a new system and attempting to follow the steps for installing
+        or implementing that system, I notice that the authors usually ignore
+        problems. The just assume everything will work.  In these situations I
+        am always wondering, "How do I verify that this is correct?"</p>
+
+
+        <h1>The Python Language and Distributed Systems</h1>
+
+        <p>Because Python has demonstrated global acceptance for
+        most projects on our tageted boards, the RaspPiLogger will continue
+        this tradition. Python provides an easy-to-code implementation
+        language as well as convenient debugger support. This project
+        combines the power of ZeroMQ to create a powerful logging system.</p>
+
+        <h2>Audience</h2>
+
+        <p>We assume the reader has one or more systems such as Raspberry Pi,
+        Arduino or BeagleBoard. Additionally, a desktop system running
+        Debian or Ubuntu will ease development because desktop systems
+        typically have greater capablities such as disk space, memory,
+        speed, and multiple monitors. </p>
+        
+        <p>Development on a single Raspberry Pi system also works well.</p>
+
+        <p>Some python knowledge is assumed. Intermediate to advanced noobies
+        can use this code, while absolute beginners will likely struggle.
+        Certainly advanced programmers should expect only minor issues.</p>
+
+        <h2>Original Hardware Development</h2>
+
+        <p>This code was originally developed on a Linux Centos 7 system.
+        It was tested on Raspberry Pi b 2 boards running the Raspian Debian OS
+        with 8Gb SSD and 512Mb RAM. The testing between boards used the
+        USB wireless ports on the Raspberry Pi hardware. Frequently
+        the Raspberry Pi boards communicated with the Centos 7 system as a
+        logging collection server.</p>
+
+        <h2>Getting the Code</h2>
+
+        <p>The entire source code resides at: <a href="https://gitlab.com/TrailingDots/loggerZeroMQ.git">loggerZeroMQ</a>. The code should work on any recent linux
+        system and will work on a recent Raspberry Pi Raspian OS. The RaspPiLogger
+        has been built on a Raspian OS and a Centos 7 Linux system. Unbuntu and Debian
+        OSs should allow for an easy build. No attempt has been made for Windows versions.</p>
+
+
+        <h1>Installation</h1>
+
+        <ol>
+            <li>Build the <a href="http://zeromq.org/area:download#toc5">ZMQ C libraries.</a>.
+            Alternatively a download of binaries should work equally well.</li>
+
+            <li>Install <a
+            href="https://gitlab.com/TrailingDots/loggerZeroMQ.git">PyZMQ</a>,
+            the python bindings to ZeroMQ.</li>
+
+            <li>cd to a directory to work from.</li>
+
+            <li>git clone <a href="https://gitlab.com/TrailingDots/loggerZeroMQ.git">https://gitlab.com/TrailingDots/loggerZeroMQ.git</a></li>
+
+            <li>
+
+        </ol>
+
+
+        <h1>Tips for Good Logging Techniques</h1>
+
+        <p>Even in our simple Raspberry Pi hydroponic system,
+            a bit of thought placed into logging concepts
+            will absolutely serve us well. Just logging
+            for logging sakes does not provide an incentive
+            to log. Having these logs provide a usable history
+            and alarm system incentivises our logging structure.</p>
+
+            <p>Think of logging as an integral part of our SCADA system.
+            SCADA = Supervisory Control and Data Acquisition.
+            SCADA gets used in remote monitoring and control
+            systems that operates with coded signals
+            over communications channels. <a href="https://en.wikipedia.org/wiki/SCADA">
+                Wikipedia: SCADA</a></p>
+
+            <p>Some logs that an elementary SCADA system could generate.
+            The model is, once again, a hydroponics system. The
+            hydroponics system has 2 Raspberry Pis controlling various
+            devices and this logs to a desktop. The desktop may
+            send control commands. Various logs from both systems
+            get sent to the logger to monitor and track events
+            in these systems.</p>
+
+            <p>Assume "hydro1" and "hydro2" are systems in a remote 
+            hydroponics garden with various measurement 
+            instrumentations. This remote system logs to a 
+            desktop inside the home.</p>
+
+            <p>Commands the remote uses to start pumps and switchs
+            get logged as well. This used "cmd=true&amp;pump1=ON&amp;host=hydro1"
+            meaning this is a command that turns pump1 on and 
+            the host is hydro1.</p>
+
+            <p>Some examples of data that appears in logs:</p>
+            <ul>
+                <li>A switch changing values ON/OFF.</li>
+                <li>An instrument reporting temperature reading.</li>
+                <li>A water level indicator reading too low or to high.</li>
+                <li>A moisture level too low has triggered.</li>
+                <li>A periodic report of temperature.</li>
+            </ul>
+
+            <p>All of the above and more could appear in your logs. The
+            specific values in the logs must, of course, have appropriate
+            values for that device.</p>
+
+            <h3>The UNKNOWN state</h3>
+
+            <p>The "UNKNOWN" value should apply to <i>every</i> device!
+            Devices can suffer all manner of reasons for refusing to
+            work properly: water damage, physically damanged, wiring
+            problems, aging, etc. A switch does not have a simple
+            ON/OFF, but should actually use ON/OFF/UNKNOWN.</p>
+
+            <h2>Notice your keywords</h2>
+            
+                <table>
+                    <tr>
+                        <td>Keyword</td>
+                        <td>Meaning</td>
+                    </tr>
+                    <tr>
+                        <td>device</td>
+                        <td>Device name</td>
+                    </tr>
+                    <tr>
+                        <td>state</td>
+                        <td>Value for descrete devices: ON, OFF, UNKNOWN</td>
+                    </tr>
+                    <tr>
+                        <td>temp</td>
+                        <td>Temperature reading for analog temperature</td>
+                    </tr>
+                    <tr>
+                        <td>host</td>
+                        <td>Which system sent this data</td>
+                    </tr>
+                    <tr>
+                        <td>cmd</td>
+                        <td>= req : A command request was sent. host=system performing request.<br>
+                        =req : tag=xyz...&amp;host=central</td>
+                    </tr>
+                    <tr>
+                        <td>cmd</td>
+                        <td>=rep : A command reply indicates acknowledgement. host=sys performing command.
+                          A reply sends the tag of the command. Optionally the entire
+                          original command may populate the command.
+                          cmd=rep&amp;tag=xyz&amp;host=hygro1</td>
+                     </tr>
+
+                 </table>
+
+                 <p>Devices in this example:</p>
+
+                 <ul>
+
+                     <li>pump01 = A water pump to maintain proper levels.</li>
+
+                     <li>water01 = A flotation switch that detects water levels too high or too low.</li>
+
+                     <li>tempIN, tempOUT = analog temperature measurements.</li>
+
+                 </ul>
+
+        <h2>A Trivial Logging Example</h2>
+
+        <p>Assume the following logs exist. (The comments are not part of the logs.)</p>
+
+        <pre>
+    # A periodic reading of water and temperature from several instruments
+    2016-03-14T08:00:00.000    INFO    device=water01&amp;state=OFF&amp;host=hydro1
+    2016-03-14T08:00:00.000    INFO    device=tempIN&amp;temp=72.3&amp;host=hydro1
+    2016-03-14T08:00:00.000    INFO    device=tempOUT&amp;temp=69.2&amp;host=hydro1
+    # Water level has gone too low
+    2016-03-14T08:00:07.325    ERROR    device=water01&amp;state=LOW&amp;host=hydro1
+    # Pump started to raise water level. A command was sent
+    # pump01 request to start.
+    2016-03-14T08:00:09.876    INFO    cmd=req&amp;tag=xyz&amp;device=pump01&amp;state=ON&amp;host=hydro1
+    # Command started, remote sends reply. Note use of "tag"
+    2016-03-14T08:00:09.876    INFO    cmd=rep&amp;tag=xyz&amp;host=hydro1
+    # Water level back to normal and turn pump1 off.
+    2016-03-14T08:05:05.325    INFO    device=water01&amp;state=OK&amp;host=hydro1
+    # Command to turn pump01 off.
+    2016-03-14T08:05:15.876    INFO    cmd=req&amp;tag=abc&amp;device=pump01&amp;state=OFF&amp;host=hydro1
+    # Response: Pump01 starting to off state.
+    2016-03-14T08:05:15.876    INFO    cmd=rep&amp;tag=abc&amp;host=hydro1
+    # Periodic readings
+    # One reading per device.
+    2016-03-14T08:10:00.000    INFO    device=water01&amp;temp=71.2&amp;host=hydro1
+    2016-03-14T08:10:00.000    INFO    device=pump01&amp;state=OFF&amp;host=hydro1
+    2016-03-14T08:10:00.000    INFO    device=fan02&amp;state=OFF&amp;host=hydro1
+    2016-03-14T08:10:00.000    INFO    device=temp04&amp;temp=71.1&amp;host=hydro1
+    2016-03-14T08:10:00.000    INFO    device=temp03&amp;temp=70.5&amp;host=hydro1
+        </pre>
+
+        <p>Notice the uniformity of the above logs.</p>
+
+        <ul>
+
+            <li>One device per command. This eases analysis logic because 
+            parsing that one keyword allows easy processing of that one value.</li>
+
+            <li>Each command request, "cmd=req&amp;tag=abc", has a tag. This ensures that the
+            response with a command reply, "cmd=rep&amp;tab=abc", has been received by the remote.
+            The "cmd=rep&amp;abc" does <i>not</i> imply that the command was successfully
+            completed, only that the remote received the command.</li>
+
+            <li>The various instruments talk in their "native" representations. For
+            instance, pumps belong to one of the ON, OFF or UNKNOWN states. A temperature
+            measurement replies as "temp=65.2", etc. Your individual needs will, of course,
+            vary.</li>
+
+            <li>Macro commands could provide for a flurry of activity. An example of a
+            macro command could be "circulate" wherein the pumps that circulate
+            nutrient solutions activate and remain on the a pre determined period.
+            These may orginate either in the remote or central control. Macros
+            remain beyond the ken of loggers except to record the issuance of the
+            command itself. The logger simply monitors and records activity.</li>
+
+        </ul>
+
+        <h1>The Necessity of Log Analysis Applications</h1>
+
+        <p>Given a repository of logs, what is the difficulty in discovering problems
+        of a logs of several thousand entries? How would you handle that mind numbing 
+        experience? Now repeat that same experience over and over when necessity dictates
+        various queries of those logs.</p>
+
+        <p>Various kinds of log analysis tools should surely exist to effective select
+        and interpret log files. This initial release contains an elementary analysis tool
+        that can output logs in either CSV (Comma Separated Values) or JSON (JavaScript
+        Object Notation). CSV may conveniently load into almost any spreadsheet. JSON
+        offers convenience in loading into most modern programming languages: python,
+        NodeJS, JavaScript, etc.</p>
+
+        <h2>logFilterApp - Assistance in Log Interpretation</h2>
+
+        <p>This command line utility program converts from the "raw" log format to either
+        CSV of JSON.
+
+
+
+        <h1>Original Ideas: ZeroMQ</h1>
+
+        <p>This code calls ZeroMQ, also known as 0MQ or zmq, 
+        with python bindings, PyZMQ, to build this logger.
+        The <a href="http://zeromq.org/intro:read-the-manual">
+            The Asynchronous Client/Server Pattern</a> forms
+        the basic idea of this logger. The full ZeroMQ pattern implements
+        bidirectional messages while the RaspPiLogger uses
+        the direction only from processes to the loggerControler.</p>
+
+        <p>The RaspPiLogger implementation as derived from the Asynchronous
+        Client/Server Pattern  in <a href="http://www.zeromq.com">ZeroMQ</a>,
+        p. 111:<br/><center><img src="./images/AsyncClientServer1.svg"></center></p>
+
+        <p>This illustration uses three clients that access the RaspPi Logger.
+        In practice the actual system may have one or more RaspPi systems
+        sending logs to the RaspPi Logging system. The senders
+        of the logs may also live either on the same systemas the RaspPi loggers
+        or on another system entirely. Remote systems may communicate with
+        the RaspPi Logger through wireless transmission or an ethernet cable.
+        How is <i>that</i> for flexibility?</p>
+
+
+
+        <h1>License</h1>
+
+        <p>In the spirit of the originators of ZeroMQ, the iMatix corporation,
+        the following constitutes the license agreement:</p>
+
+        <p>The project license is specified in COPYING and COPYING.LESSER.</p>
+
+        <p>RaspPiLogger is free software; you can redistribute it and/or modify it under
+        the terms of the GNU Lesser General Public License (LGPL) as published
+        by the Free Software Foundation; either version 3 of the License, or
+        (at your option) any later version.</p>
+
+        <p>As a special exception, the Contributors give you permission to link
+        this library with independent modules to produce an executable,
+        regardless of the license terms of these independent modules, and to
+        copy and distribute the resulting executable under terms of your choice,
+        provided that you also meet, for each linked independent module, the
+        terms and conditions of the license of that module. An independent
+        module is a module which is not derived from or based on this library.
+        If you modify this library, you must extend this exception to your
+        version of the library.</p>
+
+        <p>RaspPiLogger is distributed in the hope that it will be useful, but WITHOUT
+        ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+        FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+        License for more details.</p>
+
+        <h1>Links and References</h1>
+
+        <p><cite>ZeroMQ</cite> by Pieter Hintjens. Published by O'Reillly Media
+        Inc, 2013.  <a href="http://www.zeromq.com">ZeroMQ</a>. This book
+        provides a detailed description of ZeroMQ with many examples.  ZeroMQ
+        offers a toolkit and not a framework. ZeroMQ has been used by <a
+        href="http://zeromq.org/intro:read-the-manual"> many companies</a> as a
+        basis for a wide variety of product. Highly recommended. Their website
+        provides a plethora of ideas and practical advice.</p>
+
+
+
+
+        <h5>ISO 8601 Notes</h5>
+        <p>What do I need, <i>EXACTLY</i>?</p>
+        <ol>
+            <li>Find local time with msec. (Could be tuple format)</li>
+            <li>Convert local MS to ISO8601 display format</li>
+            <li>Get milliseconds from ISO8601 display</li>
+        </ol>
+
+        <p><b>USE THIS!</b></p>
+        <pre>
+import datetime
+import time
+
+"""
+    Illustrate multiple conversions of timestamps
+
+    On the remote system:
+    Obtain the local time with millisecond precision.
+    Convert local time to display format with local timezone.
+    
+    This time in display format gets placed into logger
+    Now convert the display formatted time into seconds
+    since the epoch.
+""" 
+
+unixNow = time.time()
+now = datetime.datetime.fromtimestamp(unixNow)
+print 'unix now:%f'% unixNow
+print 'now=%s' % str(now)
+nowStr = now.strftime("%Y-%m-%dT%H:%M:%S.%f")
+print 'nowStr = %s' % nowStr
+
+#To get now to a tuple:
+nowTuple = datetime.datetime.strptime(nowStr, "%Y-%m-%dT%H:%M:%S.%f")
+
+print 'nowTuple:' + str(nowTuple)
+
+secEpoch = time.mktime(nowTuple.timetuple()) + 1.0e-6*nowTuple.microsecond
+print 'secEpoch: %s' % secEpoch
+        </pre>
+        <p>With output:</p>
+        <pre>
+python time1.py
+unix now:1458147132.109625
+now=2016-03-16 09:52:12.109625
+nowStr = 2016-03-16T09:52:12.109625
+nowTuple:2016-03-16 09:52:12.109625
+secEpoch: 1458147132.11
+        </pre>
+
+        <p>ISO 8601 formatting: https://docs.python.org/2/library/datetime.html
+        datetime.isoformat() returns a string in date time in ISO 8601 format:</p>
+            <pre>
+datetime.datetime.strptime( "2007-03-04T21:08:12", "%Y-%m-%dT%H:%M:%S" )
+datetime.datetime(2007, 3, 4, 21, 8, 12)
+            </pre>
+Now: time.time()  in floating point seconds.
+
+<h4>To get a now ISO8601 local time string: </h4>
+<pre>
+now = datetime.datetime.now()
+print 'now=%s' & str(now)
+nowStr = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
+print 'nowStr = %s' % nowStr
+
+#To get now to a tuple:
+nowTuple = datetime.datetime.strptime(nowStr, "%Y-%m-%d %H:%M:%S.%f")
+
+print 'nowTuple:' + str(nowTuple)
+
+msSinceEpoch = time.mktime(nowTuple.timetuple()) + 1.0e-6*nowTuple.microsecond
+</pre>
+
+<pre>
+nowDT = datetime.datetime.strptime('2016-03-16T08:47:12.34', "%Y-%m-%dT%H:%M:%S.%f")
+nowDT
+datetime.datetime(2016, 3, 16, 8, 47, 12, 340000)
+</pre>
+
+<p>Current local time to milli sec since epoch:</p>
+<pre>
+from datetime import datetime
+from time import mktime
+
+dt = datetime.now()
+sec_since_epoch = mktime(dt.timetuple()) + dt.microsecond/1000000.0
+
+millis_since_epoch = sec_since_epoch * 1000
+</pre>
+
+<p>Some more conversions:</p>
+<pre>
+>>> import datetime
+>>> import time
+>>> import calendar
+
+>>> #your datetime object
+>>> now = datetime.datetime.now()
+>>> now
+datetime.datetime(2013, 3, 19, 13, 0, 9, 351812)
+
+>>> #use datetime module's timetuple method to get a `time.struct_time` object.[1]
+>>> tt = datetime.datetime.timetuple(now)
+>>> tt
+time.struct_time(tm_year=2013, tm_mon=3, tm_mday=19, tm_hour=13, tm_min=0, tm_sec=9,     tm_wday=1, tm_yday=78, tm_isdst=-1)
+
+>>> #If your datetime object is in utc you do this way. [2](see the first table on docs)
+>>> sec_epoch_utc = calendar.timegm(tt) * 1000
+>>> sec_epoch_utc
+1363698009
+
+>>> #If your datetime object is in local timeformat you do this way
+>>> sec_epoch_loc = time.mktime(tt) * 1000
+>>> sec_epoch_loc
+1363678209.0
+</pre>
+
+
+    </body>
+
+</html>
