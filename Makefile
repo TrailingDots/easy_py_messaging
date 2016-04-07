@@ -2,8 +2,8 @@ PYTHON=`which python`
 DESTDIR=/
 PROJECT=simple_log_messaging
 BUILDDIR=$(CURDIR)/$(PROJECT)
-LIBDIR=$(CURDIR)/$(PROJECT)/lib
-TOOLSDIR=$(CURDIR)/$(PROJECT)/tools
+LIBDIR=$(CURDIR)/$(PROJECT)
+TOOLSDIR=$(CURDIR)/$(PROJECT)
 
 RM=/usr/bin/rm
 
