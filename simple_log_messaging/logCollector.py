@@ -2,8 +2,8 @@
 
 import os
 import sys
-sys.path.append('./')
-sys.path.append('../lib')
+sys.path.append('.')
+sys.path.append('lib')
 import zmq
 import signal
 import atexit

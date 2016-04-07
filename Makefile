@@ -10,6 +10,9 @@ RM=/usr/bin/rm
 RM=/usr/bin/rm
 CP=/usr/bin/cp
 
+all:
+	$(PYTHON) setup.py sdist
+
 help:
 	@echo "make - Build source distributable package. Test locally"
 	@echo "make test - Run test suite. Capture with 'script' command."
