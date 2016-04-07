@@ -1,7 +1,5 @@
 #!/bin/env python
 import sys
-sys.path.append('.')
-sys.path.append('lib')
 import logFilter
 
 
@@ -67,7 +65,7 @@ def run_CSV(params):
         out_fh.write(csv_filter.log_keys() + '\n')
     else:
         sys.stderr.write('ERROR: Invalid header line ignored for CSV file:"%s"' %
-                header_line)
+            header_line)
 
     line_number = 0
     for line in lines:

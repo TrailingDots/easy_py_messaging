@@ -10,8 +10,6 @@ import sys
 import zmq
 import threading
 import time
-sys.path.append('./')
-sys.path.append('../lib')
 import logConfig
 import platform
 import apiLoggerInit
@@ -128,7 +126,7 @@ def main():
     info_msg = 'status=1,msg=info,reason=nothing important'
     warning_msg = 'msg=Warning,a=n,stuff=yuck,floor=ceiling'
     error_msg = 'status=3,warn=continue,babble=yes,reason=testing'
-    debug_msg= 'msg=debug,details=yes'
+    debug_msg = 'msg=debug,details=yes'
     critical_msg = 'msg=critical,reason=meltdown'
 
     # Do NOT change the messages below.

@@ -35,7 +35,7 @@ def main():
 
     elapsed = timeit.default_timer() - startTime
     client.info('%d logs, elapsed time: %f' % (iterations, elapsed))
-    client.info('Timed at %d messages per second' % 
+    client.info('Timed at %d messages per second' %
             int(iterations/elapsed))
     print '%d logs, elapsed time: %f' % (iterations, elapsed)
     print '%d messages per second' % int(iterations/elapsed)

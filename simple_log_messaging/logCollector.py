@@ -2,8 +2,6 @@
 
 import os
 import sys
-sys.path.append('.')
-sys.path.append('lib')
 import zmq
 import signal
 import atexit
@@ -42,9 +40,9 @@ class LogCollectorTask(object):
         self.frontend = self.context.socket(zmq.ROUTER)
 
     def signal_handler(self, signum, frame):
-        SIGNALS_TO_NAMES_DICT = dict((getattr(signal, n), n) \
-            for n in dir(signal) if n.startswith('SIG') and '_' not in n )
-        sys.stderr.write("logCollector terminated by signal %s" % 
+        SIGNALS_TO_NAMES_DICT = dict((getattr(signal, n), n)
+            for n in dir(signal) if n.startswith('SIG') and '_' not in n)
+        sys.stderr.write("logCollector terminated by signal %s" %
                 SIGNALS_TO_NAMES_DICT[signum])
         self.frontend.close()
         self.context.term()
@@ -101,7 +99,7 @@ class LogCollectorTask(object):
 def load_config(config_filename=None):
     """
      Read the config file is any. Look in the current
-     directory for .logcollectorrc . 
+     directory for .logcollectorrc .
      If not there, look in $HOME/.logcollectorrc
      Any user flags will override config file settings.
     """
@@ -147,6 +145,7 @@ def load_config_file(config_filename):
     """
     return load_config(config_filename)
 
+
 def usage():
     print 'logCollector [--file=logFilename] [-a] [-t]'
     print '     logFilename = name of file to place logs'
@@ -190,7 +189,7 @@ def main():
         return 1
 
     # Read the config file is any. Look in the current
-    # directory for .logcollectorrc . 
+    # directory for .logcollectorrc .
     # If not there, look in $HOME/.logcollectorrc
     # Any user flags will override config file settings.
     config_dict = load_config()

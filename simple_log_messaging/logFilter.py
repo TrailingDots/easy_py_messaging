@@ -13,12 +13,13 @@ import utils
 
 # The parameters controlling log filtering.
 LogFilters = {
-        #'level': 'DEBUG',              # Default: All logs entries
-        #'out_format': 'JSON',          # Default format
-        #'out_file': None,              # Printable output filename
-        #'in_file': None,               # printable intput filename
-        #'start': None,                 # start and end dates.
-        #'end': None,
+        # Most commonly used settings
+        # 'level': 'DEBUG',              # Default: All logs entries
+        # 'out_format': 'JSON',          # Default format
+        # 'out_file': None,              # Printable output filename
+        # 'in_file': None,               # printable intput filename
+        # 'start': None,                 # start and end dates.
+        # 'end': None,
 }
 
 
@@ -128,7 +129,7 @@ class LogFilter(object):
             self.log_filters['start'] = '1970-01-01T00:00:00.000'
         start_date = utils.ISO8601_to_seconds(self.log_filters['start'])
         if start_date is None:
-            sys.stderr.write('--start="%s" is not a valid ISO8601 date\n' % 
+            sys.stderr.write('--start="%s" is not a valid ISO8601 date\n' %
                     self.log_filters['end'])
             return 1
         self.log_filters['start_secs'] = start_date
@@ -140,7 +141,7 @@ class LogFilter(object):
             self.log_filters['end'] = utils.seconds_to_ISO8601(now_secs)
         else:
             end_secs = utils.ISO8601_to_seconds(self.log_filters['end'])
-            if end_secs == None:
+            if end_secs is None:
                 sys.stderr.write('--end="%s" is not a valid ISO8601 date\n' %
                         self.log_filters['end'])
                 return 1
@@ -170,7 +171,6 @@ class LogFilter(object):
         self.line_number = self.log_filters['line_number']
 
         return 0
-
 
     def parse_log_entry(self, log_entry):
         """
@@ -213,7 +213,6 @@ class LogFilter(object):
             # No user provided filter fcn.
             return self.log_dict
 
-
     def parse_payload(self, payload):
         """
         Parse the payload.
@@ -236,7 +235,6 @@ class LogFilter(object):
             # Duplicate keys get ignored.
             self.log_dict[key] = value
 
-
     def within_dates(self, log_seconds):
         """
         Determines if the log date falls within requested
@@ -249,7 +247,7 @@ class LogFilter(object):
                 None iF invalid log_date_str.
         """
 
-        if log_seconds == None:
+        if log_seconds is None:
             return None
         if self.log_filters['start_secs'] <= log_seconds <= self.log_filters['end_secs']:
             return True
@@ -259,7 +257,7 @@ class LogFilter(object):
 class LogFilterCSV(LogFilter):
     """
         For CSV, assume a log file contains exactly the
-        same payload format for each log line. 
+        same payload format for each log line.
 
         Our log files will contain multiple temperature sources:
             inside=65.2     # Temp inside house

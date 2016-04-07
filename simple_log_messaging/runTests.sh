@@ -87,6 +87,11 @@ ECHO () {
     echo "ECHO ${BASH_LINENO[0]}: $*"
 }
 
+# Run various python metric utilities
+CMD "pyflakes *.py"
+CMD "pep8 *.py"
+CMD "pylint *.py"
+
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
 export COVERAGE_PROCESS_START=$PWD/.coveragerc
@@ -95,24 +100,25 @@ ECHO " export COVERAGE_PROCESS_START=$COVERAGE_PROCESS_START"
 export CPS=$COVERAGE_PROCESS_START
 ECHO "CPS=$CPS"
 
-export PYTHONPATH=$PYTHONPATH:$PWD/test:$PWD/.
+export PYTHONPATH=$PYTHONPATH:$PWD
 ECHO "PYTHONPATH=$PYTHONPATH"
 
-#echo COVERAGE_PROCESS_START=$CPS
-
-#./wc.sh     # How big is this getting?
+./wc.sh     # How big is this getting?
 
 export BASE_DIR=$PWD
 ECHO "BASE_DIR=$BASE_DIR"
 
-export LIB_DIR=$BASE_DIR/lib
+export LIB_DIR=$BASE_DIR
 ECHO "LIB_DIR=$LIB_DIR"
 
-export TOOLS_DIR=$BASE_DIR/../tools
+export TOOLS_DIR=$BASE_DIR
 ECHO "TOOLS_DIR=$TOOLS_DIR"
 
-export TEST_DIR=$BASE_DIR/test
+export TEST_DIR=$BASE_DIR
 ECHO "TEST_DIR=$TEST_DIR"
+
+export DATA_DIR=$BASE_DIR/data
+ECHO "DATA_DIR=$DATA_DIR"
 
 export GEN_DATA=$TEST_DIR/genData.py
 ECHO "GEN_DATA=$GEN_DATA"
@@ -126,13 +132,6 @@ rm $(find . -name '.coverge.*' -type f)
 ECHO Remove test/.coverage_html/*
 (cd test; rm -rf .coverage_html)
 
-# From all the python scripts, run pyflakes, pep8 and pylint.
-#PY_FILES=`find $BASE_DIR -name '*.py' | grep -v junk`
-#CMD "pyflakes $PY_FILES "
-#CMD "pep8 $PY_FILES "
-#CMD "pylint $PY_FILES "
-
-#
 ECHO Before starting, make sure the logCollector exists.
 CMD "$TOOLS_DIR/listeningPort.py 5570"
 if [ $? -ne 0 ]
@@ -152,13 +151,12 @@ fi
 #
 ECHO Run a coverage report on unit test
 #
-CMD "cd test "
 export COVERAGE=1 
 CMD "coverage erase "
-CMD_PASS "coverage run --branch --parallel-mode --source=../test,../$LIB_DIR testLogging.py"
+CMD_PASS "coverage run --branch --parallel-mode --source=. testLogging.py"
 
 # Generate a "standard" log of data frequently used in testing.
-export DATA_LOG=$TEST_DIR/data.data
+export DATA_LOG=$DATA_DIR/data.data
 CMD "$GEN_DATA >$DATA_LOG"
 $GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
@@ -184,8 +182,8 @@ CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --bo
 CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py bogus-port "
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py  "
-CMD_PASS "coverage run --branch --parallel-mode ./loggingLoopApp.py 10   "
-CMD_PASS "coverage run --branch --parallel-mode ./testLogging.py "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingLoopApp.py 10   "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/testLogging.py "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA --happy   "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA --missing "
@@ -203,6 +201,9 @@ CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
+ECHO "Passing logCmd"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py Testing a new log config option." 
+
 ECHO Multiple runs passing various flags both valid and bogus.
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --level=ERROR "
@@ -219,30 +220,30 @@ CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-fi
 ECHO Expect ERRORs
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --JSON --level=ERROR "
 ECHO Expecte ERRORS 
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./csv.conf --in-file=/dev/null --JSON --level=ERROR "
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./happy.conf "
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./mixed.conf "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/csv.conf --in-file=/dev/null --JSON --level=ERROR "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/happy.conf "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf "
 
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad2.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad2.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad3.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad3.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_start.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_end.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_end1.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_end1.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./no_start1.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_start1.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad_start.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad_start.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./bad_end.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad_end.conf "
 ECHO Expecte ERRORS 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=./end_before_start.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/end_before_start.conf "
 
 ECHO No infile. Reads from stdin
 cat happy.data | coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py 
@@ -274,26 +275,27 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-fi
 ECHO start and end dates
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 end=2016-03-14T08:05:15.876 "
 
+
 ECHO Log Filter with configuration file. Notice in-file override
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf --in-file=mixed.data "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf --in-file=$DATA_DIR/mixed.data "
 
 ECHO Log Filter with configuration file. Read from stdin
-CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf < happy.data "
-coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf < happy.data 
+CMD "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf < $DATA_DIR/happy.data "
+coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf < $DATA_DIR/happy.data 
 
 ECHO Log Filter with invalid configuration file. Has bad syntax
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=bad --in-file=mixed.data "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad --in-file=$DATA_DIR/mixed.data "
 
 ECHO Log Filter with configuration file. Uses invalid in-file.
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=mixed.conf --in-file=does_not_exist.data "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf --in-file=$DATA_DIR/does_not_exist.data "
 
 ECHO Log Filter with non-existent configuration file. 
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=does-not-exist.conf "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/does-not-exist.conf "
 
 ECHO Log Filter with configuration file. Uses out_file.
 TMP=/tmp/$$.json
 export TEST_DIR=$PWD
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$TEST_DIR/mixed.conf --in-file=$TEST_DIR/mixed.data --out-file=$TMP "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf --in-file=$DATA_DIR/mixed.data --out-file=$TMP "
 # Should have something
 [ -s $TMP ]
 iszero=$?
@@ -307,7 +309,7 @@ rm $TMP     # Clean up tmp file.
     
 
 ECHO Same outfile, but with CSV
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$TEST_DIR/mixed.conf --CSV --in-file=$TEST_DIR/mixed.data --out-file=$TMP "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf --CSV --in-file=$DATA_DIR/mixed.data --out-file=$TMP "
 # Should have something
 [ -s $TMP ]
 iszero=$?
@@ -324,7 +326,7 @@ CMD "kill -HUP $COL_PID"
 
 ECHO Test various command line options for the logCollector
 ECHO Set log file to ./abc.log
-python $LIB_DIR/logCollector.py --config=$LIB_DIR/logRC.conf --log_file=./abc.log --trunc &
+python $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log_file=$DATA_DIR/abc.log --trunc &
 COL_PID=$! 
 CMD_PASS "$LIB_DIR/logCmd.py Testing a new log config option." 
 kill -INT $COL_PID
@@ -374,13 +376,10 @@ CMD "rm $TMP_LOG"
 
 
 CMD "coverage combine  "
-CMD "coverage report -m --omit=../lib/logCollector.py "
-CMD "coverage html -d .coverage_html  --omit=../lib/logCollector.py "
+CMD "coverage report -m --omit=./logCollector.py "
+CMD "coverage html -d .coverage_html  --omit=./logCollector.py "
 
 ECHO Paste into browser for details: file://$PWD/.coverage_html/index.html
-
-CMD "cd $BASE_DIR"
-#(cd test; python testLogging.py)
 
 echo
 echo
