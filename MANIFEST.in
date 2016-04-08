@@ -1,4 +1,5 @@
 # list of files to include.
+include bin/*
 include COPYING
 include COPYING.LESSER
 include apiLoggerInit.py
@@ -45,7 +46,7 @@ include data/no_end1.conf
 include data/no_end.conf
 include data/no_start1.conf
 include data/no_start.conf
-include data/docs/css
+include docs/css
 include docs/images
 include docs/simple_log_messaging.html
 include docs/trivialApp.md

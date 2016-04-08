@@ -26,12 +26,18 @@ setup_args = dict(
             '': ['*.conf', '*.data', '*.md', '*.html', '*.css'],
         },
         packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
+        scripts= [
+            'logCollector=simple_log_messaging.bin.logCollector:main',
+            'logFilterApp=simple_log_messaging.bin.logFilterApp:main',
+            'logCmd=simple_log_messaging.bin.logCmd:main',
+            'listeningPort=simple_log_messaging.bin.listeningPort:main'
+        ],
         entry_points= {
             'console_scripts': [
-                'logCollector=simple_log_messaging.logCollector:main',
-                'logFilterApp=simple_log_messaging.logFilterApp:main',
-                'logCmd=simple_log_messaging.logCmd:main',
-                'listeningPort=simple_log_messaging.listeningPort:main'
+                'logCollector=simple_log_messaging.bin.logCollector:main',
+                'logFilterApp=simple_log_messaging.bin.logFilterApp:main',
+                'logCmd=simple_log_messaging.bin.logCmd:main',
+                'listeningPort=simple_log_messaging.bin.listeningPort:main'
             ]
         },
         zip_safe=False,
