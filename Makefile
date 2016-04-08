@@ -17,7 +17,6 @@ help:
 	@echo "make - Build source distributable package. Test locally"
 	@echo "make test - Run test suite. Capture with 'script' command."
 	@echo "make install - install on local system"
-	@echo "make buildrpm - Generate an rpm package"
 	@echo "make backup - Create tgz backup one dir above base dir."
 	@echo "make wc - Perform word count for ine counts."
 	@echo "make clean - Get rid of scratch files"
@@ -31,9 +30,6 @@ test:
 install:
 	$(PYTHON) setup.py install --root $(DESTDIR) $(COMPILE)
 
-buildrpm:
-	$(PYTHON) setup.py bdist_rpm --post-install=rpm/postinstall --pre-uninstall=rpm/preuninstall
-
 wc:
 	$(PROJECT)/tools/wc.sh
 
@@ -45,7 +41,7 @@ lsfiles:
 	ls -lh /home/cecilm/anaconda/lib/python2.7/site-packages/$(PROJECT)-1.0.0-py2.7.egg
 
 backup:
-	$(PROJECT)/tools/backup.sh
+	$(PROJECT)/backup.sh
 
 clean:
 	$(PYTHON) setup.py clean
