@@ -129,8 +129,8 @@ ECHO "rm $(find . -name logs.log)"
 ECHO Remove all .coverage.*
 rm $(find . -name '.coverge.*' -type f)
 
-ECHO Remove test/.coverage_html/*
-(cd test; rm -rf .coverage_html)
+ECHO Remove .coverage_html/*
+CMD "rm -rf .coverage_html"
 
 ECHO Before starting, make sure the logCollector exists.
 CMD "$TOOLS_DIR/listeningPort.py 5570"
