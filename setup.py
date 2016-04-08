@@ -27,6 +27,7 @@ setup_args = dict(
         packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
         entry_points= {
             'console_scripts': [
+                'module=bin.module',
                 'logCollector=bin.logCollector:main',
                 'logFilterApp=bin.logFilterApp:main',
                 'logCmd=bin.logCmd:main',
