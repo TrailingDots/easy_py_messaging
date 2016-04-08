@@ -1,52 +1,5 @@
-# list of files to include.
-include bin/*
 include COPYING
 include COPYING.LESSER
-include apiLoggerInit.py
-include backup.sh
-include genData.py
-include __init__.py
-include listeningPort.py
-include logCmd.py
-include logCollector.py
-include logComponents.py
-include logConfig.py
-include logFilterApp.py
-include logFilter.py
-include loggingClientTask.py
-include loggingLoopApp.py
-include loggingSpeedTest.py
-include Makefile
-include MANIFEST.in
-include README.md
-include runTests.sh
-include setup.cfg
-include setup.py
-include testLogging.py
-include utils.py
-include wc.sh
-include data/bad2.conf
-include data/bad3.conf
-include data/bad.conf
-include data/bad_end.conf
-include data/bad_start.conf
-include data/base.data
-include data/csv.conf
-include data/csv.data
-include data/data.data
-include data/dated.conf
-include data/end_before_start.conf
-include data/happy.conf
-include data/happy.data
-include data/logRC.conf
-include data/missing.data
-include data/mixed.conf
-include data/mixed.data
-include data/no_end1.conf
-include data/no_end.conf
-include data/no_start1.conf
-include data/no_start.conf
-include docs/css
-include docs/images
-include docs/simple_log_messaging.html
-include docs/trivialApp.md
+recursive-include . *.py *.sh *.md
+recursive-include bin *
+recursive-include docs *

@@ -11,7 +11,10 @@ RM=/usr/bin/rm
 CP=/usr/bin/cp
 
 all:
-	cp logCollector.py logFilterApp.py logCmd.py listeningPort.py bin
+	cp logCollector.py bin/logCollector
+	cp logFilterApp.py bin/logFilterApp
+	cp logCmd.py       bin/logCmd
+	cp listeningPort.py bin/listeningPort
 	chmod a+x bin/*
 	$(PYTHON) setup.py sdist
 
