@@ -10,7 +10,7 @@ RM=/usr/bin/rm
 RM=/usr/bin/rm
 CP=/usr/bin/cp
 
-all:
+all: clean
 	#cp logCollector.py bin/logCollector
 	#cp logFilterApp.py bin/logFilterApp
 	#cp logCmd.py       bin/logCmd
