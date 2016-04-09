@@ -1,5 +1,5 @@
 include COPYING
 include COPYING.LESSER
 recursive-include . *.py *.sh *.md
-recursive-include bin *
+recursive-include data *.conf *.data
 recursive-include docs *
