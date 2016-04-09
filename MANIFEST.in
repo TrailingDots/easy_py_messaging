@@ -1,5 +1,7 @@
 include COPYING
 include COPYING.LESSER
-recursive-include . *.py *.sh *.md
-recursive-include data *.conf *.data
-recursive-include docs *
+include logCollector.py
+include module.py
+recursive-include ./ *.py *.sh *.md
+recursive-include data/ *.conf *.data
+recursive-include docs/ *
