@@ -211,36 +211,13 @@ body{
     clear: none;
 }
 
-ul.niceList { 
-    margin-left: 0.5in; 
-    padding-left:0.2em; 
-    margin-bottom:1em; 
+li {
+    font-family: "Times New Roman";
+    font-size:15px;
+    margin-left: 10px;
+    margin-bottom: 7px;
 }
 
-ul.niceList li { 
-    background:url(bullet.gif) 0em 0.3em no-repeat; /* change background em accordingly */ 
-    padding-left: 0.8em; 
-    list-style: none; 
-}
-
-.niceList ul li { 
-    background-image:url(bullet_child.gif); 
-}
-
-ol.niceList li, ul.niceList li { 
-    margin-bottom:0.5em; 
-}
-
-ol.niceList { 
-    margin-left:1.5em; 
-    padding-left:0px; 
-}
-
-.niceList ol li { 
-    list-style:decimal; 
-    background-image:none; 
-    padding-left:0em; 
-}
 .def-list dt {
     margin-left: 0.5in; 
     padding-left:0.2em; 

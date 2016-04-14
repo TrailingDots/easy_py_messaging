@@ -147,7 +147,7 @@ def load_config_file(config_filename):
 
 
 def usage():
-    print 'logCollector [--file=logFilename] [-a] [-t]'
+    print 'logCollector [--out-file=logFilename] [-a] [-t]'
     print '     logFilename = name of file to place logs'
     print '     -a  Logs will be appende dto logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
@@ -173,8 +173,7 @@ def main():
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:], 'ahnqt',
-            ['log_file=',   # output file instead of stdiout
-             'log-file=',   # output file instead of stdiout
+            ['out-file=',   # output file instead of stdiout
              'port=',       # Port to listen for msgs. Default in logConfig.
              'config=',     # Config filename to load.
              'noisy',       # Noisy - messages printed to console as well as on a file.
@@ -201,7 +200,7 @@ def main():
     if config_dict is None:
         config_dict = {
             "append":True,          # Append logs to existing log file
-            "log_file":'logs.log',  # Name of log file (could be absolute filename)
+            "out_file":'logs.log',  # Name of log file (could be absolute filename)
             "port":5570,            # Port to receive logs
             "noisy":False           # Silent. Toggle with Ctrl-D
         }
@@ -223,8 +222,8 @@ def main():
         elif opt in ['-t', '--trunc']:
             config_dict['append'] = False
             continue
-        elif opt in ['--log-file', '--log_file']:
-            config_dict['log_file'] = arg
+        elif opt in ['--out-file']:
+            config_dict['out_file'] = arg
             continue
         elif opt in ['--config']:
             return_dict = load_config_file(arg)
@@ -233,7 +232,7 @@ def main():
             # Set whatever values read from config file.
             # If not provided, use the defaults.
             config_dict['append']   = return_dict.get('append', config_dict['append'])
-            config_dict['log_file'] = return_dict.get('log_file', config_dict['log_file'])
+            config_dict['out_file'] = return_dict.get('out_file', config_dict['out_file'])
             config_dict['port']     = return_dict.get('port', config_dict['port'])
             config_dict['noisy']    = return_dict.get('noisy', config_dict['noisy'])
             continue
@@ -254,7 +253,7 @@ def main():
         id_name = sys.argv[0]
 
     logConfig.APPEND_TO_LOG = config_dict['append']
-    logConfig.LOG_FILENAME  = config_dict['log_file']
+    logConfig.LOG_FILENAME  = config_dict['out_file']
     logConfig.NOISY         = config_dict['noisy']
     logConfig.PORT          = config_dict['port']
 

@@ -27,7 +27,6 @@ include data/no_end1.conf
 include data/no_end.conf
 include data/no_start1.conf
 include data/no_start.conf
-include data/abc.log
 include docs/css/article.css
 include docs/css/blue-question.png
 include docs/css/bullet_child.gif
