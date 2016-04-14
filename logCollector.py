@@ -187,7 +187,7 @@ def main():
         usage()
         return 1
 
-    # Read the config file is any. Look in the current
+    # Read the config file if any. Look in the current
     # directory for .logcollectorrc .
     # If not there, look in $HOME/.logcollectorrc
     # Any user flags will override config file settings.
