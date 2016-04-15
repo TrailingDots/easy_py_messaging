@@ -7,10 +7,10 @@ import subprocess
 import datetime
 import logging
 import time
-import apiLoggerInit
-from utils import bcolors
-import logFilter
-import utils
+from simple_log_messaging import apiLoggerInit
+from simple_log_messaging.utils import bcolors
+from simple_log_messaging import logFilter
+from simple_log_messaging import utils
 import tempfile
 import json
 
