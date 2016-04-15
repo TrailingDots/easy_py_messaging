@@ -25,6 +25,8 @@ setup_args = dict(
             '': ['*.conf', '*.data', '*.md', '*.html', '*.css'],
         },
         packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
+        include_package_data=True,
+        py_modules=['simple_log_messaging'],
         entry_points= {
             'console_scripts': [
                 'logCollector=simple_log_messaging.logCollector:main',
