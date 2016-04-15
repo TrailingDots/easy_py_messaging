@@ -9,53 +9,15 @@
 
     <body onload="generateTOC(document.getElementById('toc'));">
 
-        <h1>Simple Distributed Logging</h1>
+        <h1>Simple Log Messaging</h1>
 
         <div id="toc"></div>
 
-        <h2>Benefits of Logging</h2>
 
-        <p>Benefits of logging frequently become vastly underestimated
-        in the course of developing and debugging systems.</p>
+        <h2>Benefits of Simple Log Messaging</h2>
 
-        <p>This logging package provides a simple way to embed
-        powerful logging techniques into your systems.</p>
-        
-        <p>This package was designed to provide logging for:</p>
-
-        <ul>
-            
-            <li>A single stand-alone process.  If the application gets
-            refactored into multiple proceses, this logging package provides a
-            common channel for logging.</li>
-
-            <li>Handling logging for multiple processes on a single
-            system. The processes use this package to conveniently
-            record timestamped information on the behavior of each
-            process.</li>
-
-            <li>Distributed systems. This paackage really shines
-            in this area. The resulting logs correlate the actions
-            of multiple systems and provides a single repository
-            of information for analysis.</li>
-
-        </ul>
-
-        <p>Logging can provide substantial benefits for both developers and
-        users.  The fact that developers remain mostly unaware of these
-        benefits presents problems. Proper logging can ease a wide variety of
-        problems.</p>
-
-        <p>Few programmers appreciate the benefits of logging.  Even fewer
-        consider how logging can ease their burdens in finding and solving
-        problems on both development and live systems.</p>
-
-        <p>Benefits to users similarly get short shrift. Users require
-        insights into their systems that logging can frequently provide.
-        Informed developers implement user oriented logging as a natural
-        course of action.</p>
-
-        <h2>Benefits of This Logging System</h2>
+        <p>Using the simple log messaging system allows a process to
+        </p>
 
         <p>By using the industry standard ZeroMQ messaging library, logging
         becomes significantly enhanced from the existing python logging module.
@@ -139,6 +101,48 @@
         solid logging capabilitiies for almost any system supporting python and
         ZeroMQ!</p>
 
+
+        <h2>Benefits of Logging</h2>
+
+        <p>Benefits of logging frequently become vastly underestimated
+        in the course of developing and debugging systems.</p>
+
+        <p>This logging package provides a simple way to embed
+        powerful logging techniques into your systems.</p>
+        
+        <p>This package was designed to provide logging for:</p>
+
+        <ul>
+            
+            <li>A single stand-alone process.  If the application gets
+            refactored into multiple proceses, this logging package provides a
+            common channel for logging.</li>
+
+            <li>Handling logging for multiple processes on a single
+            system. The processes use this package to conveniently
+            record timestamped information on the behavior of each
+            process.</li>
+
+            <li>Distributed systems. This paackage really shines
+            in this area. The resulting logs correlate the actions
+            of multiple systems and provides a single repository
+            of information for analysis.</li>
+
+        </ul>
+
+        <p>Logging can provide substantial benefits for both developers and
+        users.  The fact that developers remain mostly unaware of these
+        benefits presents problems. Proper logging can ease a wide variety of
+        problems.</p>
+
+        <p>Few programmers appreciate the benefits of logging.  Even fewer
+        consider how logging can ease their burdens in finding and solving
+        problems on both development and live systems.</p>
+
+        <p>Benefits to users similarly get short shrift. Users require
+        insights into their systems that logging can frequently provide.
+        Informed developers implement user oriented logging as a natural
+        course of action.</p>
 
         <h1>The Necessity of Logging</h1>
 
@@ -231,7 +235,9 @@
         am always wondering, "How do I verify that this is correct?"</p>
 
 
-        <h1>The Python Language and Distributed Systems</h1>
+        <h1>Introductory Matters</h1>
+
+        <h2>Python as an Implementation Language</h2>
 
         <p>Because Python has demonstrated global acceptance for many projects
         on our tageted boards, the simple log messaging app will continue this
@@ -265,7 +271,7 @@
 
         <h2>Getting the Code</h2>
 
-        <p>The entire source code resides at: <a
+        <p>The application source code resides at: <a
             href="https://gitlab.com/TrailingDots/loggerZeroMQ.git">loggerZeroMQ</a>.
         The code should work on any recent linux system and will work on a
         recent Raspberry Pi Raspian OS. The Raspberry Pi Logger has been built
@@ -275,6 +281,8 @@
 
 
         <h1>Installation</h1>
+
+        <p>If there are any problems, consult the Troubleshooting section.</p>
 
         <ol>
 
@@ -290,8 +298,20 @@
             <li>Download the python logging application: <code>git clone <a
             href="https://github.com/TrailingDots/simple_log_messaging.git">https://gitlab.com/TrailingDots/loggerZeroMQ.git</a></code></li>
 
+            <li>Get into the project directory: <code>cd simple_log_messaging</code></li>
+
             <li>Install with setup.py: <code>sudo python setup.py
             install</code></li>
+
+            <li>Ensure the logCollector has been installed: <code>which logCollector</code></li>
+
+            <li>Start the log Collector: <code>logCollector
+                --out-file=/tmp/xyz.log</code> . This will create logs in
+            /tmp/xyz.log.</li>
+
+            <li>In another terminal window send a log: <code>logCmd Simple test</code></li>
+
+            <li>Examine the log in /tmp/xyz.log:<br><code>2016-04-14T13:49:19.851	INFO	Simple test,host=brass</code></br> The timestamp reflects only the time this page was created and the host should reflect your current hostname.</li>
 
         </ol>
 
@@ -522,6 +542,11 @@ app uses the direction only from processes to the loggerControler.</p>
         for flexibility?</p>
 
 
+        <h1>Troubleshooting</h1>
+
+        TBD - installation
+        Port issues.
+        Permission denied.
 
         <h1>License</h1>
 
@@ -549,6 +574,17 @@ app uses the direction only from processes to the loggerControler.</p>
         be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
         of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
         Lesser General Public License for more details.</p>
+
+        <h1>TroubleShooting</h1>
+
+        TBD
+
+        <h1>Frequently Asked Questions - The FAQs</h1>
+
+        <h2 id="tips">Useful Tips</h2>
+
+        <h3>Test for logCollector running</h3>
+
 
         <h1>Links and References</h1>
 

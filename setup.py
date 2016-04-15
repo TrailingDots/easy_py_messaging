@@ -27,11 +27,10 @@ setup_args = dict(
         packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
         entry_points= {
             'console_scripts': [
-                'module=module',
-                'logCollector=logCollector:main',
-                'logFilterApp=logFilterApp:main',
-                'logCmd=logCmd:main',
-                'listeningPort=listeningPort:main'
+                'logCollector=simple_log_messaging.logCollector:main',
+                'logFilterApp=simple_log_messaging.logFilterApp:main',
+                'logCmd=simple_log_messaging.logCmd:main',
+                'listeningPort=simple_log_messaging.listeningPort:main'
             ]
         },
         classifiers = [

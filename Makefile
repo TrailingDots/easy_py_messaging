@@ -2,8 +2,8 @@ PYTHON=`which python`
 DESTDIR=/
 PROJECT=simple_log_messaging
 BUILDDIR=$(CURDIR)/$(PROJECT)
-LIBDIR=$(CURDIR)/$(PROJECT)
-TOOLSDIR=$(CURDIR)/$(PROJECT)
+LIBDIR=$(CURDIR)/$(PROJECT)/$(PROJECT)
+TOOLSDIR=$(CURDIR)/$(PROJECT)/$(PROJECT)
 
 RM=/usr/bin/rm
 
@@ -11,11 +11,6 @@ RM=/usr/bin/rm
 CP=/usr/bin/cp
 
 all: clean
-	#cp logCollector.py bin/logCollector
-	#cp logFilterApp.py bin/logFilterApp
-	#cp logCmd.py       bin/logCmd
-	#cp listeningPort.py bin/listeningPort
-	#chmod a+x bin/*
 	$(PYTHON) setup.py sdist
 
 help:
@@ -36,7 +31,7 @@ install:
 	$(PYTHON) setup.py install --root $(DESTDIR) $(COMPILE)
 
 wc:
-	$(PROJECT)/tools/wc.sh
+	$(PROJECT)/wc.sh
 
 lsfiles:
 	-for APP in logCollector listeningPort logCmd logFilterApp; do \
