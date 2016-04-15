@@ -1,74 +1,82 @@
+include *.txt
+include *.md
+include *.sh
+include *.cfg
+include *.py
 include COPYING
 include COPYING.LESSER
-include README.md
-include setup.cfg
-include module
-include setup.py
-include apiLoggerInit.py
-include backup.sh
-include data/logRC.conf
-include data/base.data
-include data/csv.data
-include data/data.data
-include data/happy.data
-include data/missing.data
-include data/mixed.data
-include data/bad3.conf
-include data/happy.conf
-include data/bad2.conf
-include data/bad.conf
-include data/bad_end.conf
-include data/bad_start.conf
-include data/csv.conf
-include data/dated.conf
-include data/end_before_start.conf
-include data/mixed.conf
-include data/no_end1.conf
-include data/no_end.conf
-include data/no_start1.conf
-include data/no_start.conf
-include docs/css/article.css
-include docs/css/blue-question.png
-include docs/css/bullet_child.gif
-include docs/css/bullet.gif
-include docs/css/error.png
-include docs/css/html-table-of-contents.css
-include docs/css/httpremix.png
-include docs/css/info.png
-include docs/css/toc.css
-include docs/css/warning.png
-include docs/css/__init__.py
-include docs/javascript/toc.js
-include docs/javascript/toc.css
-include docs/javascript/__init__.py
-include docs/images/AsyncClientServer1.svg
-include docs/images/AsyncClientServer1.png
-include docs/images/RaspPiToDesktop.svg
-include docs/images/flowRoot10835.png
-include docs/images/RaspPiToDesktop.png
-include docs/images/__init__.py
-include docs/LoggingTips.html
-include docs/trivialApp.md
-include docs/simple_log_messaging.html
-include docs/__init__.py
-include genData.py
-include __init__.py
-include listeningPort.py
-include logCmd.py
-include logCollector.py
-include logComponents.py
-include logConfig.py
-include logFilterApp.py
-include logFilter.py
-include loggingClientTask.py
-include loggingLoopApp.py
-include loggingSpeedTest.py
-include testLogging.py
-include utils.py
-include wc.sh
-include .coveragerc
-include .logcollectorrc
-include Makefile
-include MANIFEST.in
-include dist/simple_log_messaging-1.0.0.tar.gz
-include runTests.sh
+recursive-include simple_log_messaging  *.py
+recursive-include data  *.*
+recursive-include docs  *.*
+
+
+# include . README.md
+# include . setup.cfg
+# include . backup.sh
+# include . data/logRC.conf
+# include . data/base.data
+# include . data/csv.data
+# include . data/data.data
+# include . data/happy.data
+# include . data/missing.data
+# include . data/mixed.data
+# include . data/bad3.conf
+# include . data/happy.conf
+# include . data/bad2.conf
+# include . data/bad.conf
+# include . data/bad_end.conf
+# include . data/bad_start.conf
+# include . data/csv.conf
+# include . data/dated.conf
+# include . data/end_before_start.conf
+# include . data/mixed.conf
+# include . data/no_end1.conf
+# include . data/no_end.conf
+# include . data/no_start1.conf
+# include . data/no_start.conf
+# include . docs/css/article.css
+# include . docs/css/blue-question.png
+# include . docs/css/bullet_child.gif
+# include . docs/css/bullet.gif
+# include . docs/css/error.png
+# include . docs/css/html-table-of-contents.css
+# include . docs/css/httpremix.png
+# include . docs/css/info.png
+# include . docs/css/toc.css
+# include . docs/css/warning.png
+# include . docs/css/__init__.py
+# include . docs/javascript/toc.js
+# include . docs/javascript/toc.css
+# include . docs/javascript/__init__.py
+# include . docs/images/AsyncClientServer1.svg
+# include . docs/images/AsyncClientServer1.png
+# include . docs/images/RaspPiToDesktop.svg
+# include . docs/images/flowRoot10835.png
+# include . docs/images/RaspPiToDesktop.png
+# include . docs/images/__init__.py
+# include . docs/LoggingTips.html
+# include . docs/trivialApp.md
+# include . docs/simple_log_messaging.html
+# include . docs/__init__.py
+# include . wc.sh
+# include . Makefile
+# include . MANIFEST.in
+# include . runTests.sh
+# include simple_log_messaging genData.py
+# include simple_log_messaging setup.py
+# include simple_log_messaging apiLoggerInit.py
+# include simple_log_messaging __init__.py
+# include simple_log_messaging listeningPort.py
+# include simple_log_messaging logCmd.py
+# include simple_log_messaging logCollector.py
+# include simple_log_messaging logComponents.py
+# include simple_log_messaging logConfig.py
+# include simple_log_messaging logFilterApp.py
+# include simple_log_messaging logFilter.py
+# include simple_log_messaging loggingClientTask.py
+# include simple_log_messaging loggingLoopApp.py
+# include simple_log_messaging loggingSpeedTest.py
+# include simple_log_messaging testLogging.py
+# include simple_log_messaging utils.py
+# include simple_log_messaging .coveragerc
+# include simple_log_messaging .logcollectorrc

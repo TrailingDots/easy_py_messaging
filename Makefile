@@ -43,12 +43,12 @@ lsfiles:
 backup:
 	$(PROJECT)/backup.sh
 
+# find . -name typescript -delete
 clean:
 	$(PYTHON) setup.py clean
 	$(RM) -rf build/ dist/ $(PROJECT).egg-info/
 	find . -name '*.pyc' -delete
 	find . -name '*.pyo' -delete
-	find . -name typescript -delete
 	sudo $(RM) -rf /usr/lib/python2.7/site-packages/$(PROJECT)
 	sudo $(RM) -rf /usr/lib/python2.7/site-packages/$(PROJECT)-*
 	-for APP in logCollector listeningPort logCmd logFilterApp; do \
