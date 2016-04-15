@@ -1,4 +1,3 @@
-include *.txt
 include *.md
 include *.sh
 include *.cfg
@@ -8,6 +7,6 @@ include COPYING
 include COPYING.LESSER
 recursive-include simple_log_messaging  *.py
 recursive-include simple_log_messaging/test *.py
-recursive-include data  *.*
-recursive-include docs  *.*
+recursive-include simple_log_messaging/data  *.*
+recursive-include simple_log_messaging/docs  *.*
 
