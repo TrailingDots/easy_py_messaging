@@ -1,11 +1,14 @@
 include *.md
-include *.sh
+include runTests.sh
+include MANIFEST.in
 include *.cfg
 include *.py
 include Makefile
 include COPYING
 include COPYING.LESSER
 recursive-include simple_log_messaging  *.py
+recursive-include simple_log_messaging  .coveragerc
+recursive-include simple_log_messaging  .logcollectorrc
 recursive-include simple_log_messaging/test *.py
 recursive-include simple_log_messaging/data  *.*
 recursive-include simple_log_messaging/docs  *.*

@@ -16,11 +16,14 @@ setup_args = dict(
         name=project,
         package_dir={'': './'},
         version='1.0.0',
-        description='A simple ZeroMQ based logger for distributed Raspberry Pi systems',
+        description='A simple python-based ZeroMQ based logger for distributed Raspberry Pi systems',
         url='http://github.com/trailingdots/' + project,
         author='Trailing Dots',
+        keywords='ZeroMQ',
         author_email='TrailingDots@gmail.com',
         install_requires=['pyzmq', 'zmq'],
+        namespace_packages=[],
+        zip_safe=False,
         package_data={
             '': ['*.conf', '*.data', '*.md', '*.html', '*.css'],
         },
@@ -29,10 +32,10 @@ setup_args = dict(
         py_modules=['simple_log_messaging'],
         entry_points= {
             'console_scripts': [
-                'logCollector=simple_log_messaging.logCollector:main',
-                'logFilterApp=simple_log_messaging.logFilterApp:main',
-                'logCmd=simple_log_messaging.logCmd:main',
-                'listeningPort=simple_log_messaging.listeningPort:main'
+                'logCollector=simple_log_messaging.simple_log_messaging.logCollector:main',
+                'logFilterApp=simple_log_messaging.simple_log_messaging.logFilterApp:main',
+                'logCmd=simple_log_messaging.simple_log_messaging.logCmd:main',
+                'listeningPort=simple_log_messaging.simple_log_messaging.listeningPort:main'
             ]
         },
         classifiers = [
