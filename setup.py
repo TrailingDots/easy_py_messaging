@@ -31,10 +31,10 @@ setup_args = dict(
         include_package_data=True,
         py_modules=['simple_log_messaging'],
         scripts=[
-            'logCollector=simple_log_messaging.simple_log_messaging.bin.logCollector',
-            'logFilterApp=simple_log_messaging.simple_log_messaging.bin.logFilterApp',
-            'logCmd=simple_log_messaging.simple_log_messaging.logCmd.bin:logCmd',
-            'listeningPort=simple_log_messaging.simple_log_messaging.bin.listeningPort'
+            'logCollector=simple_log_messaging.bin.logCollector',
+            'logFilterApp=simple_log_messaging.bin.logFilterApp',
+            'logCmd=simple_log_messaging.logCmd.bin:logCmd',
+            'listeningPort=simple_log_messaging.bin.listeningPort'
         ],
         classifiers = [
             'Development Status :: 3 - Alpha',
