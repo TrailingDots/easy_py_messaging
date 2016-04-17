@@ -11,7 +11,7 @@ RM=/usr/bin/rm
 CP=/usr/bin/cp
 
 all: clean
-	$(PYTHON) setup.py sdist
+	$(PYTHON) setup.py sdist --formats=zip,gztar 
 
 help:
 	@echo "make - Build source distributable package. Test locally"
