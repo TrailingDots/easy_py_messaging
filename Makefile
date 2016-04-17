@@ -43,7 +43,6 @@ lsfiles:
 backup:
 	$(PROJECT)/backup.sh
 
-# find . -name typescript -delete
 clean:
 	$(PYTHON) setup.py clean
 	$(RM) -rf build/ dist/ $(PROJECT).egg-info/

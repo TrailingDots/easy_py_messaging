@@ -30,14 +30,12 @@ setup_args = dict(
         packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
         include_package_data=True,
         py_modules=['simple_log_messaging'],
-        entry_points= {
-            'console_scripts': [
-                'logCollector=simple_log_messaging.simple_log_messaging.bin.logCollector:main',
-                'logFilterApp=simple_log_messaging.simple_log_messaging.bin.logFilterApp:main',
-                'logCmd=simple_log_messaging.simple_log_messaging.logCmd.bin:main',
-                'listeningPort=simple_log_messaging.simple_log_messaging.bin.listeningPortbin:main'
-            ]
-        },
+        scripts=[
+            'logCollector=simple_log_messaging.bin.logCollector:main',
+            'logFilterApp=simple_log_messaging.bin.logFilterApp:main',
+            'logCmd=simple_log_messaging.logCmd.bin:main',
+            'listeningPort=simple_log_messaging.bin.listeningPortbin:main'
+        ],
         classifiers = [
             'Development Status :: 3 - Alpha',
             'Intended Audience :: Developers',
@@ -48,5 +46,7 @@ setup_args = dict(
             'Programming Language :: Python :: 2.7',
         ],
 )
+
+print 'packages:%s' % str(setup_args['packages'])
 
 setup(**setup_args)
