@@ -22,6 +22,8 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 def main():
+    print 'in logCmd.py'
+    import pdb; pdb.set_trace()
     logging.basicConfig(level=logging.NOTSET)   # Log everything
     client = loggingClientTask.LoggingClientClass(platform.node())
     client.start()
@@ -29,5 +31,3 @@ def main():
     msg = ' '.join(sys.argv[1:])
     client.info(msg)
 
-if __name__ == '__main__':
-    main()

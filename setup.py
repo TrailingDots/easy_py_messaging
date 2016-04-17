@@ -32,10 +32,10 @@ setup_args = dict(
         py_modules=['simple_log_messaging'],
         entry_points= {
             'console_scripts': [
-                'logCollector=simple_log_messaging.simple_log_messaging.logCollector:main',
-                'logFilterApp=simple_log_messaging.simple_log_messaging.logFilterApp:main',
-                'logCmd=simple_log_messaging.simple_log_messaging.logCmd:main',
-                'listeningPort=simple_log_messaging.simple_log_messaging.listeningPort:main'
+                'logCollector=simple_log_messaging.simple_log_messaging.bin.logCollector:main',
+                'logFilterApp=simple_log_messaging.simple_log_messaging.bin.logFilterApp:main',
+                'logCmd=simple_log_messaging.simple_log_messaging.logCmd.bin:main',
+                'listeningPort=simple_log_messaging.simple_log_messaging.bin.listeningPortbin:main'
             ]
         },
         classifiers = [
