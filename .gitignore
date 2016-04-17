@@ -4,18 +4,14 @@
 *.gz
 *.log
 *.bad
-*.works
-junk/
 logs/
-*.bomb
-*.older
 htmlcov/
 *.older
 PYLINT
 *cover*
 .coverage
 *coverage*
-src/test/.coverage_html
-src/test/.coverage
+test/.coverage_html
+test/.coverage
 *typescript*
 

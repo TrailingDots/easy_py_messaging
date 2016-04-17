@@ -47,6 +47,7 @@ backup:
 clean:
 	$(PYTHON) setup.py clean
 	$(RM) -rf build/ dist/ $(PROJECT).egg-info/
+	find . -name logs.log -delete
 	find . -name '*.pyc' -delete
 	find . -name '*.pyo' -delete
 	sudo $(RM) -rf /usr/lib/python2.7/site-packages/$(PROJECT)

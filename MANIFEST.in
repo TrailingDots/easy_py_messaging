@@ -6,6 +6,7 @@ include *.py
 include Makefile
 include COPYING
 include COPYING.LESSER
+recursive-include simple_log_messaging/bin *
 recursive-include simple_log_messaging  *.py
 recursive-include simple_log_messaging  .coveragerc
 recursive-include simple_log_messaging  .logcollectorrc
