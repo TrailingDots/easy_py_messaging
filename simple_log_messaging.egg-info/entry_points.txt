@@ -1,4 +1,6 @@
 [console_scripts]
-logCmd = simple_log_messaging.bin.logCmd
-logCollector = simple_log_messaging.bin.logCollector
+listeningPort = simple_log_messaging.bin.listeningPort:main
+logCmd = simple_log_messaging.bin.logCmd:main
+logCollector = simple_log_messaging.bin.logCollector:main
+logFilterApp = simple_log_messaging.bin.logFilterApp:main
 

@@ -41,8 +41,10 @@ setup_args = dict(
         py_modules=['simple_log_messaging'],
         entry_points={
             'console_scripts': [
-                'logCollector = simple_log_messaging.bin.logCollector',
-                'logCmd = simple_log_messaging.bin.logCmd',
+                'logCollector=simple_log_messaging.bin.logCollector:main',
+                'logCmd=simple_log_messaging.bin.logCmd:main',
+                'listeningPort=simple_log_messaging.bin.listeningPort:main',
+                'logFilterApp=simple_log_messaging.bin.logFilterApp:main',
             ]
         },
         classifiers = [
@@ -55,7 +57,7 @@ setup_args = dict(
             'Programming Language :: Python :: 2.7',
         ],
 )
-
+setup_args['packages'].append('simple_log_messaging.bin')
 print 'packages:%s' % str(setup_args['packages'])
 
 setup(**setup_args)
