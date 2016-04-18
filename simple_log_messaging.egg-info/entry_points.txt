@@ -1,0 +1,4 @@
+[console_scripts]
+logCmd = simple_log_messaging.bin.logCmd
+logCollector = simple_log_messaging.bin.logCollector
+
