@@ -2,8 +2,8 @@ Metadata-Version: 1.1
 Name: simple-log-messaging
 Version: 1.0.0
 Summary: A simple python-based ZeroMQ based logger for distributed Raspberry Pi systems
-Home-page: UNKNOWN
-Author: UNKNOWN
+Home-page: http://github.com/trailingdots/simple_log_messaging
+Author: Trailing Dots
 Author-email: TrailingDots@gmail.com
 License: UNKNOWN
 Description: UNKNOWN
