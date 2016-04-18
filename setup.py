@@ -12,6 +12,15 @@ here = path.abspath(path.dirname(__file__))
 
 project = 'simple_log_messaging'
 
+"""
+scripts=[
+    'simple_log_messaging/bin/logCollector',
+    'simple_log_messaging/bin/logFilterApp',
+    'simple_log_messaging/bin/logCmd',
+    'simple_log_messaging/bin/listeningPort'
+],
+"""
+
 setup_args = dict(
         name=project,
         package_dir={'': './'},
@@ -30,12 +39,12 @@ setup_args = dict(
         packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
         include_package_data=True,
         py_modules=['simple_log_messaging'],
-        scripts=[
-            'simple_log_messaging/bin/logCollector',
-            'simple_log_messaging/bin/logFilterApp',
-            'simple_log_messaging/bin/logCmd',
-            'simple_log_messaging/bin/listeningPort'
-        ],
+        entry_points={
+            'console_scripts': [
+                'logCollector = simple_log_messaging.bin.logCollector',
+                'logCmd = simple_log_messaging.bin.logCmd',
+            ]
+        },
         classifiers = [
             'Development Status :: 3 - Alpha',
             'Intended Audience :: Developers',

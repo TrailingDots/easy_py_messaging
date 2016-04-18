@@ -4,6 +4,7 @@ PROJECT=simple_log_messaging
 BUILDDIR=$(CURDIR)/$(PROJECT)
 LIBDIR=$(CURDIR)/$(PROJECT)/$(PROJECT)
 TOOLSDIR=$(CURDIR)/$(PROJECT)/$(PROJECT)
+LOCALDIR=$(HOME)/.local
 
 RM=/usr/bin/rm
 
@@ -43,6 +44,8 @@ lsfiles:
 backup:
 	$(PROJECT)/backup.sh
 
+# Due to difficulties in creating a package, kludge cleaning out the
+# code to track difficulties and installing in various ways.
 clean:
 	$(PYTHON) setup.py clean
 	$(RM) -rf build/ dist/ $(PROJECT).egg-info/
@@ -51,9 +54,12 @@ clean:
 	find . -name '*.pyo' -delete
 	sudo $(RM) -rf /usr/lib/python2.7/site-packages/$(PROJECT)
 	sudo $(RM) -rf /usr/lib/python2.7/site-packages/$(PROJECT)-*
+	$(RM) -rf $(LOCALDIR)/lib/python2.7/site-packages/$(PROJECT)
+	$(RM) -rf $(LOCALDIR)/lib/python2.7/site-packages/$(PROJECT)-*
 	-for APP in logCollector listeningPort logCmd logFilterApp; do \
-		$(RM) -f /home/cecilm/anaconda/bin/$$APP || true; \
+		$(RM) -f $(HOME)/anaconda/bin/$$APP || true; \
 		sudo $(RM) -f /usr/bin/$$APP || true; \
+		$(RM) $(LOCALDIR)/bin/$$APP; \
 	done
 	$(RM) -rf /home/cecilm/anaconda/lib/python2.7/site-packages/$(PROJECT)-1.0.0-py2.7.egg
 
