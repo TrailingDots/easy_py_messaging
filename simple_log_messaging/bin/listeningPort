@@ -17,6 +17,10 @@ except:
     top_path = os_path.abspath(os_path.join(lib_path, ".."))
     sys.path.insert(0, lib_path)
     sys.path.insert(0, top_path)
+
+    slm_path = os_path.abspath(os_path.join(this_dir, '../../simple_log_messaging'))
+    sys.path.insert(0, slm_path)
+
     import simple_log_messaging #@UnusedImport
 
 ########################################################################

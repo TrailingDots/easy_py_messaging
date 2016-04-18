@@ -13,10 +13,16 @@ try:
 except:
     ### must be in dev mode then    
     this_dir = os_path.dirname(__file__)
+
     lib_path = os_path.abspath(os_path.join(this_dir, ".."))
-    top_path = os_path.abspath(os_path.join(lib_path, ".."))
     sys.path.insert(0, lib_path)
+
+    top_path = os_path.abspath(os_path.join(lib_path, ".."))
     sys.path.insert(0, top_path)
+
+    slm_path = os_path.abspath(os_path.join(this_dir, '../../simple_log_messaging'))
+    sys.path.insert(0, slm_path)
+
     import simple_log_messaging 
 
 ########################################################################
