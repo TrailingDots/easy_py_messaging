@@ -20,6 +20,7 @@ setup.py
 ./simple_log_messaging/loggingSpeedTest.py
 ./simple_log_messaging/utils.py
 ./simple_log_messaging.egg-info/SOURCES.txt
+./simple_log_messaging/bin/__init__.py
 ./simple_log_messaging/docs/__init__.py
 ./simple_log_messaging/docs/css/__init__.py
 ./simple_log_messaging/docs/images/__init__.py
@@ -39,6 +40,7 @@ simple_log_messaging/loggingClientTask.py
 simple_log_messaging/loggingLoopApp.py
 simple_log_messaging/loggingSpeedTest.py
 simple_log_messaging/utils.py
+simple_log_messaging/bin/__init__.py
 simple_log_messaging/bin/listeningPort
 simple_log_messaging/bin/logCmd
 simple_log_messaging/bin/logCollector
