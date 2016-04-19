@@ -147,7 +147,7 @@ def load_config_file(config_filename):
 
 
 def usage():
-    print 'logCollector [--out-file=logFilename] [-a] [-t]'
+    print 'logCollector [--log-file=logFilename] [-a] [-t]'
     print '     logFilename = name of file to place logs'
     print '     -a  Logs will be appende dto logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
@@ -173,7 +173,7 @@ def main():
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:], 'ahnqt',
-            ['out-file=',   # output file instead of stdiout
+            ['log-file=',   # output file instead of stdiout
              'port=',       # Port to listen for msgs. Default in logConfig.
              'config=',     # Config filename to load.
              'noisy',       # Noisy - messages printed to console as well as on a file.
@@ -222,7 +222,7 @@ def main():
         elif opt in ['-t', '--trunc']:
             config_dict['append'] = False
             continue
-        elif opt in ['--out-file']:
+        elif opt in ['--log-file']:
             config_dict['out_file'] = arg
             continue
         elif opt in ['--config']:

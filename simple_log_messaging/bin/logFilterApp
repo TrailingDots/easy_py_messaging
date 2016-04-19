@@ -33,7 +33,7 @@ DEFAULTS={
 
 def main():
     try:
-        import logFilterApp 
+        import simple_log_messaging.logFilterApp as logFilterApp
         
         logFilterApp.main()
 

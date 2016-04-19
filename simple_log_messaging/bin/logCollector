@@ -33,7 +33,7 @@ DEFAULTS={
 
 def main():
     try:
-        import logCollector 
+        import simple_log_messaging.logCollector  as logCollector
         
         logCollector.main()
 

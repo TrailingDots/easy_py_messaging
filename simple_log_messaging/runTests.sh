@@ -29,6 +29,14 @@
 #set -x
 #PS4='$LINENO: '
 
+# Start a timer for this entire script.
+SECONDS = 0
+
+
+# Future versions may use python3
+alias python=/usr/bin/python2.7
+export PYTHON=/usr/bin/python2.7
+
 # function to echo command and then execute it.
 # Do NOT try to start backgrounded commands with this function.
 CMD () {
@@ -114,7 +122,7 @@ ECHO "LIB_DIR=$LIB_DIR"
 export TOOLS_DIR=$BASE_DIR
 ECHO "TOOLS_DIR=$TOOLS_DIR"
 
-export TEST_DIR=$BASE_DIR
+export TEST_DIR=$BASE_DIR/test
 ECHO "TEST_DIR=$TEST_DIR"
 
 export DATA_DIR=$BASE_DIR/data
@@ -153,7 +161,6 @@ ECHO Run a coverage report on unit test
 #
 export COVERAGE=1 
 CMD "coverage erase "
-CMD_PASS "coverage run --branch --parallel-mode --source=. testLogging.py"
 
 # Generate a "standard" log of data frequently used in testing.
 export DATA_LOG=$DATA_DIR/data.data
@@ -183,7 +190,7 @@ CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py bogu
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py  "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingLoopApp.py 10   "
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/testLogging.py "
+CMD_PASS "coverage run --branch --parallel-mode $TEST_DIR/testLogging.py "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA --happy   "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA --missing "
@@ -248,23 +255,23 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --confi
 ECHO No infile. Reads from stdin
 cat happy.data | coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py 
 
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/dev/null --in-file=$DATA_LOG --JSON "
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start=1970-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start=1970-01-01T00:00:00.000 --end=2020-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start=1970-01-01T00:00:00.000 --in-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --start=1970-01-01T00:00:00.000 --end=2020-01-01T00:00:00.000 --in-file=/dev/null --in-file=$DATA_LOG --JSON "
 ECHO 
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end=2020-01-01T00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end=2020-01-01T00:00:00.000 --in-file=/dev/null --in-file=$DATA_LOG --JSON "
 ECHO Syntax error on end date
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end=2017-01-01:00:00:00.000 --out-file=/dev/null --in-file=$DATA_LOG --JSON "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --end=2017-01-01:00:00:00.000 --in-file=/dev/null --in-file=$DATA_LOG --JSON "
 ECHO Permission denied on output file.
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/ --in-file=$DATA_LOG --JSON "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/ --out-file=$DATA_LOG --JSON "
 ECHO Permission denied on input file.
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/dev/null --in-file=/var/log/messages --JSON "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --in-file=/var/log/messages --JSON "
 
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/dev/null --in-file=$DATA_LOG --CSV "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --in-file=$DATA_LOG --CSV "
 ECHO Permission denied on output file.
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/ --in-file=$DATA_LOG --CSV "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/ --out-file=$DATA_LOG --CSV "
 ECHO Permission denied on input file.
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --out-file=/dev/null --in-file=/var/log/messages --CSV "
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --in-file=/var/log/messages --CSV "
 
 ECHO Filter on dates as well.
 ECHO These test depend on the dates as set in ./test/getData.py and the $DATA_LOG file
@@ -302,7 +309,7 @@ iszero=$?
 if [ $iszero -eq 1 ]
 then
     echo '==============================================================================='
-    echo logFilterApp with in-file and out-file should have produced output, but did not.
+    echo logFilterApp with in-file and in-file should have produced output, but did not.
     echo '==============================================================================='
 fi
 rm $TMP     # Clean up tmp file.
@@ -316,7 +323,7 @@ iszero=$?
 if [ $iszero -eq 1 ]
 then
     echo '==============================================================================='
-    echo logFilterApp with in-file and out-file should have produced output, but did not.
+    echo logFilterApp with in-file and in-file should have produced output, but did not.
     echo '==============================================================================='
 fi
 CMD "rm $TMP"     # Clean up tmp file.
@@ -326,7 +333,7 @@ CMD "kill -HUP $COL_PID"
 
 ECHO Test various command line options for the logCollector
 ECHO Set log file to ./abc.log
-python $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log_file=$DATA_DIR/abc.log --trunc &
+$PYTHON $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log-file=$DATA_DIR/abc.log --trunc &
 COL_PID=$! 
 CMD_PASS "$LIB_DIR/logCmd.py Testing a new log config option." 
 kill -INT $COL_PID
@@ -343,13 +350,13 @@ ECHO  " Create a logCollector config file in $TMP_CONF "
 cat >$TMP_CONF <<EOF
 {
     "append":   True,
-    "log_file": '$TMP_LOG',
+    "log-file": '$TMP_LOG',
     "noisy":    False,
     "port":     5570,
 }
 EOF
 
-python $LIB_DIR/logCollector.py --config=$TMP_CONF &
+$PYTHON $LIB_DIR/logCollector.py --config=$TMP_CONF &
 COL_PID=$! 
 CMD "sleep 1"   # Let the collector get started.
 CMD_PASS "$LIB_DIR/logCmd.py Testing log config in $TMP_CONF " 
@@ -392,3 +399,7 @@ echo Expected to pass but failed: $EXPECTED_PASS_BUT_FAIL
 echo Expected to fail but passed: $EXPECTED_FAIL_BUT_PASS
 echo
 echo =================================================
+
+duration=$SECONDS
+echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed."
+

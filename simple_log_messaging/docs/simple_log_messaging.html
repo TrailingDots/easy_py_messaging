@@ -284,7 +284,18 @@
 
         <p>If there are any problems, consult the Troubleshooting section.</p>
 
+        <p>Each of the following commands may require a <code>sudo</code>
+        in front of the command to allow root to install in secure
+        locations.</p>
+
+        <p>If the results of a <code>pip</code> command results in
+        "Requirements already satisfied...", upgrade to the latest version by
+        supplying the <code>--upgrade</code> switch as in: <code>pip install
+        --upgrade cython</code> .
+
         <ol>
+
+            <li>Install cython: <code>pip install cython</code> .</li>
 
             <li>Install the <a href="http://zeromq.org/area:download#toc5">ZMQ C libraries</a>.
             Alternatively, a download of binaries should work equally well. <a href="zeromq.org">ZeroMQ</a> has detailed procedures for installation if necessary.</li>
@@ -557,6 +568,20 @@ app uses the direction only from processes to the loggerControler.</p>
         TBD - installation
         Port issues.
         Permission denied.
+
+        <h2>Undefined symbol: zmq_msg_gets</h2>
+
+        <p>When starting logCollector, logCmd, ..., a bomb ending in
+        <code>ImportError: ... undefined symbol: zmq_msg_gets</code>
+
+        <p><code>sudo python</code> and <code>python</code> could be
+        different python versions due to $PATH. Run this:<p>
+
+        <pre>python -c 'import zmq; print(zmq)
+        sudo python -c 'import zmq; print(zmq)
+        </pre>
+
+        <p>If the <code>import zmq</code> fails, 
 
         <h1>License</h1>
 

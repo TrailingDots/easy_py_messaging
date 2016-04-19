@@ -1,13 +1,19 @@
 # .coveagerc to control coverage.py
 [run]
-omit="../lib/logCollector.py ../junk genData.py"
+omit=
+    ../lib/logCollector.py
+    /usr/lib/python2.7/*
+    /usr/local/lib/python2.7/*
 
 branch = True
 Parallel = True
 
 [report]
 ignore_errors = True
-omit="../lib/logCollector.py ../lib/convDate.py time1.py genData.py"
+omit=
+    ../lib/logCollector.py
+    genData.py
+    /usr/lib/python2.7/*
 
 [html]
 directory = coverage_html

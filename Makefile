@@ -1,10 +1,12 @@
-PYTHON=`which python`
 DESTDIR=/
 PROJECT=simple_log_messaging
 BUILDDIR=$(CURDIR)/$(PROJECT)
 LIBDIR=$(CURDIR)/$(PROJECT)/$(PROJECT)
 TOOLSDIR=$(CURDIR)/$(PROJECT)/$(PROJECT)
 LOCALDIR=$(HOME)/.local
+
+# Future versions may use python3
+PYTHON=/usr/bin/python2.7
 
 RM=/usr/bin/rm
 

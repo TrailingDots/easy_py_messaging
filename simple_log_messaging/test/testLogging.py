@@ -7,13 +7,29 @@ import subprocess
 import datetime
 import logging
 import time
+
+abs_file = os.path.abspath(__file__)
+abs_dir = os.path.dirname(abs_file)
+
+sys.path.append(abs_dir + '/..')
+sys.path.append(abs_dir + '/../../')
+
 from simple_log_messaging import apiLoggerInit
 from simple_log_messaging.utils import bcolors
 from simple_log_messaging import logFilter
 from simple_log_messaging import utils
+from simple_log_messaging import logCollector
+from simple_log_messaging import loggingSpeedTest
+from simple_log_messaging import loggingClientTask
 import tempfile
 import json
 
+def find_logCollector():
+    """
+    Find the location of the logCollector in order
+    to start it.
+    """
+    pass
 
 # Single test example:
 #    python -n unittest testLogging.RunTests.testNaming
@@ -26,8 +42,8 @@ class RunTests(unittest.TestCase):
         Spawn the server and client loggers
         in their own separate procsses.
         """
-        abs_path_server = os.path.abspath('./logCollector.py')
-        abs_path_app = os.path.abspath('./loggingClientTask.py')
+        abs_path_server = os.path.abspath(logCollector.__file__)
+        abs_path_app = os.path.abspath(loggingClientTask.__file__)
 
         log_filename = os.path.abspath('./logs.log')
         print '***** log_filename:%s' % log_filename
@@ -40,8 +56,7 @@ class RunTests(unittest.TestCase):
         print 'starting collector'
         argv_collector = ['python',
                            abs_path_server,
-                           '--log-file',
-                           log_filename,
+                           '--log-file', log_filename,
                            '-t']
         proc_collector = subprocess.Popen(argv_collector)
         print ' '.join(argv_collector)
@@ -98,8 +113,8 @@ class RunTests(unittest.TestCase):
 
     def testLoggingSpeed(self):
         """How many messages per second?"""
-        abs_path_server = os.path.abspath('./logCollector.py')
-        abs_path_app = os.path.abspath('./loggingSpeedTest.py')
+        abs_path_server = os.path.abspath(logCollector.__file__)
+        abs_path_app = os.path.abspath(loggingSpeedTest.__file__)
 
         log_filename = os.path.abspath('./SpeedLogs.log')
         print '***** log_filename:%s' % log_filename
@@ -112,7 +127,7 @@ class RunTests(unittest.TestCase):
         print 'starting collector'
         argv_collector = ['python',
                           abs_path_server,
-                          '--log_file',
+                          '--log-file',
                           log_filename,
                           '-t']
         proc_collector = subprocess.Popen(argv_collector)
