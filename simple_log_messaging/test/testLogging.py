@@ -24,13 +24,6 @@ from simple_log_messaging import loggingClientTask
 import tempfile
 import json
 
-def find_logCollector():
-    """
-    Find the location of the logCollector in order
-    to start it.
-    """
-    pass
-
 # Single test example:
 #    python -n unittest testLogging.RunTests.testNaming
 
