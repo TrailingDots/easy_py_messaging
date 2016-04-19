@@ -78,6 +78,10 @@ aside {
     color: blue;
 }
 
+code.indent {
+    margin-left: 50px;
+}
+
 h1 {
 	font-family: sans-serif;
     text-decoration: underline;

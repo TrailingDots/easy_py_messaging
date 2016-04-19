@@ -151,6 +151,7 @@ def usage():
     print '     logFilename = name of file to place logs'
     print '     -a  Logs will be appende dto logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
+    print ''
     print '-a and -t apply only when --file specifics a valid filename.'
     print '--noisy or -n : Echo message to console. Useful for debugging.'
     print 'If logFilename does not exist, it will be created'

@@ -16,20 +16,40 @@
 
         <h2>Benefits of Simple Log Messaging</h2>
 
-        <p>Using the simple log messaging system allows a process to
-        </p>
+        <center>
+        <div style="width:300px;border:1px solid #cecece; padding:10px;">
+            <blockquote>It turns out that bulding reusable messaging systems
+            is really difficult, which is why few free and open source
+            (FOSS) projects ever get tried, and why commercial
+            messaging products are complex, inflexible and brittle. ...
+            It takes weeks to learn to use it, and months to create
+            stable architectures that don't crash when things get
+            hairy.</blockquote>
+            <div class="credit" style="text-align:center;">
+                <cite><a href="http://zguide.zeromq.org/page:all#Why-We-Needed-ZeroMQ">Pieter Hintjens in ZeroMQ</a></cite>
+            </div>
+        </div>
+        </center>
 
-        <p>By using the industry standard ZeroMQ messaging library, logging
-        becomes significantly enhanced from the existing python logging module.
-        The ZeroMQ messaging system works well within a single process, between
-        mulitple processes within a single system and, most importantly, with
-        distributed nodes over a network.</p>
+        <p>This package strives to provide a simple, useful package for
+        small projects. The learning curve should require only a minimal
+        amount of python coding to produce acceptable results.</p>
+
+        <p>This simple log messaging package offers a first installment for a
+        succession of future package specifically targeting implementors of
+        Raspberry Pi, Arduino, etc. boards: a name server and a control
+        service. Managing multiple nodes should be easy.</p> 
+
+        <p>By writing a wrapper on the industry standard ZeroMQ messaging
+        library, logging gains significant enhancements from the existing
+        python logging module. The ZeroMQ messaging system works well within a
+        single process, between mulitple processes within a single system and,
+        most importantly, with distributed nodes over a network.</p>
 
         <p>This code provides a solution to centralizing logs from multiple
         nodes.  With the inevitable rise of distributed systems 
         everywhere, a centralized log offers an in-depth view for
         problem solving.</p>
-
 
         <p>Developers face a quandry when faced with inevitable problems.
         Developers can greatly simplify their efforts in understanding
@@ -102,7 +122,7 @@
         ZeroMQ!</p>
 
 
-        <h2>Benefits of Logging</h2>
+        <h1>Benefits of Logging</h1>
 
         <p>Benefits of logging frequently become vastly underestimated
         in the course of developing and debugging systems.</p>
@@ -144,8 +164,6 @@
         Informed developers implement user oriented logging as a natural
         course of action.</p>
 
-        <h1>The Necessity of Logging</h1>
-
         <p>Observing behavior in a distributed system presents a problem. Do
         pumps operate on schedule? How about maintaining water levels?  Does
         the lighting operate as scheduled? Does the temperature remain within
@@ -174,9 +192,9 @@
 
         <h2>Still Using Print Statements?</h2>
 
-        <p>Many noodies seem satisfied with the ubiquitous "print"
-        statements. Their console output becomes cluttered with
-        tons of disorganized, unfiltered, opaque output.</p>
+        <p>Many noobies seem satisfied with the ubiquitous "print" statements.
+        Their console output becomes cluttered with tons of disorganized,
+        unfiltered, opaque output.</p>
 
         <p>The lowly "print" statements cannot work outside the narrow confines
         of brief ad-hoc debugging. Print statements for debugging clutter both
@@ -293,9 +311,7 @@
         supplying the <code>--upgrade</code> switch as in: <code>pip install
         --upgrade cython</code> .
 
-        <ol>
-
-            <li>Install cython: <code>pip install cython</code> .</li>
+        <ul>
 
             <li>Install the <a href="http://zeromq.org/area:download#toc5">ZMQ C libraries</a>.
             Alternatively, a download of binaries should work equally well. <a href="zeromq.org">ZeroMQ</a> has detailed procedures for installation if necessary.</li>
@@ -304,33 +320,113 @@
             href="https://github.com/zeromq/pyzmq.git">PyZMQ</a>,
             the python bindings to ZeroMQ.</li>
 
-            <li><code>cd</code> to a directory to work from.</li>
+        </ul>
 
-            <li>Install the simple log messagng application: <code>pip install
-                git+git://github.com/TrailingDots/simple_log_messaging.git</code>
-            . If you get a "permission denied" then you need to prefix the
-            previous command with <code>sudo</code> to install with root
-            access.</li>
+        <p>ZeroMQ should exist and python code should work with ZeroMQ,
+        Test this by:</p>
 
-            
-            <li>Ensure the logCollector has been installed: <code>which logCollector</code> . If you get an error containing something like "<code>no logCollector in ...</code>, refer to the troubleshooting section.</li>
+        <pre >
+        python
+        import zmq</pre>
 
-            <li>Start the log Collector: <code>logCollector
-                --out-file=/tmp/xyz.log</code> . This will create logs in
-            /tmp/xyz.log.</li>
+        <p>If errors get emitted, please refer to the web for
+        workarounds.</p>
 
-            <li>In another terminal window, send a log: <code>logCmd Simple
-                test</code></li>
+        <p>Continue to install the simple_log_messaging code:</p>
 
-            <li>Examine the log in /tmp/xyz.log:<br>
-            <code>2016-04-14T13:49:19.851	INFO	Simple
-            test,host=brass</code></br> The timestamp reflects only time
-        this page was created and the host reflects your current
-        hostname.</li>
 
-            <li>Congratulations! You have a working system!</li>
+        <p><code>cd</code> to a directory to work from.</p>
 
-        </ol>
+        <p>Install the simple log messagng application: <br>
+        <code class="indent">git clone
+            https://github.com/TrailingDots/simple_log_messaging.git</code><br/>
+        If you get "permission denied", then you need to prefix the
+        previous command with <code>sudo</code> to install with root
+        access.</p>
+
+        <p>Move into the just-downloaded code:<br/>
+        <code class=indent>cd
+            simple_log_messaging</code></p>
+
+        <p>Finish the installation with a final install:<br/> <code>python
+            setup.py install</code> Again, if "permission denied", prefix with
+        "sudo"</p>
+        
+        <p>Ensure the logCollector has been installed:<br/>
+        <code class=indent>which
+            logCollector</code><br/>If you get an error containing something
+        like "<code>no logCollector in ...</code>, refer to the troubleshooting
+        section.</p>
+
+        <p>Start the log Collector: <br/>
+        <code class=indent>logCollector
+            --log-file=/tmp/xyz.log</code><br/>
+        This will create logs in /tmp/xyz.log.</p>
+
+        <p>In another terminal window, send a log: <br/>
+        <code class=indent>logCmd Simple
+            test</code></p>
+
+        <p>Examine the log in /tmp/xyz.log:<br/> 
+        <code class=indent>cat /tmp/xyz.log</code><br/>
+        <code class=indent>2016-04-14T13:49:19.851
+            INFO	Simple test,host=brass</code></br> The timestamp reflects
+        only the time this log was received and the host signifies your current
+        hostname.</p>
+
+        <p>Congratulations! You have a working system!</p>
+
+
+        <h1>Supplied Tools</h1>
+
+            <h2>logCollector - Collecting and saving log messages</h1>
+
+            <pre>
+logCollector --help
+logCollector: pid 18083
+logCollector [--log-file=logFilename] [-a] [-t]
+     logFilename = name of file to place logs
+     -a  Logs will be appende dto logFilename. Default
+     -t  logFilename will be truncated before writing logs.
+
+-a and -t apply only when --file specifics a valid filename.
+--noisy or -n : Echo message to console. Useful for debugging.
+If logFilename does not exist, it will be created
+
+logCollector [--help]
+     This message
+
+To toggle printing of messages received:
+    kill -USR1 <pid>
+            </pre>
+
+            <h2>logFilterApp - Assistance in log interpretation</h2>
+
+            <p>This command line utility program converts from the the standard
+            log format to either JSON or CSV. JSON remains the preferred
+            format.</p>
+
+            <h3>The Necessity of Log Analysis Applications</h3>
+
+            <p>Given a repository of logs, what is the difficulty in
+            discovering problems of a logs of several thousand entries? How
+            would you handle that mind numbing experience? Now repeat that same
+            experience over and over when necessity dictates various queries of
+            those logs.</p>
+
+            <p>Various log analysis tools exist to select and interpret log
+            files. This initial release contains an elementary analysis tool
+            that can output logs in either CSV (Comma Separated Values) or JSON
+            (JavaScript Object Notation).  CSV may conveniently load into
+            almost any spreadsheet. JSON offers convenience in loading into
+            most modern programming languages: python, NodeJS, JavaScript,
+            etc.</p>
+
+
+            <h2>logCmd - Simple logging for shell commands</h2>
+
+            <h2>loggingLoopApp - For debugging your logging configuration</h2>
+
 
         <h1>Sample Code</h1>
         
@@ -350,7 +446,7 @@
         <code>logCmd</code> also provides convenient tutorial for the
         use of the simple log messaging tools.</p>
 
-        <h1>Tips for Good Logging Techniques</h1>
+        <h1>Tips for Good Logging</h1>
 
         <p>Even in our simple Raspberry Pi hydroponic system, a bit of thought
         placed into logging concepts will absolutely serve us well. Just
@@ -518,28 +614,6 @@
 
         </ul>
 
-        <h1>The Necessity of Log Analysis Applications</h1>
-
-        <p>Given a repository of logs, what is the difficulty in discovering
-        problems of a logs of several thousand entries? How would you handle
-        that mind numbing experience? Now repeat that same experience over and
-        over when necessity dictates various queries of those logs.</p>
-
-        <p>Various kinds of log analysis tools should surely exist to effective
-        select and interpret log files. This initial release contains an
-        elementary analysis tool that can output logs in either CSV (Comma
-        Separated Values) or JSON (JavaScript Object Notation). CSV may
-        conveniently load into almost any spreadsheet. JSON offers convenience
-        in loading into most modern programming languages: python, NodeJS,
-        JavaScript, etc.</p>
-
-        <h2>logFilterApp - Assistance in Log Interpretation</h2>
-
-        <p>This command line utility program converts from the "raw" log format
-        to either CSV of JSON.
-
-
-
         <h1>Original Ideas: ZeroMQ</h1>
 
         <p>This code calls ZeroMQ, also known as 0MQ or zmq, with python
@@ -583,33 +657,6 @@ app uses the direction only from processes to the loggerControler.</p>
 
         <p>If the <code>import zmq</code> fails, 
 
-        <h1>License</h1>
-
-        <p>In the spirit of the originators of ZeroMQ, the iMatix corporation,
-        the following constitutes the license agreement:</p>
-
-        <p>The project license is specified in COPYING and COPYING.LESSER.</p>
-
-        <p>The simple log messaging app is free software; you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License (LGPL) as
-        published by the Free Software Foundation; either version 3 of the
-        License, or (at your option) any later version.</p>
-
-        <p>As a special exception, the Contributors give you permission to link
-        this library with independent modules to produce an executable,
-        regardless of the license terms of these independent modules, and to
-        copy and distribute the resulting executable under terms of your
-        choice, provided that you also meet, for each linked independent
-        module, the terms and conditions of the license of that module. An
-        independent module is a module which is not derived from or based on
-        this library.  If you modify this library, you must extend this
-        exception to your version of the library.</p>
-
-        <p>The simple log messaging app is distributed in the hope that it will
-        be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-        of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-        Lesser General Public License for more details.</p>
-
         <h1>TroubleShooting</h1>
 
         TBD
@@ -630,6 +677,34 @@ app uses the direction only from processes to the loggerControler.</p>
         href="http://zeromq.org/intro:read-the-manual"> many companies</a> as a
         basis for a wide variety of product. Highly recommended. Their website
         provides a plethora of ideas and practical advice.</p>
+
+
+        <h1>License</h1>
+
+        <p>In the spirit of the originators of ZeroMQ, the iMatix corporation,
+        the following constitutes the license agreement:</p>
+
+        <p>The project license is specified in COPYING and COPYING.LESSER.</p>
+
+        <p>The simple log messaging app is free software; you can redistribute
+        it and/or modify it under the terms of the GNU Lesser General Public
+        License (LGPL) as published by the Free Software Foundation; either
+        version 3 of the License, or (at your option) any later version.</p>
+
+        <p>As a special exception, the Contributors give you permission to link
+        this library with independent modules to produce an executable,
+        regardless of the license terms of these independent modules, and to
+        copy and distribute the resulting executable under terms of your
+        choice, provided that you also meet, for each linked independent
+        module, the terms and conditions of the license of that module. An
+        independent module is a module which is not derived from or based on
+        this library.  If you modify this library, you must extend this
+        exception to your version of the library.</p>
+
+        <p>The simple log messaging app is distributed in the hope that it will
+        be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+        of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+        Lesser General Public License for more details.</p>
 
 
         <h1>Additional Relevant material</h1>
