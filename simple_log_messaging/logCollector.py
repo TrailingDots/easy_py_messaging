@@ -149,7 +149,7 @@ def load_config_file(config_filename):
 def usage():
     print 'logCollector [--log-file=logFilename] [-a] [-t]'
     print '     logFilename = name of file to place logs'
-    print '     -a  Logs will be appende dto logFilename. Default'
+    print '     -a  Logs will be appended to logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
     print ''
     print '-a and -t apply only when --file specifics a valid filename.'
@@ -168,7 +168,6 @@ def main():
     """main function"""
     import getopt
 
-    print 'logCollector: pid %d' % os.getpid()
     atexit.register(exiting, 'Exiting logCollector')
 
     try:
@@ -257,6 +256,8 @@ def main():
     logConfig.LOG_FILENAME  = config_dict['out_file']
     logConfig.NOISY         = config_dict['noisy']
     logConfig.PORT          = config_dict['port']
+
+    print 'logCollector: pid %d, port %s' % (os.getpid(), str(logConfig.PORT))
 
     context = zmq.Context()
     server = LogCollectorTask(context, id_name)

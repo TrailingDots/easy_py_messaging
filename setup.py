@@ -38,6 +38,8 @@ setup_args = dict(
             'simple_log_messaging/bin/logCmd',
             'simple_log_messaging/bin/listeningPort',
             'simple_log_messaging/bin/logFilterApp',
+            'simple_log_messaging/bin/loggingLoopApp',
+            'simple_log_messaging/bin/loggingSpeedTest',
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',

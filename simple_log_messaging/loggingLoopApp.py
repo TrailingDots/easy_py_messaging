@@ -23,7 +23,6 @@ class ClientTask(threading.Thread):
         self.id_name = id_name
         self.iterations = int(iterations)
 
-        # WTF! Why do I have to do this????
         self.timeit = timeit
         self.zmq = zmq
         threading.Thread.__init__(self)
@@ -42,8 +41,9 @@ class ClientTask(threading.Thread):
 
         for reqs in range(self.iterations):
             this_msg = 'request #%d' % reqs
-            #print('Req #%d sent "%s"' % (reqs, this_msg))
+            print('Req #%d sent "%s"' % (reqs, this_msg))
             socket.send_string(this_msg)
+            my_sleep(1)
 
         elapsed = self.timeit.default_timer() - start_time
         print '%d logs, elapsed time: %f' % (self.iterations, elapsed)

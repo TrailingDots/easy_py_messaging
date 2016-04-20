@@ -337,7 +337,7 @@
 
         <p><code>cd</code> to a directory to work from.</p>
 
-        <p>Install the simple log messagng application: <br>
+        <p>Install the simple log messagng application: <br/>
         <code class="indent">git clone
             https://github.com/TrailingDots/simple_log_messaging.git</code><br/>
         If you get "permission denied", then you need to prefix the
@@ -370,7 +370,7 @@
         <p>Examine the log in /tmp/xyz.log:<br/> 
         <code class=indent>cat /tmp/xyz.log</code><br/>
         <code class=indent>2016-04-14T13:49:19.851
-            INFO	Simple test,host=brass</code></br> The timestamp reflects
+            INFO	Simple test,host=brass</code><br/> The timestamp reflects
         only the time this log was received and the host signifies your current
         hostname.</p>
 
@@ -379,14 +379,18 @@
 
         <h1>Supplied Tools</h1>
 
-            <h2>logCollector - Collecting and saving log messages</h1>
+            <h2>logCollector - Collecting and saving log messages</h2>
+
+            <p>The process that collects logs sent from other threads
+            and/or processes. Logs currently get saved in simple text
+            files.</p>
 
             <pre>
 logCollector --help
-logCollector: pid 18083
+logCollector: pid 18083, port 5570
 logCollector [--log-file=logFilename] [-a] [-t]
      logFilename = name of file to place logs
-     -a  Logs will be appende dto logFilename. Default
+     -a  Logs will be appended to logFilename. Default
      -t  logFilename will be truncated before writing logs.
 
 -a and -t apply only when --file specifics a valid filename.
@@ -397,8 +401,77 @@ logCollector [--help]
      This message
 
 To toggle printing of messages received:
-    kill -USR1 <pid>
+    kill -USR1 &lt;pid&gt;
             </pre>
+
+            <ul>
+
+            <li><code>-log-file=&lt;filename&gt;</code> - The filename where
+            logs will get saved. Using an absolute filename provides assurity
+            that the files get stored in a well known place.  Caveats such as
+            an existing directory and permissions apply, of course.</li>
+
+            <li><code>-a</code> - New logs should normally get appended to the
+            end of any existing logs. This is the default.</li>
+
+            <li><code>-t</code> - Any existing log-file gets truncated and all
+            new logs will replace the existing log file. Sometimes useful when
+            debugging a system.</li>
+
+            <li><code>--help</code> - The help display.</li>
+
+            </ul>
+
+            <h3>Configuration file</h3>
+
+            <p>In normal operations the logCollector begins by reading a
+            configuration file from <code>.logcollectorrc</code>. If that file
+            does not exist, it tries to read
+            <code>$HOME/.logcollectorrc</code>, that is, the configuration file
+            from the user's home directory.</p>
+
+            <p>Users may, of course, supply a configuration filename on
+            the command line with the <code>--config=&lt;filename&gt;</code>
+            argument.</p>
+
+            <p>The configuration file eases the implementation of more
+            complex systems by storing any special setting necessary.</p>
+
+            <p>The default contents of <code>.logcollectorrc</code>:</p>
+
+            <pre>
+{
+    "append":   True,
+    "out_file": './logs.log',
+    "noisy":    False,
+    "port":     5570,
+}
+            </pre>
+
+            <ul>
+
+                <li>append - True to append new logs to the tail of
+                any existing logs. This satisfies most normal requirements.</li>
+
+                <li>out_file - The name of the output log file. This should typically 
+                use an absolute filename. Any relative filename will
+                write logs relative to the directory where logCollector
+                was started.</li>
+
+                <li>noisy - Logs do not normally get echoed to the console.
+                However, while debugging a system, listing all incoming logs
+                to the console as well as to the out_file provides a
+                convenient monitoring scheme.</li>
+
+            </ul>
+
+            <p>An additional feature to the <code>noisy</code> config option is
+            the command line option to toggle <code>noisy</code> as required.
+            When logCollector starts, it displays the process id, pid, of
+            itself. In the help message above this was 18083.  To toggle
+            console display of log messages, send the command <code>kill -USR1
+            18083</code>. This has been found useful in debugging a system. The
+            only trick has been in remembering the pid of logCollector.</p>
 
             <h2>logFilterApp - Assistance in log interpretation</h2>
 
@@ -406,26 +479,238 @@ To toggle printing of messages received:
             log format to either JSON or CSV. JSON remains the preferred
             format.</p>
 
-            <h3>The Necessity of Log Analysis Applications</h3>
-
-            <p>Given a repository of logs, what is the difficulty in
-            discovering problems of a logs of several thousand entries? How
+            <p>Given a repository of logs, what is the difficulty of
+            discovering problems in logs of several thousand entries? How
             would you handle that mind numbing experience? Now repeat that same
             experience over and over when necessity dictates various queries of
-            those logs.</p>
+            those logs. Now consider that enterprise systems typically
+            contains log files of million or even billions of logs?</p>
 
             <p>Various log analysis tools exist to select and interpret log
             files. This initial release contains an elementary analysis tool
             that can output logs in either CSV (Comma Separated Values) or JSON
-            (JavaScript Object Notation).  CSV may conveniently load into
-            almost any spreadsheet. JSON offers convenience in loading into
+            (JavaScript Object Notation).  CSV conveniently loads into
+            almost any spreadsheet. JSON offers ease of loading into
             most modern programming languages: python, NodeJS, JavaScript,
             etc.</p>
 
+            <pre>
+logFilterApp [--out-file=outfile] [--in-file=infile]
+	[--start=&lt;ISO8601 start date&gt;] [--end=&gt;iso8601 end date&gt;]
+	[--JSON] [--CSV] [--help]
+	[--level=&lt;level name&gt;]--out-file=output file # output goes here
+--in-file=input file   # output goes here
+--start=&lt;iso8601 start date&gt; # start date iso formatted
+--end=&lt;iso8601 end date&gt;     # end date   iso formatted
+     If start with no end, continue to present time.
+--level=LEVEL   # Handle only from LEVEL up.
+     DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL are the levels.
+--JSON          # output format is JSON (default)
+--CSV           # Output format is CSV
+--help          # This message
+            </pre>
+
+            <ul>
+
+                <li><code>--out-file=filename</code> - The name of an
+                output file to place the results. Output files format
+                themselves as either JSON or CSV. The console is the
+                default output.</li>
+
+                <li><code>--in-file=log_filename</code> - The name of
+                the logfile to use as input. The console is the default.</li>
+
+                <li><code>--start=&lt;ISO8601 start date&gt;</code> - An ISO8601
+                    formatted date to begin filtering log data. See the section
+                    below on ISO8601 dates.</li>
+
+                <li><code>--end=&lt;ISO8601 end date&gt;</code> - An ISO8601
+                formatted date to stop filtering log data. See the section
+                below on ISO8601 dates.</li>
+
+                <li><code>--JSON</code> - The output format is JSON format.
+                JSON provides an easily read coding format
+                for almost all languages. JSON is the default format.</li>
+
+                <li><code>--CSV</code> - The output format is CSV, Comma
+                Separated Variables. Speadsheets can easily consume
+                this information. CAREFUL: The log files must have
+                been carefully formatted to intelligently produce
+                CSV. JSON is the default format.</li>
+
+                <li><code>--level=&lt;level&gt;</code> - Only log entries
+                at or above this level get processes. The default
+                level is WARNING, meaning only WARNING, ERROR and
+                CRITICAL log entries appear in the output.</li>
+
+                <li><code>--help</code> - The help message.</li>
+
+            </ul>
+                    
+
+            <h3>A note on start and end dates</h3>
+
+            <p>The default start and end dates are from the start of
+            the log file to the end of the log file. This default
+            gets used when no dates are specified. For larger log
+            files this may yield abnormally large output files.</p>
+
+            <p>Supplying a start date only results in ignoring log
+            entries before the specified date. The remainder of the log
+            file gets processed. A common use would be reading today's
+            logs.</p>
+
+            <p>Suppling an end date only will read from the beginning
+            of the log file upto and including the end date.</p>
+
+            <p>Supplying both a start and end date will, of course,
+            read all logs between these two dates. Gathering information
+            on last weeks operations could be a typical case.</p>
+                
+            <h3>Supplying your own log filters - TBD</h3>
 
             <h2>logCmd - Simple logging for shell commands</h2>
 
-            <h2>loggingLoopApp - For debugging your logging configuration</h2>
+            <p>logCmd fills the need to log information from the
+            linux shell. Either the console or shell scripts may
+            send logs to the logCollector.</p>
+
+            <p>Using logCmd is simplicity itself:<br/><code class=indent>
+                logCmd This is an important message</code><br/>
+            The string "This is an important message" get appended
+            to the existing logs.<p>
+
+            <p>When using logCmd pay attention to the format. The
+            command line arguments get sent as the are written.
+            If the arguments can be free-form, meaning literally
+            anything, then just start typing.</p>
+
+            <p>If the arguments contain data that may be processed later by
+            something like logFilterApp, take care to write a proper parsable
+            string. For instance, suppose a shell script reads a
+            temperature. This could be sent as:<br/><code
+            class=indent>logCmd therm01=74.6</code></p>
+
+            <p><b>WARNING!</b> logCmd will hang unless the logCollector
+            process is running. logCmd does not attempt to determine
+            if a logCollector is running because multiple logCollectors
+            may be run on different ports. Also, the code for this
+            utility has been deliverately left as simple as possible.<p>
+
+            <p>See an explanation of logCmd and its coding as
+            a simple example of using simple log messaging in
+            your own code.</p>
+
+            <h2>loggingLoopApp - For debugging your logging system</h2>
+
+            <p>In the process of development the requirement may arise
+            to repeatedly send logs. Problems in communications, configuration
+            file mis-configured, path problems in finding programs,
+            downed boards, disconnected wiring, etc.</p>
+
+            <p>The current implementation send a logs once a second to
+            logCollector. The log contents provide feedback of
+            successful messaging and little else.</p>
+
+            <p>To run this utility, use a two console: one for collecting
+            the logs and one for loggingLoopApp. These terminals may
+            be on the same system or on different systems.</p>
+
+            <p>Start the logCollector:<br/><code class=indent>logCollector --noisy</code></p>
+
+            <p>On the other terminal start sending log messages:<br/><code>loggingLoopApp</code></p>
+
+            <p>The terminal running loggingLoopApp will list something similar
+            to:</p>
+
+            <pre>
+python loggingLoopApp.py
+&gt;&gt;&gt; loggingApp: pid 5413
+loggingApp: Client worker-RaspPi5413 started
+Req #0 sent "request #0"
+Req #1 sent "request #1"
+Req #2 sent "request #2"
+            </pre>
+
+            <p>And the console where logCollector reports:</p>
+
+            <pre>
+2016-04-20T11:07:21.180	DEBUG	request #0,host=worker-RaspPi5413
+2016-04-20T11:07:22.181	DEBUG	request #1,host=worker-RaspPi5413
+2016-04-20T11:07:23.183	DEBUG	request #2,host=worker-RaspPi5413
+            </pre>
+
+            <p>The timestamp and worker ID will, of course, be different.</p>
+
+            <p>Kill both the loggingLoopApp and logCollector with 
+            ctrl-C in each terminal.</p>
+
+            <h2>listeningPort - Detecting a logCollector</h2>
+
+            <p><b>WARNING!</b> This utility may not work on all systems!  If
+            this procedure does not work on your system, refer to <a
+            href="http://www.cyberciti.biz/faq/what-process-has-open-linux-port/">Linux:
+        Find Out Which Process Is Listening Upon a Port</a>. Sorry, I
+            tried!</p>
+
+            <p>Many times when developing software manual testing
+            requires repeating the same process over and over.
+            Due to various factors, it's easy to forget that
+            the logCollector process already runs. It's certainly
+            possible to forget the exact terminal logCollector runs
+            on. listeningPort provides an answer to this situation.</p>
+
+            <p>This utility must be run on the same node that logCollector
+            runs.</p>
+
+            <pre>
+    listeningPort --help
+
+    Give a port that defaults to ZeroMQ of 5570,
+    list the processes that are listening to that port.
+   
+    Use by:
+      listening [--help] [--short] &lt;port&gt;
+    e.g.:
+      listening 5570      # The ZeroMQ default port
+    --help = this message
+    --short = Output consists of only three space separated fields:
+        &lt;port&gt; &lt;pid of listener&gt; &lt;process name of listener&gt;
+
+    Return codes:
+      0 = Nobody listening to &lt;port&gt;
+      1 = Someone is listening. stdout has details.
+            </pre>
+
+            <ul>
+
+                <li><code>--help</code> - Provide help message.</li>
+
+                <li><code>--port=port_number</code> - Use port_number
+                for the logCollector.</li>
+
+                <li><code>--short</code> - Output displayed in a condensed
+                manner. Three fields get separated by spaces:<br/>
+                <code>&lt;port&gt; &lt;pid of listener&gt; &lt;process name of
+                listener&gt;</code><br/>This permits ease of processing by
+                shell scripts or programs.</li>
+
+            </ul>
+
+            <p>Start <code>listeningPort</code> on some terminal. The response
+            will be one of two possible output: (Of course, your pids will differ)</p>
+
+            <pre>
+# logCollector is running
+listeningPort
+Port 5570 : listening thru pid 5933 named /home/cecilm/.local/bin/logCollector
+            </pre>
+
+            <pre>
+# logCollector is not running, or it may be running on a different port.
+listeningPort
+Port 5570 : Nobody listening
+            </pre>
 
 
         <h1>Sample Code</h1>
@@ -436,7 +721,7 @@ To toggle printing of messages received:
         any editor.</p>
 
         <p>Installation should have installed logCollector in a location
-        within your $PATH environmental variable.</code>
+        within your $PATH environmental variable.</p>
 
         <h2>Shell Logging: logCmd</h2>
 
@@ -446,7 +731,39 @@ To toggle printing of messages received:
         <code>logCmd</code> also provides convenient tutorial for the
         use of the simple log messaging tools.</p>
 
-        <h1>Tips for Good Logging</h1>
+        <p>The code that implements logCmd:</p>
+
+        <pre>
+import sys
+import platform
+import logging
+import loggingClientTask
+
+def main():
+    logging.basicConfig(level=logging.NOTSET)   # Log everything
+    client = loggingClientTask.LoggingClientClass(platform.node())
+    client.start()
+
+    msg = ' '.join(sys.argv[1:])
+    client.info(msg)
+        </pre>
+
+        <p>The first three lines of <code>main()</code> contain
+        all needed information to send a log to the collector with
+        a level of <code>info</code>. The first line overrides
+        any possible setting that eliminate <code>info</code>
+        level logs. The next two lines create and start a logging
+        process.</p>
+
+        <p>Since a logging process has been started, an arbitary
+        number of logs could be sent. However, the last two lines
+        space separate the command line argumens and send to
+        logCollector.</p>
+
+        <p>Very simple. But this code could be a skeleton for
+        much more complex applications.</p>
+
+        <h1>Tips for Great Logging</h1>
 
         <p>Even in our simple Raspberry Pi hydroponic system, a bit of thought
         placed into logging concepts will absolutely serve us well. Just
@@ -527,7 +844,7 @@ To toggle printing of messages received:
                     </tr>
                     <tr>
                         <td>cmd</td>
-                        <td>= req : A command request was sent. host=system performing request.<br>
+                        <td>= req : A command request was sent. host=system performing request.<br/>
                         =req : tag=xyz...&amp;host=central</td>
                     </tr>
                     <tr>
@@ -614,34 +931,18 @@ To toggle printing of messages received:
 
         </ul>
 
-        <h1>Original Ideas: ZeroMQ</h1>
-
-        <p>This code calls ZeroMQ, also known as 0MQ or zmq, with python
-        bindings, PyZMQ, to build this logger.  The <a
-        href="http://zeromq.org/intro:read-the-manual">The Asynchronous
-    Client/Server Pattern</a> forms the basic idea of this logger. The full
-ZeroMQ pattern implements bidirectional messages while the simple log messaging
-app uses the direction only from processes to the loggerControler.</p>
-
-        <p>The simple log messaging app implementation derives from the
-        Asynchronous Client/Server Pattern  in <a
-        href="http://www.zeromq.com">ZeroMQ</a>, p. 111:<br/><center><img
-        src="./images/AsyncClientServer1.svg"></center></p>
-
-        <p>This illustration uses three clients that access the RaspPi Logger.
-        In practice the actual system may have one or more RaspPi systems
-        sending logs to the RaspPi Logging system. The senders of the logs may
-        also live either on the same systemas the RaspPi loggers or on another
-        system entirely. Remote systems may communicate with the RaspPi Logger
-        through wireless transmission or an ethernet cable.  How is <i>that</i>
-        for flexibility?</p>
-
 
         <h1>Troubleshooting</h1>
 
         TBD - installation
         Port issues.
         Permission denied.
+
+        <h2>I get "permission denied" when I ...</h2>
+
+        <p>Some part of your attempted operation tried to access
+        areas protected by root access. Prefix you command with
+        <code>sudo</code> and try again.</p>
 
         <h2>Undefined symbol: zmq_msg_gets</h2>
 
@@ -655,11 +956,37 @@ app uses the direction only from processes to the loggerControler.</p>
         sudo python -c 'import zmq; print(zmq)
         </pre>
 
-        <p>If the <code>import zmq</code> fails, 
+        <p>If the <code>import zmq</code> fails, please refer to
+        the web. This happened to be and it took awhile to straighten
+        this out. I wish I could tell you what to do in this case,
+        but I'm not sure myself what fixed the problem.</p>
 
-        <h1>TroubleShooting</h1>
+        <h1>ISO8601 - What IS this?</h1>
 
-        TBD
+        <p><a href="https://en.wikipedia.org/wiki/ISO_8601">ISO8601</a>
+        refers to an international standard for representation of
+        dates and times for the exchange of date and time related
+        data. The ISO8601 standard provide an unambiguous and well-defined
+        method of representing dates and time.</p>
+
+        <p>For purposes of simple log messaging, each individual
+        log entry gets tags with the ISO8601 date-time when
+        logCollector receives the log.</p>
+        
+        <p>Systems using multiple nodes
+        all have logs time stamped by the logCollector and <i>not</i>
+        by the times on each node. This avoids time synchronization
+        problems of keeping all nodes in time sync. This design
+        element will not work for all systems, but for the targeted
+        audience, Raspberry Pi/Arduino/..., this should not
+        pose a problem.</p>
+
+        <p>A deviation from the ISO8601 standard: simple log messaging
+        uses local time as defined by the logCollector node. The
+        standard demands UTC time. This was deemed confusing for purposes
+        of this application.</p>
+
+        TBD - code for ISO8601.,....
 
         <h1>Frequently Asked Questions - The FAQs</h1>
 
@@ -667,6 +994,28 @@ app uses the direction only from processes to the loggerControler.</p>
 
         <h3>Test for logCollector running</h3>
 
+
+        <h1>Original Ideas: ZeroMQ</h1>
+
+        <p>This code calls ZeroMQ, also known as 0MQ or zmq, with python
+        bindings, PyZMQ, to build this logger.  The <a
+        href="http://zeromq.org/intro:read-the-manual">The Asynchronous
+    Client/Server Pattern</a> forms the basic idea of this logger. The full
+ZeroMQ pattern implements bidirectional messages while the simple log messaging
+app uses the direction only from processes to the loggerControler.</p>
+
+        <p>The simple log messaging app implementation derives from the
+        Asynchronous Client/Server Pattern  in <a
+        href="http://www.zeromq.com">ZeroMQ</a>, p. 111:<br/><center><img
+        src="./images/AsyncClientServer1.svg"/></center></p>
+
+        <p>This illustration uses three clients that access the RaspPi Logger.
+        In practice the actual system may have one or more RaspPi systems
+        sending logs to the RaspPi Logging system. The senders of the logs may
+        also live either on the same systemas the RaspPi loggers or on another
+        system entirely. Remote systems may communicate with the RaspPi Logger
+        through wireless transmission or an ethernet cable.  How is <i>that</i>
+        for flexibility?</p>
 
         <h1>Links and References</h1>
 
@@ -770,9 +1119,9 @@ Now: time.time()  in floating point seconds.
 <h2>To get a now ISO8601 local time string: </h2>
 <pre>
 now = datetime.datetime.now()
-print 'now=%s' & str(now)
+print 'now=%s' &amp; str(now)
 nowStr = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
-print 'nowStr = %s' % nowStr
+print 'nowStr = %s' &amp; nowStr
 
 #To get now to a tuple:
 nowTuple = datetime.datetime.strptime(nowStr, "%Y-%m-%d %H:%M:%S.%f")

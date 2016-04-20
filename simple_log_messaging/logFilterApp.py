@@ -4,7 +4,7 @@ import logFilter
 
 
 def usage():
-    sys.stderr.write('logs2JSON [--out-file=outfile] [--in-file=infile]\n' +
+    sys.stderr.write('logFilterApp [--out-file=outfile] [--in-file=infile]\n' +
             '\t[--start=<ISO8601 start date>] [--end=>iso8601 end date]\n' +
             '\t[--JSON] [--CSV] [--help]\n' +
             '\t[--level=<level name>]')
