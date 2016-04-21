@@ -4,12 +4,14 @@ import logFilter
 
 
 def usage():
-    sys.stderr.write('logFilterApp [--out-file=outfile] [--in-file=infile]\n' +
+    sys.stderr.write('logFilterApp [--config=config_file]\n' +
+            '\t[--out-file=outfile] [--in-file=infile]\n' +
             '\t[--start=<ISO8601 start date>] [--end=>iso8601 end date]\n' +
-            '\t[--JSON] [--CSV] [--help]\n' +
-            '\t[--level=<level name>]')
-    sys.stderr.write('--out-file=output file # output goes here\n')
-    sys.stderr.write('--in-file=input file   # output goes here\n')
+            '\t[--JSON|--CSV] [--help]\n' +
+            '\t[--level=<level name>]\n')
+    sys.stderr.write('--config=config_file   # Take parameters from config file\n')
+    sys.stderr.write('--out-file=output file # output goes here. Default: stdout\n')
+    sys.stderr.write('--in-file=input file   # input read from here. Default: stdin\n')
     sys.stderr.write('--start=<iso8601 start date> # start date iso formatted\n')
     sys.stderr.write('--end=<iso8601 end date>     # end date   iso formatted\n')
     sys.stderr.write('     If start with no end, continue to present time.\n')

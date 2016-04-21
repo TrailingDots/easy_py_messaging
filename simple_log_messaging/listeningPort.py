@@ -37,14 +37,14 @@ def listening(port, shortened, pid_only, proc_only):
         if items[0] != pid:
             continue
         if shortened:
-            sys.stdout.write('%d %s %s\n' % (port, pid, items[-1]))
+            sys.stdout.write('%d %s %s\n' % (port, pid, ' '.join(items[5:])))
         elif pid_only:
             sys.stdout.write('%s\n' % pid)
         elif proc_only:
             sys.stdout.write('%s\n' % items[-1])
         else:
             sys.stdout.write('Port %d : listening thru pid %s named %s\n' %
-                    (port, pid, items[-1]))
+                    (port, pid, ' '.join(items[5:])))
         return 0    # Indicate a found listener
 
     # Nobody listening. fuser should have found this, but be careful.

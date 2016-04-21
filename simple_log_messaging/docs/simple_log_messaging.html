@@ -497,14 +497,17 @@ To toggle printing of messages received:
             <pre>
 logFilterApp [--out-file=outfile] [--in-file=infile]
 	[--start=&lt;ISO8601 start date&gt;] [--end=&gt;iso8601 end date&gt;]
-	[--JSON] [--CSV] [--help]
-	[--level=&lt;level name&gt;]--out-file=output file # output goes here
---in-file=input file   # output goes here
---start=&lt;iso8601 start date&gt; # start date iso formatted
---end=&lt;iso8601 end date&gt;     # end date   iso formatted
-     If start with no end, continue to present time.
+	[--JSON | --CSV] 
+    [--help]
+	[--level=&lt;level name&gt;] 
+    [--out-file=output file] # output goes here. Default: stdout
+    [--in-file=input file]   # input file here. Default: stdin
+
+--start=&lt;iso8601 start date&gt;     # start date iso formatted
+--end=&lt;iso8601   end   date&gt;     # end   date iso formatted
+ If start with no end, continue to present time.
 --level=LEVEL   # Handle only from LEVEL up.
-     DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL are the levels.
+ DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL are the levels.
 --JSON          # output format is JSON (default)
 --CSV           # Output format is CSV
 --help          # This message
@@ -524,350 +527,427 @@ logFilterApp [--out-file=outfile] [--in-file=infile]
                     formatted date to begin filtering log data. See the section
                     below on ISO8601 dates.</li>
 
-                <li><code>--end=&lt;ISO8601 end date&gt;</code> - An ISO8601
-                formatted date to stop filtering log data. See the section
-                below on ISO8601 dates.</li>
+            <li><code>--end=&lt;ISO8601 end date&gt;</code> - An ISO8601
+            formatted date to stop filtering log data. See the section
+            below on ISO8601 dates.</li>
 
-                <li><code>--JSON</code> - The output format is JSON format.
-                JSON provides an easily read coding format
-                for almost all languages. JSON is the default format.</li>
+            <li><code>--JSON</code> - The output format is JSON format.
+            JSON provides an easily read coding format
+            for almost all languages. JSON is the default format.</li>
 
-                <li><code>--CSV</code> - The output format is CSV, Comma
-                Separated Variables. Speadsheets can easily consume
-                this information. CAREFUL: The log files must have
-                been carefully formatted to intelligently produce
-                CSV. JSON is the default format.</li>
+            <li><code>--CSV</code> - The output format is CSV, Comma
+            Separated Variables. Speadsheets can easily consume
+            this information. CAREFUL: The log files must have
+            been carefully formatted to intelligently produce
+            CSV. JSON is the default format.</li>
 
-                <li><code>--level=&lt;level&gt;</code> - Only log entries
-                at or above this level get processes. The default
-                level is WARNING, meaning only WARNING, ERROR and
-                CRITICAL log entries appear in the output.</li>
+            <li><code>--level=&lt;level&gt;</code> - Only log entries
+            at or above this level get processes. The default
+            level is WARNING, meaning only WARNING, ERROR and
+            CRITICAL log entries appear in the output.</li>
 
-                <li><code>--help</code> - The help message.</li>
+            <li><code>--help</code> - The help message.</li>
 
-            </ul>
-                    
-
-            <h3>A note on start and end dates</h3>
-
-            <p>The default start and end dates are from the start of
-            the log file to the end of the log file. This default
-            gets used when no dates are specified. For larger log
-            files this may yield abnormally large output files.</p>
-
-            <p>Supplying a start date only results in ignoring log
-            entries before the specified date. The remainder of the log
-            file gets processed. A common use would be reading today's
-            logs.</p>
-
-            <p>Suppling an end date only will read from the beginning
-            of the log file upto and including the end date.</p>
-
-            <p>Supplying both a start and end date will, of course,
-            read all logs between these two dates. Gathering information
-            on last weeks operations could be a typical case.</p>
+        </ul>
                 
-            <h3>Supplying your own log filters - TBD</h3>
 
-            <h2>logCmd - Simple logging for shell commands</h2>
+        <h3>A note on start and end dates</h3>
 
-            <p>logCmd fills the need to log information from the
-            linux shell. Either the console or shell scripts may
-            send logs to the logCollector.</p>
+        <p>The default start and end dates are from the start of
+        the log file to the end of the log file. This default
+        gets used when no dates are specified. For larger log
+        files this may yield abnormally large output files.</p>
 
-            <p>Using logCmd is simplicity itself:<br/><code class=indent>
-                logCmd This is an important message</code><br/>
-            The string "This is an important message" get appended
-            to the existing logs.<p>
+        <p>Supplying a start date only results in ignoring log
+        entries before the specified date. The remainder of the log
+        file gets processed. A common use would be reading today's
+        logs.</p>
 
-            <p>When using logCmd pay attention to the format. The
-            command line arguments get sent as the are written.
-            If the arguments can be free-form, meaning literally
-            anything, then just start typing.</p>
+        <p>Suppling an end date only will read from the beginning
+        of the log file upto and including the end date.</p>
 
-            <p>If the arguments contain data that may be processed later by
-            something like logFilterApp, take care to write a proper parsable
-            string. For instance, suppose a shell script reads a
-            temperature. This could be sent as:<br/><code
-            class=indent>logCmd therm01=74.6</code></p>
+        <p>Supplying both a start and end date will, of course,
+        read all logs between these two dates. Gathering information
+        on last weeks operations could be a typical case.</p>
+            
+        <h3>Configuration Files</h3>
 
-            <p><b>WARNING!</b> logCmd will hang unless the logCollector
-            process is running. logCmd does not attempt to determine
-            if a logCollector is running because multiple logCollectors
-            may be run on different ports. Also, the code for this
-            utility has been deliverately left as simple as possible.<p>
+        <p>Filtering log entries can result in powerful analytics
+        for your system. Depending up your needs, various
+        scenarios present themselves over and over.</p>
 
-            <p>See an explanation of logCmd and its coding as
-            a simple example of using simple log messaging in
-            your own code.</p>
+        <p>Perhaps the solution to handle these repetitious queries
+        represents itself in a configuration file.  Using multiple
+        configuration files allows easy invocation of multiple queries.</p>
 
-            <h2>loggingLoopApp - For debugging your logging system</h2>
+        <p>The logFilterApp configuration file contains a python
+        dictionary of matching keyword=values the same as
+        described in the help output above. Due to "standard"
+        linux nameing conventions, the configation file
+        uses '_' instead of '-'.</p>
 
-            <p>In the process of development the requirement may arise
-            to repeatedly send logs. Problems in communications, configuration
-            file mis-configured, path problems in finding programs,
-            downed boards, disconnected wiring, etc.</p>
+        <p>A sample configuration file to read every log entry
+        for all times with a level of <code>CMD</code> and above:</p>
 
-            <p>The current implementation send a logs once a second to
-            logCollector. The log contents provide feedback of
-            successful messaging and little else.</p>
+        <pre>
+cat $HOME/cmd.conf  # List the config file.
+{
+'in_file': 'data/base.data',
+'level': 'CMD',
+}
+        </pre>
 
-            <p>To run this utility, use a two console: one for collecting
-            the logs and one for loggingLoopApp. These terminals may
-            be on the same system or on different systems.</p>
+        <p>Notice the absense of start and end times. The default
+        start time means the start of the Linux epoch. The default
+        end time means now. Thus, the entire contents of the
+        file will be read.</p>
 
-            <p>Start the logCollector:<br/><code class=indent>logCollector --noisy</code></p>
+        <p>But what if all  you need is a single day's worth of
+        logs? When a configuration file gets loaded, further
+        command line arguments override existing arguments. For
+        example, if you were working on your taxes Apr 15,2016,
+        you could use this configuration file to read data only for
+        Apr 15, 2016:</p>
 
-            <p>On the other terminal start sending log messages:<br/><code>loggingLoopApp</code></p>
+        <pre>
+logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-05-15T23:59:59.000
+        </pre>
 
-            <p>The terminal running loggingLoopApp will list something similar
-            to:</p>
+        <h3>Supplying your own log filters - TBD</h3>
 
-            <pre>
+        <p>The current filtering allows powerful results. But what if
+        your requirements were more extensive? What if you needed to
+        search for an <code>ERROR</code> and process related logs?
+        The current filtering does not allow easy management of such
+        requests.</p>
+
+        <p>TBD - A placeholder exists in the code for this!</p>
+
+
+        <h2>logCmd - Simple logging for shell commands</h2>
+
+        <p>logCmd fills the need to log information from the
+        linux shell. Either the console or shell scripts may
+        send logs to the logCollector.</p>
+
+        <p>Using logCmd is simplicity itself:<br/><code class=indent>
+            logCmd This is an important message</code><br/>
+        The string "This is an important message" get appended
+        to the existing logs.<p>
+
+        <p>When using logCmd pay attention to the format. The
+        command line arguments get sent as the are written.
+        If the arguments can be free-form, meaning literally
+        anything, then just start typing.</p>
+
+        <p>If the arguments contain data that may be processed later by
+        something like logFilterApp, take care to write a proper parsable
+        string. For instance, suppose a shell script reads a
+        temperature. This could be sent as:<br/><code
+        class=indent>logCmd therm01=74.6</code></p>
+
+        <p><b>WARNING!</b> logCmd will hang unless the logCollector
+        process is running. logCmd does not attempt to determine
+        if a logCollector is running because multiple logCollectors
+        may be run on different ports. Also, the code for this
+        utility has been deliverately left as simple as possible.<p>
+
+        <p>See an explanation of logCmd and its coding as
+        a simple example of using simple log messaging in
+        your own code.</p>
+
+        <h2>loggingLoopApp - For debugging your logging system</h2>
+
+        <p>In the process of development the requirement may arise
+        to repeatedly send logs. Problems in communications, configuration
+        file mis-configured, path problems in finding programs,
+        downed boards, disconnected wiring, etc.</p>
+
+        <p>The current implementation send a logs once a second to
+        logCollector. The log contents provide feedback of
+        successful messaging and little else.</p>
+
+        <p>To run this utility, use a two console: one for collecting
+        the logs and one for loggingLoopApp. These terminals may
+        be on the same system or on different systems.</p>
+
+        <p>Start the logCollector:<br/><code class=indent>logCollector --noisy</code></p>
+
+        <p>On the other terminal start sending log messages:<br/><code>loggingLoopApp</code></p>
+
+        <p>The terminal running loggingLoopApp will list something similar
+        to:</p>
+
+        <pre>
 python loggingLoopApp.py
 &gt;&gt;&gt; loggingApp: pid 5413
 loggingApp: Client worker-RaspPi5413 started
 Req #0 sent "request #0"
 Req #1 sent "request #1"
 Req #2 sent "request #2"
-            </pre>
+        </pre>
 
-            <p>And the console where logCollector reports:</p>
+        <p>And the console where logCollector reports:</p>
 
-            <pre>
+        <pre>
 2016-04-20T11:07:21.180	DEBUG	request #0,host=worker-RaspPi5413
 2016-04-20T11:07:22.181	DEBUG	request #1,host=worker-RaspPi5413
 2016-04-20T11:07:23.183	DEBUG	request #2,host=worker-RaspPi5413
-            </pre>
+        </pre>
 
-            <p>The timestamp and worker ID will, of course, be different.</p>
+        <p>The timestamp and worker ID will, of course, be different.</p>
 
-            <p>Kill both the loggingLoopApp and logCollector with 
-            ctrl-C in each terminal.</p>
+        <p>Kill both the loggingLoopApp and logCollector with 
+        ctrl-C in each terminal.</p>
 
-            <h2>listeningPort - Detecting a logCollector</h2>
+        <h2>listeningPort - Detecting a logCollector</h2>
 
-            <p><b>WARNING!</b> This utility may not work on all systems!  If
-            this procedure does not work on your system, refer to <a
-            href="http://www.cyberciti.biz/faq/what-process-has-open-linux-port/">Linux:
-        Find Out Which Process Is Listening Upon a Port</a>. Sorry, I
-            tried!</p>
+        <p><b>WARNING!</b> This utility may not work on all systems!  If
+        this procedure does not work on your system, refer to <a
+        href="http://www.cyberciti.biz/faq/what-process-has-open-linux-port/">Linux:
+    Find Out Which Process Is Listening Upon a Port</a>. Sorry, I
+        tried!</p>
 
-            <p>Many times when developing software manual testing
-            requires repeating the same process over and over.
-            Due to various factors, it's easy to forget that
-            the logCollector process already runs. It's certainly
-            possible to forget the exact terminal logCollector runs
-            on. listeningPort provides an answer to this situation.</p>
+        <p>Many times when developing software manual testing
+        requires repeating the same process over and over.
+        Due to various factors, it's easy to forget that
+        the logCollector process already runs. It's certainly
+        possible to forget the exact terminal logCollector runs
+        on. listeningPort provides an answer to this situation.</p>
 
-            <p>This utility must be run on the same node that logCollector
-            runs.</p>
+        <p>This utility must be run on the same node that logCollector
+        runs.</p>
 
-            <pre>
-    listeningPort --help
+        <pre>
+listeningPort --help
 
-    Give a port that defaults to ZeroMQ of 5570,
-    list the processes that are listening to that port.
-   
-    Use by:
-      listening [--help] [--short] &lt;port&gt;
-    e.g.:
-      listening 5570      # The ZeroMQ default port
-    --help = this message
-    --short = Output consists of only three space separated fields:
-        &lt;port&gt; &lt;pid of listener&gt; &lt;process name of listener&gt;
+Give a port that defaults to ZeroMQ of 5570,
+list the processes that are listening to that port.
 
-    Return codes:
-      0 = Nobody listening to &lt;port&gt;
-      1 = Someone is listening. stdout has details.
-            </pre>
+Use by:
+  listening [--help] [--short] &lt;port&gt;
+e.g.:
+  listening 5570      # The ZeroMQ default port
+--help = this message
+--short = Output consists of only three space separated fields:
+    &lt;port&gt; &lt;pid of listener&gt; &lt;process name of listener&gt;
 
-            <ul>
+Return codes:
+  0 = Nobody listening to &lt;port&gt;
+  1 = Someone is listening. stdout has details.
+        </pre>
 
-                <li><code>--help</code> - Provide help message.</li>
+        <ul>
 
-                <li><code>--port=port_number</code> - Use port_number
-                for the logCollector.</li>
+            <li><code>--help</code> - Provide help message.</li>
 
-                <li><code>--short</code> - Output displayed in a condensed
-                manner. Three fields get separated by spaces:<br/>
-                <code>&lt;port&gt; &lt;pid of listener&gt; &lt;process name of
-                listener&gt;</code><br/>This permits ease of processing by
-                shell scripts or programs.</li>
+            <li><code>--port=port_number</code> - Use port_number
+            for the logCollector.</li>
 
-            </ul>
+            <li><code>--short</code> - Output displayed in a condensed
+            manner. Three fields get separated by spaces:<br/>
+            <code>&lt;port&gt; &lt;pid of listener&gt; &lt;process name of
+            listener&gt;</code><br/>This permits ease of processing by
+            shell scripts or programs.</li>
 
-            <p>Start <code>listeningPort</code> on some terminal. The response
-            will be one of two possible output: (Of course, your pids will differ)</p>
+        </ul>
 
-            <pre>
+        <p>Start <code>listeningPort</code> on some terminal. The response
+        will be one of two possible output: (Of course, your pids will differ)</p>
+
+        <pre>
 # logCollector is running
 listeningPort
 Port 5570 : listening thru pid 5933 named /home/cecilm/.local/bin/logCollector
-            </pre>
+        </pre>
 
-            <pre>
+        <pre>
 # logCollector is not running, or it may be running on a different port.
 listeningPort
 Port 5570 : Nobody listening
-            </pre>
+        </pre>
 
 
-        <h1>Sample Code</h1>
-        
-        <p>In all the following example the logCollector must run. The
-        logCollector process listens to the designated ZeroMQ port and
-        save the incoming logs to a text file. This file may be read with
-        any editor.</p>
+    <h1>Sample Code</h1>
+    
+    <p>In all the following example the logCollector must run. The
+    logCollector process listens to the designated ZeroMQ port and
+    save the incoming logs to a text file. This file may be read with
+    any editor.</p>
 
-        <p>Installation should have installed logCollector in a location
-        within your $PATH environmental variable.</p>
+    <p>Installation should have installed logCollector in a location
+    within your $PATH environmental variable.</p>
 
-        <h2>Shell Logging: logCmd</h2>
+    <h2>Shell Logging: logCmd</h2>
 
-        <p>Perhaps the simplest logging consists of a single command
-        from a terminal. Shell commands provide a convenient way to
-        record significant events of functioning systems. The code for
-        <code>logCmd</code> also provides convenient tutorial for the
-        use of the simple log messaging tools.</p>
+    <p>Perhaps the simplest logging consists of a single command
+    from a terminal. Shell commands provide a convenient way to
+    record significant events of functioning systems. The code for
+    <code>logCmd</code> also provides convenient tutorial for the
+    use of the simple log messaging tools.</p>
 
-        <p>The code that implements logCmd:</p>
+    <p>The code that implements logCmd:</p>
 
-        <pre>
+    <pre>
 import sys
 import platform
 import logging
 import loggingClientTask
 
 def main():
-    logging.basicConfig(level=logging.NOTSET)   # Log everything
-    client = loggingClientTask.LoggingClientClass(platform.node())
-    client.start()
+logging.basicConfig(level=logging.NOTSET)   # Log everything
+client = loggingClientTask.LoggingClientClass(platform.node())
+client.start()
 
-    msg = ' '.join(sys.argv[1:])
-    client.info(msg)
-        </pre>
+msg = ' '.join(sys.argv[1:])
+client.info(msg)
+    </pre>
 
-        <p>The first three lines of <code>main()</code> contain
-        all needed information to send a log to the collector with
-        a level of <code>info</code>. The first line overrides
-        any possible setting that eliminate <code>info</code>
-        level logs. The next two lines create and start a logging
-        process.</p>
+    <p>The first three lines of <code>main()</code> contain
+    all needed information to send a log to the collector with
+    a level of <code>info</code>. The first line overrides
+    any possible setting that eliminate <code>info</code>
+    level logs. The next two lines create and start a logging
+    process.</p>
 
-        <p>Since a logging process has been started, an arbitary
-        number of logs could be sent. However, the last two lines
-        space separate the command line argumens and send to
-        logCollector.</p>
+    <p>Since a logging process has been started, an arbitary
+    number of logs could be sent. However, the last two lines
+    space separate the command line argumens and send to
+    logCollector.</p>
 
-        <p>Very simple. But this code could be a skeleton for
-        much more complex applications.</p>
+    <h3>Exercise: Expand upon logCmd</h3>
 
-        <h1>Tips for Great Logging</h1>
+    <p>Very simple code indeed. But this code could be a skeleton for
+    much more complex applications.</p>
 
-        <p>Even in our simple Raspberry Pi hydroponic system, a bit of thought
-        placed into logging concepts will absolutely serve us well. Just
-        logging for logging sakes does not provide an incentive to log. Having
-        these logs provide a usable history and alarm system incentivises our
-        logging structure.</p>
+    <ul>
 
-        <p>Think of logging as an integral part of our SCADA system.  SCADA =
-        Supervisory Control and Data Acquisition.  SCADA gets used in remote
-        monitoring and control systems that operates with coded signals over
-        communications channels. <a href="https://en.wikipedia.org/wiki/SCADA">
-        Wikipedia: SCADA</a></p>
+        <li>The original code uses the pre-configured logConfig
+        for port addresses. Add a command line option that
+        allows the user to specify a port. This will, of course,
+        require adding a <code>usage()</code> routine
+        as part a new <code>--help</code> option as well.</li>
 
-        <p>Some logs that an elementary SCADA system could generate.  The model
-        is, once again, a hydroponics system. The hydroponics system has 2
-        Raspberry Pis controlling various devices and this logs to a desktop.
-        The desktop may send control commands. Various logs from both systems
-        get sent to the logger to monitor and track events in these
-        systems.</p>
+        <li>The current code uses the <code>INFO</code> log level
+        for recording logCmd entries. Allow the user to
+        specify the level at run time. This permits a shell
+        to log <code>ERROR</code>, <code>WARNING</code>, etc.</li>
 
-        <p>Assume "hydro1" and "hydro2" are systems in a remote hydroponics
-        garden with various measurement instrumentations. This remote system
-        logs to a desktop inside the home.</p>
+    </ul>
 
-        <p>Commands the remote uses to start pumps and switchs get logged as
-        well. This used "cmd=true&amp;pump1=ON&amp;host=hydro1" meaning this is
-        a command that turns pump1 on and the host is hydro1.</p>
+    <h1>Tips for Great Logging</h1>
 
-        <p>Some examples of data that appears in logs:</p>
+    <p>Even in our simple Raspberry Pi hydroponic system, a bit of thought
+    placed into logging concepts will absolutely serve us well. Just
+    logging for logging sakes does not provide an incentive to log. Having
+    these logs provide a usable history and alarm system incentivises our
+    logging structure.</p>
 
-        <ul>
+    <p>Think of logging as an integral part of our SCADA system.  SCADA =
+    Supervisory Control and Data Acquisition.  SCADA gets used in remote
+    monitoring and control systems that operates with coded signals over
+    communications channels. <a href="https://en.wikipedia.org/wiki/SCADA">
+    Wikipedia: SCADA</a></p>
 
-             <li>A switch changing values ON/OFF.</li>
+    <p>Some logs that an elementary SCADA system could generate.  The model
+    is, once again, a hydroponics system. The hydroponics system has 2
+    Raspberry Pis controlling various devices and this logs to a desktop.
+    The desktop may send control commands. Various logs from both systems
+    get sent to the logger to monitor and track events in these
+    systems.</p>
 
-             <li>An instrument reporting temperature reading.</li>
+    <p>Assume "hydro1" and "hydro2" are systems in a remote hydroponics
+    garden with various measurement instrumentations. This remote system
+    logs to a desktop inside the home.</p>
 
-             <li>A water level indicator reading too low or to high.</li>
+    <p>Commands the remote uses to start pumps and switchs get logged as
+    well. This used "cmd=true&amp;pump1=ON&amp;host=hydro1" meaning this is
+    a command that turns pump1 on and the host is hydro1.</p>
 
-             <li>A moisture level too low has triggered.</li>
+    <p>Some examples of data that appears in logs:</p>
 
-             <li>A periodic report of temperature.</li>
+    <ul>
 
-        </ul>
+         <li>A switch changing values ON/OFF.</li>
 
-        <p>All of the above and more could appear in your logs. The specific
-        values in the logs must, of course, have appropriate values for that
-        device.</p>
+         <li>An instrument reporting temperature reading.</li>
 
-        <h3>The UNKNOWN state</h3>
+         <li>A water level indicator reading too low or to high.</li>
 
-        <p>The "UNKNOWN" value should apply to <i>every</i> device!  Devices
-        can suffer all manner of reasons for refusing to work properly: water
-        damage, physically damanged, wiring problems, aging, etc. A switch does
-        not have a simple ON/OFF, but should actually use ON/OFF/UNKNOWN.</p>
+         <li>A moisture level too low has triggered.</li>
 
-         <h2>Notice your keywords</h2>
-            
-                <table>
-                    <tr>
-                        <td>Keyword</td>
-                        <td>Meaning</td>
-                    </tr>
-                    <tr>
-                        <td>device</td>
-                        <td>Device name</td>
-                    </tr>
-                    <tr>
-                        <td>state</td>
-                        <td>Value for descrete devices: ON, OFF, UNKNOWN</td>
-                    </tr>
-                    <tr>
-                        <td>temp</td>
-                        <td>Temperature reading for analog temperature</td>
-                    </tr>
-                    <tr>
-                        <td>host</td>
-                        <td>Which system sent this data</td>
-                    </tr>
-                    <tr>
-                        <td>cmd</td>
-                        <td>= req : A command request was sent. host=system performing request.<br/>
-                        =req : tag=xyz...&amp;host=central</td>
-                    </tr>
-                    <tr>
-                        <td>cmd</td>
-                        <td>=rep : A command reply indicates acknowledgement. host=sys performing command.
-                          A reply sends the tag of the command. Optionally the entire
-                          original command may populate the command.
-                          cmd=rep&amp;tag=xyz&amp;host=hygro1</td>
-                     </tr>
+         <li>A periodic report of temperature.</li>
 
-                 </table>
+    </ul>
 
-                 <p>Devices in this example:</p>
+    <p>All of the above and more could appear in your logs. The specific
+    values in the logs must, of course, have appropriate values for that
+    device.</p>
 
-                 <ul>
+    <h2>The UNKNOWN state</h2>
 
-                     <li>pump01 = A water pump to maintain proper levels.</li>
+    <p>The "UNKNOWN" value should apply to <i>every</i> device!  Devices
+    can suffer all manner of reasons for refusing to work properly: water
+    damage, physically damanged, wiring problems, aging, etc. A switch does
+    not have a simple ON/OFF, but should actually use ON/OFF/UNKNOWN.</p>
 
-                     <li>water01 = A flotation switch that detects water levels too high or too low.</li>
+     <h2>Notice your keywords</h2>
 
-                     <li>tempIN, tempOUT = analog temperature measurements.</li>
+     <p>Keyword ease problems in interpreting log files. Log files can
+     become easier to interpret if reasonable keywords and values
+     describe each device. Humans have great linguistic abilities. Please
+     allow your creations to communicate their reading
+     with easily understood descriptions.</p>
 
-                 </ul>
+     <p>Some suggestions for naming:</p>
+        
+            <table>
+                <tr>
+                    <td>Keyword</td>
+                    <td>Meaning</td>
+                </tr>
+                <tr>
+                    <td>device</td>
+                    <td>Device name</td>
+                </tr>
+                <tr>
+                    <td>state</td>
+                    <td>Value for descrete devices: ON, OFF, UNKNOWN</td>
+                </tr>
+                <tr>
+                    <td>temp</td>
+                    <td>Temperature reading for analog temperature</td>
+                </tr>
+                <tr>
+                    <td>host</td>
+                    <td>Which system sent this data?</td>
+                </tr>
+                <tr>
+                    <td>cmd</td>
+                    <td>= req : A command request was sent. host=system performing request.<br/>
+                    =req : tag=xyz...&amp;host=central</td>
+                </tr>
+                <tr>
+                    <td>cmd</td>
+                    <td>=rep : A command reply indicates acknowledgement. host=sys performing command.
+                      A reply sends the tag of the command. Optionally the entire
+                      original command may populate the command.
+                      cmd=rep&amp;tag=xyz&amp;host=hygro1</td>
+                 </tr>
+
+             </table>
+
+             <p>Devices in this example:</p>
+
+             <ul>
+
+                 <li>pumpWaterLevel = A water pump to maintain proper levels.</li>
+
+                 <li>waterLevel = A floatation switch that detects water levels too high or too low.</li>
+
+                 <li>tempIN, tempOUT = analog temperature measurements.</li>
+
+             </ul>
 
         <h2>A Trivial Logging Example</h2>
 
@@ -957,9 +1037,9 @@ def main():
         </pre>
 
         <p>If the <code>import zmq</code> fails, please refer to
-        the web. This happened to be and it took awhile to straighten
+        the web. This happened to me and it took a while to straighten
         this out. I wish I could tell you what to do in this case,
-        but I'm not sure myself what fixed the problem.</p>
+        but I'm not sure myself what fixed the problem. Yuck!</p>
 
         <h1>ISO8601 - What IS this?</h1>
 
@@ -986,13 +1066,12 @@ def main():
         standard demands UTC time. This was deemed confusing for purposes
         of this application.</p>
 
-        TBD - code for ISO8601.,....
+        <p>Simple log messaging uses local time, and when daylight
+        savings time switches, the timestamps follow system time.
+        This means an hour may be repeated or ignored depending
+        upon the time of year.</p>
 
-        <h1>Frequently Asked Questions - The FAQs</h1>
-
-        <h2 id="tips">Useful Tips</h2>
-
-        <h3>Test for logCollector running</h3>
+        <h2>TBD - Coding for ISO8601,....</h2>
 
 
         <h1>Original Ideas: ZeroMQ</h1>
@@ -1012,10 +1091,122 @@ app uses the direction only from processes to the loggerControler.</p>
         <p>This illustration uses three clients that access the RaspPi Logger.
         In practice the actual system may have one or more RaspPi systems
         sending logs to the RaspPi Logging system. The senders of the logs may
-        also live either on the same systemas the RaspPi loggers or on another
+        also live either on the same system as the RaspPi loggers or on another
         system entirely. Remote systems may communicate with the RaspPi Logger
         through wireless transmission or an ethernet cable.  How is <i>that</i>
         for flexibility?</p>
+
+        <h1>The Simple Messaging System - A Larger Vision</h1>
+
+        <p>Simple log messaging just starts a suite of applications
+        that provide an easy way to communicate with multiple
+        nodes, be they Raspberry Pi, Arguino, Beagle Board
+        and even desktop linux systems.</p>
+
+        <p>I started with a logging system because I believe that
+        basically <i>every</i> process envisioned needs a decent
+        logging system to develop, debug and deploy multiple
+        node systems.</p>
+
+        <p>I used the excellent ZeroMQ libraries because ZeroMQ
+        offers and ease of use not found in most messaging systems.
+        ZeroMQ was wrapped in python because python is arguably the
+        language of applications in this targeted market.</p>
+
+        <p>Most importantly, I wanted relatively new developers
+        from the Maker movement to have visions of connection multiple
+        nodes to form new and creative methodologies to implement
+        their own visions.</p>
+
+        <p>To fully use the power of ZeroMQ for messaging requires
+        two more basic modules: a name server and a control module.</p>
+
+        <h2>Simple Name Server</h2>
+
+        <p>Maintaining multiple nodes with coordinated communications
+        can be a nightmare unless proper tools exist to support
+        general node communications.</p>
+
+        <p>A name server maintains a dictionary of names and port numbers.
+        An external node knows it must communicate with a named node, e.g., "logCollector", so it queries the name server. The name server replies to the
+        "logCollector" with the the proper port. This dictionary should
+        persist between reboots.</p>
+
+        <h2>Simple Control</h2>
+
+        <p>Supplying commands to nodes must exist in some way. A unified
+        command processing should ease application requirements for
+        developers.<p>
+
+        <p>In industry an example of this would be called "<a href="https://en.wikipedia.org/wiki/SCADA">SCADA</a>" - Supervisory Control And Data Acquisition.
+        SCADA provides a system for remote monitoring and control.
+        While SCADA systems can become quite elaborate, most of our needs
+        could be quite modest.</p>
+
+        <h2>A human interface</h2>
+
+        <p>One major issue with our control system is the human interface:
+        "How do we display our data that allows use to properly
+        control our remote applications?"</p>
+
+        <p>Since my vision for this tool encompasses all Maker style computer
+        projects, a general human interface may be too general to be of much
+        use. Perhaps multiple ideas require mulitple solutions. And most
+        certainly some people have their own strong ideas; requirement ideas
+        that are most valid indeed.</p>
+
+        <p>A general human interface cannot be force fitted to this
+        tool set. This problem may be addressed much futher down
+        the line.</p>
+
+
+        <h1>TODO list</h1>
+
+        <p>Non-trivial software always has something missing. The missing
+        something differs from person to person, from user to user.
+        An important item for one user exists as a distraction to another user.
+        We all have our own view of reality.</p>
+
+        <p>Some items I consider important:</p>
+
+        <ul>
+
+            <li>Security. No security currently exists. As more and more
+            systems get into the field, security becomes important. Do you
+            want your home infested by a hacker? Definitely needed.</li>
+
+            <li>Docs for expanding log filtering.</li>
+
+            <li>Speed increase. The current speed on my desktop
+            of about 70,000 messages/second should handle all
+            but the most demanding applications. Does this need attention?</li>
+
+            <li>runTests.sh. This current test script detects only success
+            or failure of a run and does not examine output. This needs
+            upgrading. However, current, Apr, 2016, coverage is 92%.</li>
+
+            <li>Database for logs. Is this necessary? Too complicated?</li>
+
+            <li>Periodic log rollover. How large do logs get before
+            the unwieldy size encumbers use? This obviously depends
+            on what gets logged and user tolerance. Build a process
+            that performs rollover periodically or by size?</li>
+
+        </ul>
+
+        <h1>Afterwords</h1>
+
+        <p>I am reminded of the famous quote by <a href-"http://joearms.github.io/2013/05/31/a-week-with-elixir.html">Joe Armstrong</a>,
+        creator of Erlang:</p>
+
+        <center>
+        <div style="width:300px;border:1px solid #cecece; padding:10px;">
+            <blockquote>The Three Laws of Programming Language Design<br/><ul><li>What you get right, nobody mentions it.</li><li>What you get wrong, people bitch about.</li><li>What is difficult to understand you have to explain to people over and over again.</li></ul></blockquote>
+            <div class="credit" style="text-align:center;">
+                <cite><a href="http://joearms.github.io/2013/05/31/a-week-with-elixir.html">Joe Armstrong on designing Erlang</a></cite>
+            </div>
+        </div>
+        </center>
 
         <h1>Links and References</h1>
 
@@ -1026,7 +1217,6 @@ app uses the direction only from processes to the loggerControler.</p>
         href="http://zeromq.org/intro:read-the-manual"> many companies</a> as a
         basis for a wide variety of product. Highly recommended. Their website
         provides a plethora of ideas and practical advice.</p>
-
 
         <h1>License</h1>
 
@@ -1252,5 +1442,8 @@ time.struct_time(tm_year=2013, tm_mon=3, tm_mday=19, tm_hour=13, tm_min=0, tm_se
             <i>only</i> information source. The assist in reproducing erroneous
             cases. If you can reproduce it, you can find a way to debug
             it.</li>
-
+            
+            <li>ISO8601 has notation for periodic events! This
+            may also be used for intervening time between two time points.
+            See https://en.wikipedia.org/wiki/ISO_8601 "Time intervals"</li>
         </ul>
