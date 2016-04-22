@@ -9,14 +9,21 @@ import os
 # logs to stdout.
 LOG_FILENAME = None
 
-# ============ FUTURE - Ignore for now =====================
-# Set to True to handle JSON logs.
-# Using a database such as MongoDB allows
-# trivial storage with JSON.
-# Future: CSV, key=value&key1=value1&...,
-# Default is "key=value&"
-DATA_FORMAT = 'DEFAULT'
-# ============ End of FUTURE =====================
+#
+# Log level setting: Only logs of this level
+# and above get logged.
+#
+#    The default logging level is logConfig.LOG_LEVEL. To log everything,
+#    change the level at any time:
+#        logger.basicConfig(level=logging.NOTSET)
+#
+#    Set level to warning and above:
+#        logger.basicConfig(level=logging.WARNING)
+#
+#    Set level to debug and above for development:
+#        logger.basicConfig(level=logging.WARNING)
+#
+LOG_LEVEL = 'WARNING'
 
 #
 # -------------------------------

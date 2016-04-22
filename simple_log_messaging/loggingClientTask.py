@@ -48,7 +48,7 @@ class LoggingClientClass(threading.Thread):
         self.poll = zmq.Poller()
         self.poll.register(self.socket, zmq.POLLIN)
 
-    def send_string(self, astr):
+    def _send_string(self, astr):
         """Send astr as a fully formed log message.
         Return True  for success
                False for failure.
@@ -65,14 +65,14 @@ class LoggingClientClass(threading.Thread):
             self.socket.send_string(astr)
         except zmq.ZMQError as err:
             sys.stderr.write('ERROR in send_string:%s\n' % err)
-            return False
-        return True
+            return 1    # Non-zero status == problems
+        return 0        # Zero status == msg sent
 
     def _compose_msg(self, level, payload):
         """ From the pieces, create a full message and send it.  """
         log_components = logComponents.LogComponents(level, payload)
         msg = str(log_components)
-        return self.send_string(msg)
+        return self._send_string(msg)
 
     def debug(self, payload):
         """ Send a debug message to the log server.  """

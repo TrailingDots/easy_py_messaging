@@ -11,14 +11,14 @@
 """
 import sys
 import platform
-import logging
 import loggingClientTask
 
 def main():
-    logging.basicConfig(level=logging.NOTSET)   # Log everything
     client = loggingClientTask.LoggingClientClass(platform.node())
     client.start()
 
     msg = ' '.join(sys.argv[1:])
-    client.info(msg)
+    return client.info(msg)
 
+if __name__ == '__main__':
+    sys.exit(main())

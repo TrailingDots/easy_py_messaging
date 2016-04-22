@@ -1,50 +1,49 @@
 
 # DRAFT ONLY - This code is under heavy development. PLEASE do not use!!
 
-# simple_log_messaging
+# simple_log_messaging - version 1.0.0
 A simple to use wrapper around ZeroMQ for distributed systems to use for logging.
-
-[![Build Status](https://travis-ci.org/zeromq/libzmq.png?branch=master)](https://travis-ci.org/zeromq/libzmq)
-[![Build status](https://ci.appveyor.com/api/projects/status/e2ks424yrs1un3wt?svg=true)](https://ci.appveyor.com/project/zeromq/libzmq)
 
 ## Welcome
 
-The Raspberry Pi lightweight logger is a library which implements
-a ZeroMQ based messaging to privde logging facilities for
-distributed systems. This robust library extends the ZeroMQ messaging
-system to allow easy interfaces to distributed systems.
-While specifically developed for distributed Raspberry Pi
-systems, it is easily installed in almost any linux system.
+The Simple Log Messaging is a lightweight logger is a library which implements
+a ZeroMQ based messaging to privde logging facilities for distributed systems.
+This robust library extends the ZeroMQ messaging system to allow easy
+interfaces to distributed systems.  While specifically developed for
+distributed Raspberry Pi and similar systems, it is easily installed in almost
+any linux system. Additionaly, this code seamlessly when all processes
+exist on the same node.
 
-This code contains a logcollector to receive and store logs,
-a log filter application to read and filter logs based on
-multiple configurable criteria.
+This code contains a log collector to receive and store logs,
+a log filter application to receive, store and filter logs.
 
-The library contains an easy-to-use python class for interfacing
-with the lower level ZeroMQ messaging system. Now sending
-log messages eases the problems associated with monitoring and
-debugging problems with distributed systems.
+The library contains easy-to-use python classes for interfacing with the lower
+level ZeroMQ messaging system. Users will enjoy the simplicity of interfacing
+these classes with their own applications. Now sending log messages eases the
+problems associated with monitoring and debugging problems with distributed
+systems.
 
 
 ## Building and installation
 
-See the INSTALL file included with the distribution.
+See the [INSTALL](./simple_log_messaging/docs/simple_log_messaging.html)
+file included with the distribution.
 
 ## Resources
 
 Extensive documentation is provided with the distribution. Refer to
-docs/RaspPiLOgger.html.
+[Simple Log Messaging](./simple_log_messaging/docs/simple_log_messaging.html).
 
-Git repository: http://github.com/trailingdots/simple_log_messaging
+Git repository: [Simple Log Messaging](http://github.com/trailingdots/simple_log_messaging).
 
 ## License
 
 The project license is specified in COPYING and COPYING.LESSER.
 
-rasppilogger is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License (LGPL) as published
-by the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
+Simple Log Messaging is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License (LGPL) as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
 
 As a special exception, the Contributors give you permission to link
 this library with independent modules to produce an executable,
@@ -56,7 +55,8 @@ module is a module which is not derived from or based on this library.
 If you modify this library, you must extend this exception to your
 version of the library.
 
-rasppilogger is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-License for more details.
+Simple Log Messaging is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+more details.
+

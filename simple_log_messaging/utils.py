@@ -30,18 +30,18 @@ class bcolors(object):
 # Remote loggers MUST use the routines in logComponents and use the
 # keys in LOG_LEVEL to determine valid log levels.
 LOG_LEVELS = {'DEBUG': logging.debug,
-              'CMD': logging.info,      # logging has no command!
               'INFO': logging.info,
               'WARNING': logging.warning,
+              'CMD': logging.warning,      # Pytrhon logging has no CMD!
               'ERROR': logging.error,
               'CRITICAL': logging.critical}
 
 # Priority of logging. Used in filter routines.
 LOG_PRIORITY = {
                 'DEBUG': 0,
-                'CMD': 1,
-                'INFO': 2,
-                'WARNING': 3,
+                'INFO': 1,
+                'WARNING': 2,
+                'CMD': 3,       # At this level to capture all CMDs.
                 'ERROR': 4,
                 'CRITICAL': 5,
                 }

@@ -108,93 +108,12 @@
         absorb all that new hardware and software that's been bubbling though
         your mind.</p>
 
-        <h2>The Primary Goal</h2>
-
-        <p>This application offers a logging server capable of collecting
-        logs from multiple sources and storing them into a text file or
-        database system. The initial release saves only to a text file.</p>
-
-        <p>The primary goal supplies a useful and <i>easy</i> to use logging
-        system that will work well with supplied enhancements for controlling
-        and monitoring distributed Raspberry Pis, Arduinos or similar systems.
-        This package provides general purpose software capable of providing
-        solid logging capabilitiies for almost any system supporting python and
-        ZeroMQ!</p>
-
-
-        <h1>Benefits of Logging</h1>
-
-        <p>Benefits of logging frequently become vastly underestimated
-        in the course of developing and debugging systems.</p>
-
-        <p>This logging package provides a simple way to embed
-        powerful logging techniques into your systems.</p>
-        
-        <p>This package was designed to provide logging for:</p>
-
-        <ul>
-            
-            <li>A single stand-alone process.  If the application gets
-            refactored into multiple proceses, this logging package provides a
-            common channel for logging.</li>
-
-            <li>Handling logging for multiple processes on a single
-            system. The processes use this package to conveniently
-            record timestamped information on the behavior of each
-            process.</li>
-
-            <li>Distributed systems. This paackage really shines
-            in this area. The resulting logs correlate the actions
-            of multiple systems and provides a single repository
-            of information for analysis.</li>
-
-        </ul>
-
-        <p>Logging can provide substantial benefits for both developers and
-        users.  The fact that developers remain mostly unaware of these
-        benefits presents problems. Proper logging can ease a wide variety of
-        problems.</p>
-
-        <p>Few programmers appreciate the benefits of logging.  Even fewer
-        consider how logging can ease their burdens in finding and solving
-        problems on both development and live systems.</p>
-
-        <p>Benefits to users similarly get short shrift. Users require
-        insights into their systems that logging can frequently provide.
-        Informed developers implement user oriented logging as a natural
-        course of action.</p>
-
-        <p>Observing behavior in a distributed system presents a problem. Do
-        pumps operate on schedule? How about maintaining water levels?  Does
-        the lighting operate as scheduled? Does the temperature remain within
-        range? If something goes wrong, how long until your notice that
-        problem? And, more importantly, how do you debug that misbehaving
-        system?</p>
-
-        <p>Logging offers a major opportunity to observe all this
-        and more.</p>
-
-        <p>Good, really good logging remains an elusive target.  Most
-        developers seem content with either the bare minmum or with flooding a
-        system with lots and lots of useless debug garbage.</p>
-
-        <p>Proper logging of a running process provides <i>the</i>
-        primary view into your running proceses. Without this
-        log view only guessing remains.</p>
-
-        <p>Debugging distributed systems can provide hours of frustrating
-        entertainment. A clatch of logs supplies nutritious food for forensic
-        debugging.</p>
-
-
-        <p>Did I say logging as a debugging tool in development? Why yes,
-        I did.</p>
 
         <h2>Still Using Print Statements?</h2>
 
         <p>Many noobies seem satisfied with the ubiquitous "print" statements.
         Their console output becomes cluttered with tons of disorganized,
-        unfiltered, opaque output.</p>
+        unfiltered and opaque output.</p>
 
         <p>The lowly "print" statements cannot work outside the narrow confines
         of brief ad-hoc debugging. Print statements for debugging clutter both
@@ -204,21 +123,21 @@
 
         <h2>Logging within a Single System</h2>
 
-        <p>The logging solution extends beautifully to multiple
-        systems. However, a single system
-        cannot use logging to great advantage. Starting with
-        a single system with easy logging greatly simplifies
-        expansion to larger systems. That single system can become a
-        wealth of information for further implementations.</p>
+        <p>This simple log messaging solution extends beautifully to multiple
+        systems.  However, a single system can definitely use this logging
+        system to great advantage. Starting with a single system with easy
+        logging this can greatly simplify expansion to multi-node systems. That
+        single system can become a wealth of information for further
+        implementations.</p>
 
-        <p>The proposed simple log messaging app solution can even live as a
-        thread within a single process! The degree of flexibility offered along
-        with ease of implementation allows this solution to shine!</p>
+        <p>This simple log messaging solution can even live as a thread within
+        a single process! The degree of flexibility offered along with ease of
+        implementation allows this solution to shine!</p>
 
         <h2>Using the Simple Log Messaging Application</h2>
 
         <p>The simple log messaging application greatly eases the problem of
-        tracking what happens in your SOC systems. It provides a central
+        tracking what happens in your multi-node systems. It provides a central
         logging system that collects logs from one or more application and
         stores them into either a simple text file or a database. The messaging
         speed has been demonstrated to be adequate for all but the most
@@ -229,28 +148,49 @@
         specified.</p> 
 
         <p>The process generating the logs can reside on the same node as the
-        logger.  Alternatively the process creating the logs can run on a
+        logger.  Alternatively, the process creating the logs can run on a
         system removed from the logging system.</p>
 
-        <p>A separate logging process presents a much stronger resource than a
-        thread of the application task. If the application were to crash, the
-        last few logs may be buffered and lost in the crash.  If a separate
-        logging task would used, it would receive those last few logs and post
-        them to your logging repository.</p>
+        <p>A separate logging process presents a much stronger resource than
+        when a thread of the application task. If the application were to
+        crash, the last few logs may be buffered and lost in the crash.  If a
+        separate logging task would used, it would receive those last few logs
+        and post them to your logging repository.</p>
 
         <p>This local vs. remote flexibility opens the possibility of storing
-        logs on a desktop in your home while monitoring SOC computers in your
+        logs on a desktop in your home while monitoring nodes in your
         garden, backyard, garage or other places of interest. The remote
         systems could crash and the logging system will assist in debugging
         that crash. Your crashed system may or may not have information
         necessary to fixing that crash.</p>
 
-        <p>As the various parts of the RaspPiLogging system are presented, the
-        necessary debugging techniques will also be explained. When I am
-        learning a new system and attempting to follow the steps for installing
-        or implementing that system, I notice that the authors usually ignore
-        problems. The just assume everything will work.  In these situations I
-        am always wondering, "How do I verify that this is correct?"</p>
+        <p>As the various parts of the simple log messaging system are
+        presented, the necessary debugging techniques will also be explained.
+        When I am learning a new system and attempting to follow the steps for
+        installing or implementing that system, I notice that the authors
+        usually ignore problems. The just assume everything will work.  In
+        these situations I am always wondering, "How do I verify that this is
+        correct?"</p>
+
+        <h2>The Primary Goal</h2>
+
+        <p>This simple log messaging application offers a logging server
+        capable of collecting logs from multiple sources and storing them into
+        a text file or database system. The initial release saves only to a
+        text file.</p>
+
+        <p>The primary goal supplies a useful and <i>easy</i> to use logging
+        system that will work well with supplied enhancements for controlling
+        and monitoring distributed Raspberry Pis, Arduinos or similar systems.
+        This package provides general purpose software capable of providing
+        solid logging capabilitiies for almost any system supporting python and
+        ZeroMQ!</p>
+
+        <p>Our working model is, once again, a hydroponics system. The
+        hydroponics system has 2 Raspberry Pis controlling various devices and
+        this logs to a desktop.  The desktop may send control commands. Various
+        logs from both systems get sent to the logger to monitor and track
+        events in these systems.</p>
 
 
         <h1>Introductory Matters</h1>
@@ -260,8 +200,8 @@
         <p>Because Python has demonstrated global acceptance for many projects
         on our tageted boards, the simple log messaging app will continue this
         tradition. Python provides an easy-to-code implementation language as
-        well as convenient debugger support. This project combines the power of
-        ZeroMQ to create a powerful logging system.</p>
+        well as convenient debugger support. This project combines the python
+        power with ZeroMQ to create a powerful logging system.</p>
 
         <h2>Audience</h2>
 
@@ -270,6 +210,9 @@
         or Ubuntu or any linux system will ease development because desktop
         systems typically have greater capablities such as disk space, memory,
         speed, and multiple monitors. </p>
+
+        <p>One or more Raspberry Pi nodes is <i>not</i> a requirement. This
+        system works perfectly well with processes on a single desktop.</p>
         
         <p>Developing an application using a single Raspberry Pi system also
         works well.</p>
@@ -299,8 +242,6 @@
 
 
         <h1>Installation</h1>
-
-        <p>If there are any problems, consult the Troubleshooting section.</p>
 
         <p>Each of the following commands may require a <code>sudo</code>
         in front of the command to allow root to install in secure
@@ -335,7 +276,7 @@
         <p>Continue to install the simple_log_messaging code:</p>
 
 
-        <p><code>cd</code> to a directory to work from.</p>
+        <p><code>cd</code> to a work directory.</p>
 
         <p>Install the simple log messagng application: <br/>
         <code class="indent">git clone
@@ -348,14 +289,14 @@
         <code class=indent>cd
             simple_log_messaging</code></p>
 
-        <p>Finish the installation with a final install:<br/> <code>python
-            setup.py install</code> Again, if "permission denied", prefix with
-        "sudo"</p>
+        <p>Finish the installation with a final install:<br/><code class=indent>python
+            setup.py install</code><br/>Again, for "permission denied" error,
+        prefix with "<code>sudo</code>"</p>
         
         <p>Ensure the logCollector has been installed:<br/>
         <code class=indent>which
             logCollector</code><br/>If you get an error containing something
-        like "<code>no logCollector in ...</code>, refer to the troubleshooting
+        like "<code>no logCollector in ...</code>", refer to the troubleshooting
         section.</p>
 
         <p>Start the log Collector: <br/>
@@ -376,8 +317,72 @@
 
         <p>Congratulations! You have a working system!</p>
 
+        <h1>Structure of Log Entries</h1>
 
-        <h1>Supplied Tools</h1>
+        <p>A single log consist of three fields separated by a tab:</p>
+
+        <pre>
+        timestamp \t level \t payload
+        </pre>
+
+        <p>Each log entry saved in the text file has the following
+        tab sepatated field:</p>
+            <table>
+                <tr>
+                    <td><b>Name</b></td>
+                    <td><b>Meaning</b></td>
+                </tr>
+                <tr>
+                    <td>ISO8601 timestamp</td>
+                    <td>The timestamp of arrival of the log entry as
+                        determined by logCollector. Using the timestamp
+                        of logCollector provides a more accurate time
+                        than attempting to synchronize multiple nodes
+                        to the same time.</td>
+                </tr>
+                <tr>
+                    <td>Level</td>
+                    <td>The level of the log entry. Levels tag an entry
+                        to a level of importance. The current levels are,
+                        from least important to most:<br/>
+                        <ul>
+                            <li>DEBUG - a debugging message</li>
+                            <li>INFO - an informational message</li>
+                            <li>CMD - records a command.</li>
+                            <li>WARNING - a warning that something is amiss.</li>
+                            <li>ERROR - something has gone wrong that should not happen.</li>
+                            <li>CRITICAL - something very wrong has happened to the system. Likely a crash or something that prevents system operation.</li>
+                    </ul></td>
+                </tr>
+                <tr>
+                    <td>Payload</td>
+                    <td>A payload may consist of absolutely anything. However,
+                        a highly recommended structure would be keyword=value
+                        separated by commas. An example:<br/><code
+                        class=indent> pump01=ON,waterLevel=normal</code><br/>
+                    This allows easy parsing in processing log entries.  Each
+                    payload gets terminated with a &lt;host=hostname&gt; by the
+                    logging code. A user should not add their own host field.
+                    This host item supplies an identification for the source
+                    for each log entry.</td>
+                </tr>
+            </table>
+
+        <p>Using this suggested format greatly simplifies processing
+        log files by other programs. Large log files become unwieldy
+        to read. Do youself a favor.</p>
+
+        <p>Notice that the suggested format allows the payload
+        to trivially convert to JSON format. JSON format blends
+        in well with many modern utilities.</p>
+
+        <h1>Components</h1>
+
+        <p>A brief not on configuration files. All configuration files
+        load by reading the contents that get evaluated by the python
+        interpreter using <code>eval()</code>. This can represent a
+        security threat! If this is a concern, please contact the author
+        to bump up security enhancements.</p>
 
             <h2>logCollector - Collecting and saving log messages</h2>
 
@@ -414,9 +419,9 @@ To toggle printing of messages received:
             <li><code>-a</code> - New logs should normally get appended to the
             end of any existing logs. This is the default.</li>
 
-            <li><code>-t</code> - Any existing log-file gets truncated and all
-            new logs will replace the existing log file. Sometimes useful when
-            debugging a system.</li>
+            <li><code>-t</code> - An existing log-file gets truncated and all
+            new log entries will replace the existing log file. Sometimes
+            useful when debugging a system.</li>
 
             <li><code>--help</code> - The help display.</li>
 
@@ -425,14 +430,17 @@ To toggle printing of messages received:
             <h3>Configuration file</h3>
 
             <p>In normal operations the logCollector begins by reading a
-            configuration file from <code>.logcollectorrc</code>. If that file
-            does not exist, it tries to read
-            <code>$HOME/.logcollectorrc</code>, that is, the configuration file
-            from the user's home directory.</p>
+            configuration file from <code>.logcollectorrc</code> in the same
+            directoryt logCollector began executing. If that file does not
+            exist, it tries to read <code>$HOME/.logcollectorrc</code>, that
+            is, the configuration file from the user's home directory.</p>
 
             <p>Users may, of course, supply a configuration filename on
             the command line with the <code>--config=&lt;filename&gt;</code>
             argument.</p>
+
+            <p>If the configuration file does not exist, logs get save in the
+            invocation directory with the name of <code>logs.log</code>.</p>
 
             <p>The configuration file eases the implementation of more
             complex systems by storing any special setting necessary.</p>
@@ -484,7 +492,7 @@ To toggle printing of messages received:
             would you handle that mind numbing experience? Now repeat that same
             experience over and over when necessity dictates various queries of
             those logs. Now consider that enterprise systems typically
-            contains log files of million or even billions of logs?</p>
+            contains log files of million or even billions of log entries?</p>
 
             <p>Various log analysis tools exist to select and interpret log
             files. This initial release contains an elementary analysis tool
@@ -496,10 +504,10 @@ To toggle printing of messages received:
 
             <pre>
 logFilterApp [--out-file=outfile] [--in-file=infile]
-	[--start=&lt;ISO8601 start date&gt;] [--end=&gt;iso8601 end date&gt;]
-	[--JSON | --CSV] 
+    [--start=&lt;ISO8601 start date&gt;] [--end=&gt;iso8601 end date&gt;]
+    [--JSON | --CSV] 
     [--help]
-	[--level=&lt;level name&gt;] 
+    [--level=&lt;level name&gt;] 
     [--out-file=output file] # output goes here. Default: stdout
     [--in-file=input file]   # input file here. Default: stdin
 
@@ -563,8 +571,8 @@ logFilterApp [--out-file=outfile] [--in-file=infile]
         file gets processed. A common use would be reading today's
         logs.</p>
 
-        <p>Suppling an end date only will read from the beginning
-        of the log file upto and including the end date.</p>
+        <p>Supplying an end date with no start date results in reading from the
+        beginning of the log file upto and including the end date.</p>
 
         <p>Supplying both a start and end date will, of course,
         read all logs between these two dates. Gathering information
@@ -573,7 +581,7 @@ logFilterApp [--out-file=outfile] [--in-file=infile]
         <h3>Configuration Files</h3>
 
         <p>Filtering log entries can result in powerful analytics
-        for your system. Depending up your needs, various
+        for your system. Depending upon your needs, various
         scenarios present themselves over and over.</p>
 
         <p>Perhaps the solution to handle these repetitious queries
@@ -600,7 +608,7 @@ cat $HOME/cmd.conf  # List the config file.
         <p>Notice the absense of start and end times. The default
         start time means the start of the Linux epoch. The default
         end time means now. Thus, the entire contents of the
-        file will be read.</p>
+        file will filtered with a level of WARNING.</p>
 
         <p>But what if all  you need is a single day's worth of
         logs? When a configuration file gets loaded, further
@@ -620,6 +628,9 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         search for an <code>ERROR</code> and process related logs?
         The current filtering does not allow easy management of such
         requests.</p>
+
+        <p>Or, you might have an interest in only one node, or only a
+        few specific devices. Only your immagination limit the number of queries .</p>
 
         <p>TBD - A placeholder exists in the code for this!</p>
 
@@ -647,7 +658,7 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         class=indent>logCmd therm01=74.6</code></p>
 
         <p><b>WARNING!</b> logCmd will hang unless the logCollector
-        process is running. logCmd does not attempt to determine
+        process is not running. logCmd does not attempt to determine
         if a logCollector is running because multiple logCollectors
         may be run on different ports. Also, the code for this
         utility has been deliverately left as simple as possible.<p>
@@ -656,6 +667,11 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         a simple example of using simple log messaging in
         your own code.</p>
 
+        <p><b>Exercise:</b> Add a timeout to logCmd is the logCollector
+        is not running. Appropriate error messages should also
+        record this event. Don't forget proper setting of return
+        codes.</p>
+
         <h2>loggingLoopApp - For debugging your logging system</h2>
 
         <p>In the process of development the requirement may arise
@@ -663,13 +679,13 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         file mis-configured, path problems in finding programs,
         downed boards, disconnected wiring, etc.</p>
 
-        <p>The current implementation send a logs once a second to
+        <p>The current implementation sends a logs once a second to
         logCollector. The log contents provide feedback of
         successful messaging and little else.</p>
 
         <p>To run this utility, use a two console: one for collecting
         the logs and one for loggingLoopApp. These terminals may
-        be on the same system or on different systems.</p>
+        be on the same node or on different nodes.</p>
 
         <p>Start the logCollector:<br/><code class=indent>logCollector --noisy</code></p>
 
@@ -698,7 +714,7 @@ Req #2 sent "request #2"
         <p>The timestamp and worker ID will, of course, be different.</p>
 
         <p>Kill both the loggingLoopApp and logCollector with 
-        ctrl-C in each terminal.</p>
+        ctrl-C in each terminal when finished.</p>
 
         <h2>listeningPort - Detecting a logCollector</h2>
 
@@ -711,7 +727,7 @@ Req #2 sent "request #2"
         <p>Many times when developing software manual testing
         requires repeating the same process over and over.
         Due to various factors, it's easy to forget that
-        the logCollector process already runs. It's certainly
+        the logCollector process is already running. It's certainly
         possible to forget the exact terminal logCollector runs
         on. listeningPort provides an answer to this situation.</p>
 
@@ -758,7 +774,7 @@ Return codes:
         <pre>
 # logCollector is running
 listeningPort
-Port 5570 : listening thru pid 5933 named /home/cecilm/.local/bin/logCollector
+Port 5570 : listening thru pid 5933 named /home/trailingdots/.local/bin/logCollector
         </pre>
 
         <pre>
@@ -766,6 +782,15 @@ Port 5570 : listening thru pid 5933 named /home/cecilm/.local/bin/logCollector
 listeningPort
 Port 5570 : Nobody listening
         </pre>
+
+        <p><b>Exercise:</b> Extend listeningPort to use a different node.
+        Currently it detects port usage only on the same node as invoked.</p>
+
+    <h1>Configuring a Node</h1>
+
+    <p><code>logConfig.py</code> has setting that may need modification
+    for each node. Using logging only on a single system requires no
+    changes. This default setting works well.</p>
 
 
     <h1>Sample Code</h1>
@@ -791,29 +816,26 @@ Port 5570 : Nobody listening
     <pre>
 import sys
 import platform
-import logging
 import loggingClientTask
 
 def main():
-logging.basicConfig(level=logging.NOTSET)   # Log everything
-client = loggingClientTask.LoggingClientClass(platform.node())
-client.start()
+    client = loggingClientTask.LoggingClientClass(platform.node())
+    client.start()
 
 msg = ' '.join(sys.argv[1:])
 client.info(msg)
     </pre>
 
-    <p>The first three lines of <code>main()</code> contain
-    all needed information to send a log to the collector with
-    a level of <code>info</code>. The first line overrides
-    any possible setting that eliminate <code>info</code>
-    level logs. The next two lines create and start a logging
-    process.</p>
+    <p>The two lines of <code>main()</code> contain all needed information to
+    send a log to the collector with a level of <code>INFO</code>.  These two
+    lines create and start a logging process.</p>
 
-    <p>Since a logging process has been started, an arbitary
-    number of logs could be sent. However, the last two lines
-    space separate the command line argumens and send to
-    logCollector.</p>
+    <p>The <code>platform()</code> informs LoggingClientClass that the
+    payload portion of the log contains the name of the host. This example
+    was run on my desktop.</p>
+
+    <p>The last two lines space separate the command line arguments to create a
+    string and sends this string to logCollector.</p>
 
     <h3>Exercise: Expand upon logCmd</h3>
 
@@ -833,6 +855,10 @@ client.info(msg)
         specify the level at run time. This permits a shell
         to log <code>ERROR</code>, <code>WARNING</code>, etc.</li>
 
+        <li>The current logCmd works only on the node running
+        logCollector. Extend this with a node argument to remote
+        nodes and use shell commands to send logs.</p>
+
     </ul>
 
     <h1>Tips for Great Logging</h1>
@@ -849,22 +875,26 @@ client.info(msg)
     communications channels. <a href="https://en.wikipedia.org/wiki/SCADA">
     Wikipedia: SCADA</a></p>
 
-    <p>Some logs that an elementary SCADA system could generate.  The model
-    is, once again, a hydroponics system. The hydroponics system has 2
-    Raspberry Pis controlling various devices and this logs to a desktop.
-    The desktop may send control commands. Various logs from both systems
-    get sent to the logger to monitor and track events in these
-    systems.</p>
+    <p>Industrial uses of SCADA include electric power systems, water
+    treatment plants, pipelines, chemical complexes, etc.</p>
 
     <p>Assume "hydro1" and "hydro2" are systems in a remote hydroponics
     garden with various measurement instrumentations. This remote system
     logs to a desktop inside the home.</p>
 
-    <p>Commands the remote uses to start pumps and switchs get logged as
-    well. This used "cmd=true&amp;pump1=ON&amp;host=hydro1" meaning this is
-    a command that turns pump1 on and the host is hydro1.</p>
+    <p>Log files should be readable by humans and computers alike.
+    This implies a consistent format.</p>
 
-    <p>Some examples of data that appears in logs:</p>
+    <p>Ease of searching. If you can't easily find the information 
+    you need, it doesn't exist.</p>
+    
+    <p>Log exceptions properly. Stack traces should rarely get dumped
+    into a log file. If you <i>realy</i> want to log exceptions,
+    consider condensing them. (Note: I need to think about this
+    more as exception tracing can greatly assist with production
+    problems)</p>
+
+    <p>Some examples of data that could appear in logs:</p>
 
     <ul>
 
@@ -884,9 +914,43 @@ client.info(msg)
     values in the logs must, of course, have appropriate values for that
     device.</p>
 
+    <h2>Production vs. Development Log Levels</h2>
+
+    <p>When your system begin operating normally, the DEBUG level logs
+    can flood your log system and become unwelcome guests.</p>
+
+    <p>To change from a development level to production level,
+    change <code>logConfig.LOG_LEVEL</code> to the appropriate
+    level:</p>
+
+    <pre>
+    # In file logConfig.py:
+    LOG_LEVEL = 'WARNING'
+    </pre>
+
+    <p>To include everything:</p>
+
+    <pre>
+    # In file logConfig.py:
+    LOG_LEVEL = 'NOTSET'
+    </pre>
+
+    <p>In particular, the <code>CMD</code> level is above <code>WARNING</code>
+    and before <code>ERROR</code> priority. This ordering ensures that
+    normal operations can capture all <code>CMD</code> transactions.</p>
+
+    <p>The <code>CMD</code> level create an out-of-band level for the
+    python logging system. As such, this code maps the <code>CMD</code>
+    level to the same level as <code>WARNING</code>.</p>
+
+    <p><b>Excercise:</b> Add a conditional setting to this level
+    setting based on an environmental variable. For example, an
+    environmental variable "<code>PRODUCTION</code>" would indicate
+    <code>DEBUG</code> and <code>INFO</code> levels get ignored.</p>
+
     <h2>The UNKNOWN state</h2>
 
-    <p>The "UNKNOWN" value should apply to <i>every</i> device!  Devices
+    <p>The "<code>UNKNOWN</code>" value should apply to <i>every</i> device!  Devices
     can suffer all manner of reasons for refusing to work properly: water
     damage, physically damanged, wiring problems, aging, etc. A switch does
     not have a simple ON/OFF, but should actually use ON/OFF/UNKNOWN.</p>
@@ -901,41 +965,41 @@ client.info(msg)
 
      <p>Some suggestions for naming:</p>
         
-            <table>
-                <tr>
-                    <td>Keyword</td>
-                    <td>Meaning</td>
-                </tr>
-                <tr>
-                    <td>device</td>
-                    <td>Device name</td>
-                </tr>
-                <tr>
-                    <td>state</td>
-                    <td>Value for descrete devices: ON, OFF, UNKNOWN</td>
-                </tr>
-                <tr>
-                    <td>temp</td>
-                    <td>Temperature reading for analog temperature</td>
-                </tr>
-                <tr>
-                    <td>host</td>
-                    <td>Which system sent this data?</td>
-                </tr>
-                <tr>
-                    <td>cmd</td>
-                    <td>= req : A command request was sent. host=system performing request.<br/>
-                    =req : tag=xyz...&amp;host=central</td>
-                </tr>
-                <tr>
-                    <td>cmd</td>
-                    <td>=rep : A command reply indicates acknowledgement. host=sys performing command.
-                      A reply sends the tag of the command. Optionally the entire
-                      original command may populate the command.
-                      cmd=rep&amp;tag=xyz&amp;host=hygro1</td>
-                 </tr>
+        <table>
+            <tr>
+                <td><b>Keyword</b></td>
+                <td><b>Meaning</b></td>
+            </tr>
+            <tr>
+                <td>device</td>
+                <td>Device name</td>
+            </tr>
+            <tr>
+                <td>state</td>
+                <td>Value for descrete devices: ON, OFF, UNKNOWN</td>
+            </tr>
+            <tr>
+                <td>temp</td>
+                <td>Temperature reading for analog temperature</td>
+            </tr>
+            <tr>
+                <td>host</td>
+                <td>Which system sent this data?</td>
+            </tr>
+            <tr>
+                <td>cmd</td>
+                <td>= req : A command request was sent. host=system performing request.<br/>
+                =req : tag=xyz...&amp;host=central</td>
+            </tr>
+            <tr>
+                <td>cmd</td>
+                <td>=rep : A command reply indicates acknowledgement. host=sys performing command.
+                  A reply sends the tag of the command. Optionally the entire
+                  original command may populate the command.
+                  cmd=rep&amp;tag=xyz&amp;host=hygro1</td>
+             </tr>
 
-             </table>
+         </table>
 
              <p>Devices in this example:</p>
 
@@ -1003,8 +1067,8 @@ client.info(msg)
 
             <li>Macro commands could provide for a flurry of activity. An
             example of a macro command could be "circulate" wherein the pumps
-            that circulate nutrient solutions activate and remain on the a pre
-            determined period.  These may orginate either in the remote or
+            that circulate nutrient solutions activate and remain on during a
+            pre-determined period.  These may orginate either in the remote or
             central control. Macros remain beyond the ken of loggers except to
             record the issuance of the command itself. The logger simply
             monitors and records activity.</li>
@@ -1013,10 +1077,6 @@ client.info(msg)
 
 
         <h1>Troubleshooting</h1>
-
-        TBD - installation
-        Port issues.
-        Permission denied.
 
         <h2>I get "permission denied" when I ...</h2>
 
@@ -1029,11 +1089,12 @@ client.info(msg)
         <p>When starting logCollector, logCmd, ..., a bomb ending in
         <code>ImportError: ... undefined symbol: zmq_msg_gets</code>
 
-        <p><code>sudo python</code> and <code>python</code> could be
+        <p><code>sudo python</code> and <code>python</code> could execute
         different python versions due to $PATH. Run this:<p>
 
-        <pre>python -c 'import zmq; print(zmq)
-        sudo python -c 'import zmq; print(zmq)
+        <pre>
+        python -c 'import zmq; print(zmq)'
+        sudo python -c 'import zmq; print(zmq)'
         </pre>
 
         <p>If the <code>import zmq</code> fails, please refer to
@@ -1076,10 +1137,10 @@ client.info(msg)
 
         <h1>Original Ideas: ZeroMQ</h1>
 
-        <p>This code calls ZeroMQ, also known as 0MQ or zmq, with python
-        bindings, PyZMQ, to build this logger.  The <a
-        href="http://zeromq.org/intro:read-the-manual">The Asynchronous
-    Client/Server Pattern</a> forms the basic idea of this logger. The full
+        <p>This code uses ZeroMQ, also known as 0MQ or zmq, with python
+        bindings, PyZMQ, to build this simple log messaging.  The <a
+        href="http://zeromq.org/intro:read-the-manual">Asynchronous
+    Client/Server Pattern</a> pattern forms the basic idea of this logger. The full
 ZeroMQ pattern implements bidirectional messages while the simple log messaging
 app uses the direction only from processes to the loggerControler.</p>
 
@@ -1143,17 +1204,18 @@ app uses the direction only from processes to the loggerControler.</p>
         While SCADA systems can become quite elaborate, most of our needs
         could be quite modest.</p>
 
-        <h2>A human interface</h2>
+        <h2>A human Interface</h2>
 
         <p>One major issue with our control system is the human interface:
-        "How do we display our data that allows use to properly
+        "How do we display our data that allows a user to properly
         control our remote applications?"</p>
 
         <p>Since my vision for this tool encompasses all Maker style computer
-        projects, a general human interface may be too general to be of much
-        use. Perhaps multiple ideas require mulitple solutions. And most
-        certainly some people have their own strong ideas; requirement ideas
-        that are most valid indeed.</p>
+        projects from light switches to robots to swarms of drones, a general
+        human interface may be too general to be of much use. Perhaps multiple
+        ideas require mulitple solutions. And most certainly some people have
+        their own strong ideas; requirement ideas that are most valid
+        indeed.</p>
 
         <p>A general human interface cannot be force fitted to this
         tool set. This problem may be addressed much futher down
@@ -1166,6 +1228,10 @@ app uses the direction only from processes to the loggerControler.</p>
         something differs from person to person, from user to user.
         An important item for one user exists as a distraction to another user.
         We all have our own view of reality.</p>
+
+        <p>Overall, this logging systems seems to work well. Improvements,
+        of couse, abound. No program can be considered dead until the
+        last user has died. "Please close the door on the way out."</p>
 
         <p>Some items I consider important:</p>
 
@@ -1181,18 +1247,48 @@ app uses the direction only from processes to the loggerControler.</p>
             of about 70,000 messages/second should handle all
             but the most demanding applications. Does this need attention?</li>
 
-            <li>runTests.sh. This current test script detects only success
-            or failure of a run and does not examine output. This needs
-            upgrading. However, current, Apr, 2016, coverage is 92%.</li>
+            <li>runTests.sh. This current functional test script detects only
+            success or failure depending upon the return code of a run and does
+            not examine output. This needs upgrading. However, currently, as od
+            Apr, 2016, coverage is 92%. Create "golden" files? Scan output for
+            special targets?</li>
 
-            <li>Database for logs. Is this necessary? Too complicated?</li>
+            <li>More unit tests. Never have enough.</li>
+
+            <li>Database for logs. Is this necessary? Too complicated?  An
+            add-in component? Likely MongoDB because flexibility counts.</li>
 
             <li>Periodic log rollover. How large do logs get before
             the unwieldy size encumbers use? This obviously depends
             on what gets logged and user tolerance. Build a process
             that performs rollover periodically or by size?</li>
 
+            <li>Simple date intervals. Filtering by "YESTERDAY", "TODAY",
+            "LAST_WEEK", "LAST_HOUR", etc.</li>
+
+            <li>Strange loss of "namespace": sometimes vars set in the
+            __init__() method get "lost". This is particilarly true for ZeroMQ
+            vars. For example, <code>self.context=zmq.Context()</code> set in
+            init() but when used later in another class method has somehow
+            become NULL!  This is not always true. The strange NULL appears is
+            somewhat random. Likely a threading problem. Research has not
+            yielded any viable insight. I am currently working around this with
+            some kludgy looking code.</li>
+
+            <li>Log exceptions properly. Stack traces should rarely get dumped
+            into a log file. If you <i>realy</i> want to log exceptions,
+            consider condensing them. I need to think about this
+            more as exception tracing can greatly assist with production
+            problems. Likely a special method to record exceptions
+            with their stack traces.</li>
+
+            <li>For logging on a single system, the payload identification
+            of <code>host=hostname</code> does not work well enough to
+            uniquely determine the source. What other scheme could
+            allow exact identification?</li>
+
         </ul>
+
 
         <h1>Afterwords</h1>
 
@@ -1200,8 +1296,8 @@ app uses the direction only from processes to the loggerControler.</p>
         creator of Erlang:</p>
 
         <center>
-        <div style="width:300px;border:1px solid #cecece; padding:10px;">
-            <blockquote>The Three Laws of Programming Language Design<br/><ul><li>What you get right, nobody mentions it.</li><li>What you get wrong, people bitch about.</li><li>What is difficult to understand you have to explain to people over and over again.</li></ul></blockquote>
+        <div style="width:400px;border:1px solid #cecece; padding:10px;">
+            <blockquote><b>The Three Laws of Programming Language Design</b><br/><ul><li>What you get right, nobody mentions.</li><li>What you get wrong, people bitch about.</li><li>What is difficult to understand you have to explain to people over and over again.</li></ul></blockquote>
             <div class="credit" style="text-align:center;">
                 <cite><a href="http://joearms.github.io/2013/05/31/a-week-with-elixir.html">Joe Armstrong on designing Erlang</a></cite>
             </div>
@@ -1211,11 +1307,11 @@ app uses the direction only from processes to the loggerControler.</p>
         <h1>Links and References</h1>
 
         <p><cite>ZeroMQ</cite> by Pieter Hintjens. Published by O'Reillly Media
-        Inc, 2013.  <a href="http://www.zeromq.com">ZeroMQ</a>. This book
+        Inc, 2013.  <a href="http://www.zeromq.com">ZeroMQ</a>: this book
         provides a detailed description of ZeroMQ with many examples.  ZeroMQ
         offers a toolkit and not a framework. ZeroMQ has been used by <a
         href="http://zeromq.org/intro:read-the-manual"> many companies</a> as a
-        basis for a wide variety of product. Highly recommended. Their website
+        basis for a wide variety of products. Highly recommended. Their website
         provides a plethora of ideas and practical advice.</p>
 
         <h1>License</h1>
