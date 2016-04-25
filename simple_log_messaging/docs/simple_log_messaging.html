@@ -621,7 +621,7 @@ cat $HOME/cmd.conf  # List the config file.
 logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-05-15T23:59:59.000
         </pre>
 
-        <h3>Supplying your own log filters - TBD</h3>
+        <h3>Supplying your own log filters</h3>
 
         <p>The current filtering allows powerful results. But what if
         your requirements were more extensive? What if you needed to
@@ -632,7 +632,10 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         <p>Or, you might have an interest in only one node, or only a
         few specific devices. Only your immagination limit the number of queries .</p>
 
-        <p>TBD - A placeholder exists in the code for this!</p>
+        <p>For now, start with simply filtering all the logs.
+        Write code that handles your choice of JSON or CSV data.</p>
+
+        <p>Later additions will offer better filtering options.</p>
 
 
         <h2>logCmd - Simple logging for shell commands</h2>
@@ -1132,7 +1135,114 @@ client.info(msg)
         This means an hour may be repeated or ignored depending
         upon the time of year.</p>
 
-        <h2>TBD - Coding for ISO8601,....</h2>
+        <h2>Coding for ISO8601,....</h2>
+
+        <p>Your code likely needs to records time one way or another.
+        Coding for ISO8601 can confuse programs. Some examples can
+        help.</p>
+
+        <h3>An example using binary now to ISO8601 back to binary</h3>
+
+        <pre>
+import datetime
+import time
+
+"""
+    Illustrate multiple conversions of timestamps
+
+    Obtain the local time with millisecond precision.
+    Convert local time to display format with local timezone.
+    
+    This time in display format gets placed into logger
+    Now convert the display formatted time into seconds
+    since the epoch.
+""" 
+
+# Read the current time. The time is in seconds since
+# the start of the unix epoch, Jan 1, 1970.
+unixNow = time.time()
+print 'unix now:%f'% unixNow
+
+# Create a python datetime from seconds.
+now = datetime.datetime.fromtimestamp(unixNow)
+print 'now=%s' % str(now)
+
+# Format the python datetime into ISO8601 output
+now8601 = now.strftime("%Y-%m-%dT%H:%M:%S.%f")
+print 'now8601 = %s' % now8601
+
+# Given a string, convert to a python tuple
+nowTuple = datetime.datetime.strptime(now8601, "%Y-%m-%dT%H:%M:%S.%f")
+print 'nowTuple:' + str(nowTuple)
+
+# Convert from the tuple to seconds from the unix epoch.
+secEpoch = time.mktime(nowTuple.timetuple()) + \
+            1.0e-6*nowTuple.microsecond
+print 'secEpoch: %s' % secEpoch
+        </pre>
+
+        <p>With output: (Obviously this is my current time)</p>
+
+        <pre>
+python iso.py
+unix now:1461605636.495767
+now=2016-04-25 10:33:56.495767
+now8601 = 2016-04-25T10:33:56.495767
+nowTuple:2016-04-25 10:33:56.495767
+secEpoch: 1461605636.5
+        </pre>
+
+        <h3>To get a now ISO8601 local time string</h3>
+        
+        <p>A simple reading to get now in seconds from start
+        of epoch to print this time in ISO8601 format.</p>
+
+        <pre>
+now = datetime.datetime.now()
+print 'now=%s' % str(now)
+nowStr = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
+print 'nowStr = %s' % nowStr
+
+# To get now to a tuple:
+nowTuple = datetime.datetime.strptime(nowStr, "%Y-%m-%d %H:%M:%S.%f")
+print 'nowTuple:' + str(nowTuple)
+
+msSinceEpoch = time.mktime(nowTuple.timetuple()) + \
+                1.0e-6*nowTuple.microsecond
+print 'msSinceEpoch:' + str(msSinceEpoch)
+        </pre>
+
+        <h3>Some linux date/time commands</h3>
+
+        <p>These <a
+            href="https://www.gnu.org/software/coreutils/manual/html_node/Examples-of-date.html">tips</a>
+        could provide useful information at times.</p>
+
+        <pre>
+To convert a date string to the number of seconds since 
+the start of the epoch use the "%s" format:
+    date --date='1970-01-01 00:02:00 +0000' +%s
+    120
+
+If you do not specify time zone information in the date 
+string, date uses your computer's idea of the time zone:
+    # local time zone used
+    date --date='1970-01-01 00:02:00' +%s
+    18120
+
+Also the --utc (-u) option:
+    date --date='2000-01-01 UTC' +%s
+    946684800
+
+To convert such an unwieldy number of seconds back 
+to a more readable form, use a command like this: 
+    date -d @946684800 +"%F %T %z"
+    1999-12-31 19:00:00 -0500
+
+Often it is better to output UTC-relative date and time: 
+    date -u -d '1970-01-01 946684800 seconds' +"%Y-%m-%d %T %z"
+    2000-01-01 00:00:00 +0000
+</pre>
 
 
         <h1>Original Ideas: ZeroMQ</h1>
@@ -1341,205 +1451,6 @@ app uses the direction only from processes to the loggerControler.</p>
         of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
         Lesser General Public License for more details.</p>
 
-
-        <h1>Additional Relevant material</h1>
-
-        <h2>ISO 8601 Notes</h2>
-        <p>What do I need, <i>EXACTLY</i>?</p>
-        <ol>
-            <li>Find local time with msec. (Could be tuple format)</li>
-            <li>Convert local MS to ISO8601 display format</li>
-            <li>Get milliseconds from ISO8601 display</li>
-        </ol>
-
-        <p><b>USE THIS!</b></p>
-        <pre>
-import datetime
-import time
-
-"""
-    Illustrate multiple conversions of timestamps
-
-    On the remote system:
-    Obtain the local time with millisecond precision.
-    Convert local time to display format with local timezone.
-    
-    This time in display format gets placed into logger
-    Now convert the display formatted time into seconds
-    since the epoch.
-""" 
-
-unixNow = time.time()
-now = datetime.datetime.fromtimestamp(unixNow)
-print 'unix now:%f'% unixNow
-print 'now=%s' % str(now)
-nowStr = now.strftime("%Y-%m-%dT%H:%M:%S.%f")
-print 'nowStr = %s' % nowStr
-
-#To get now to a tuple:
-nowTuple = datetime.datetime.strptime(nowStr, "%Y-%m-%dT%H:%M:%S.%f")
-
-print 'nowTuple:' + str(nowTuple)
-
-secEpoch = time.mktime(nowTuple.timetuple()) + 1.0e-6*nowTuple.microsecond
-print 'secEpoch: %s' % secEpoch
-        </pre>
-        <p>With output:</p>
-        <pre>
-python time1.py
-unix now:1458147132.109625
-now=2016-03-16 09:52:12.109625
-nowStr = 2016-03-16T09:52:12.109625
-nowTuple:2016-03-16 09:52:12.109625
-secEpoch: 1458147132.11
-        </pre>
-
-        <p>ISO 8601 formatting: https://docs.python.org/2/library/datetime.html
-        datetime.isoformat() returns a string in date time in ISO 8601 format:</p>
-            <pre>
-datetime.datetime.strptime( "2007-03-04T21:08:12", "%Y-%m-%dT%H:%M:%S" )
-datetime.datetime(2007, 3, 4, 21, 8, 12)
-            </pre>
-Now: time.time()  in floating point seconds.
-
-<h2>To get a now ISO8601 local time string: </h2>
-<pre>
-now = datetime.datetime.now()
-print 'now=%s' &amp; str(now)
-nowStr = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
-print 'nowStr = %s' &amp; nowStr
-
-#To get now to a tuple:
-nowTuple = datetime.datetime.strptime(nowStr, "%Y-%m-%d %H:%M:%S.%f")
-
-print 'nowTuple:' + str(nowTuple)
-
-msSinceEpoch = time.mktime(nowTuple.timetuple()) + 1.0e-6*nowTuple.microsecond
-</pre>
-
-<pre>
-nowDT = datetime.datetime.strptime('2016-03-16T08:47:12.34', "%Y-%m-%dT%H:%M:%S.%f")
-nowDT
-datetime.datetime(2016, 3, 16, 8, 47, 12, 340000)
-</pre>
-
-<p>Current local time to milli sec since epoch:</p>
-<pre>
-from datetime import datetime
-from time import mktime
-
-dt = datetime.now()
-sec_since_epoch = mktime(dt.timetuple()) + dt.microsecond/1000000.0
-
-millis_since_epoch = sec_since_epoch * 1000
-</pre>
-
-<p>Some more conversions:</p>
-<pre>
->>> import datetime
->>> import time
->>> import calendar
-
->>> #your datetime object
->>> now = datetime.datetime.now()
->>> now
-datetime.datetime(2013, 3, 19, 13, 0, 9, 351812)
-
->>> #use datetime module's timetuple method to get a `time.struct_time` object.[1]
->>> tt = datetime.datetime.timetuple(now)
->>> tt
-time.struct_time(tm_year=2013, tm_mon=3, tm_mday=19, tm_hour=13, tm_min=0, tm_sec=9,     tm_wday=1, tm_yday=78, tm_isdst=-1)
-
->>> #If your datetime object is in utc you do this way. [2](see the first table on docs)
->>> sec_epoch_utc = calendar.timegm(tt) * 1000
->>> sec_epoch_utc
-1363698009
-
->>> #If your datetime object is in local timeformat you do this way
->>> sec_epoch_loc = time.mktime(tt) * 1000
->>> sec_epoch_loc
-1363678209.0
-</pre>
-
-
     </body>
 
 </html>
-        <h2><b>A LONG LIST OF MISC STATEMENTS</b></h2>
-        <ul>
-
-
-            <li>A run-time replacement for debuggers.</li>
-
-            <li>An opportunity to clarify operational systems; a lens into
-            current system details.</li>
-
-            <li>An easy way to provide monitoring for multiple 
-            systems such as Raspberry Pi or Arduinos.</li>
-
-            <li>Tracking of remote systems in an orderly manner that
-            facilitates data mining techniques.</li>
-
-            <li>A small and simple to use technique easily downloaded
-            and installed. The use in current applications should
-            present few problems.</li>
-
-            <li>Increased awareness of problems.</li>
-
-            <li>Fast detection of outages and system problems.</li>
-
-            <li>A centralized repository for system information.</li>
-
-            <li>An invaluable tool to detect problems on installed
-            systems.</li>
-
-            <li>A aid to understanding the flow of control of an
-            application. Non-trivial systems with multiple SOCs
-            provide fertile grounds for timing and dependency problems.</li>
-
-            <li>An aid for debugging before a system gets shipped.
-            Logs can significantly enhance other development tools.</li>
-
-            <li>By logging every request, analysis can provide busiest times,
-            most commonly used commands, etc.</li>
-
-            <li>After-the-fact forensic analysis relies on decent logging
-            to discover and solve problems.</li>
-
-            <li>Careful: Logging can become an addiction whose value is rarely
-            justified.  For every situation where you can log gratuitously,
-            it's better to collect targeted information and send it where you
-            need it to go.</li>
-
-            <li>If your app crashes, any buffered information is lost. If
-            logs are sent to a logging task, that logging task can likely report
-            up the last log reported.</li>
-
-            <li>At first you may have only an inkling of what logs
-            provide valuable information. Only after use and analysis
-            will clarity emerge.</li>
-
-            <li>Appreciating the significance of logging takes practive.</li>
-
-            <li>Capturing stack traces. Multi-line output may special logging
-            consideration.</li>
-
-            <li>Profiling information. By tracking the various states of
-            a running system, bottlenecks may present themselves.</li>
-
-            <li>(Future) Dynamically modify the log level: turn DEBUG on and off at will.</li>
-
-            <li>Write logging code anticipating that you may one day have to
-            debug a situation where ALL you have is the log file, and doing it
-            right may be the difference between getting fired and getting
-            promoted.</li>
-
-            <li>When problems arise on a running system, logs are likely your
-            <i>only</i> information source. The assist in reproducing erroneous
-            cases. If you can reproduce it, you can find a way to debug
-            it.</li>
-            
-            <li>ISO8601 has notation for periodic events! This
-            may also be used for intervening time between two time points.
-            See https://en.wikipedia.org/wiki/ISO_8601 "Time intervals"</li>
-        </ul>
