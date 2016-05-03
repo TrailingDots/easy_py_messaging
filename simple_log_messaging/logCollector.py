@@ -27,6 +27,18 @@ def signalUSR1Handler(signum, frame):
     print('Log tracing now %s' % ('ON' if logConfig.NOISY else 'OFF'))
 
 
+def signalUSR2Handler(signum, frame):
+    """
+    When a USR2 signal arrives, cycle through the log levels.
+    Set the logging level to the next highest level. If already
+    at the highest level, cycle to the bottom.
+    This allows a dynamic way to set log level while still running.
+        kill -USR2  1234    # 1234 is the pid of logCollector.
+    """
+    logConfig.LOG_LEVEL = utils.cycle_priority(logConfig.LOG_LEVEL)
+    print('Log level set to %s' % logConfig.LOG_LEVEL)
+
+
 class LogCollectorTask(object):
     """
     LogCollectorTask. One and only one instance of this
@@ -61,6 +73,7 @@ class LogCollectorTask(object):
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
         signal.signal(signal.SIGUSR1, signalUSR1Handler)
+        signal.signal(signal.SIGUSR2, signalUSR2Handler)
 
         try:
             self.frontend.bind(logConfig.COLL_SOCKET)
@@ -88,6 +101,9 @@ class LogCollectorTask(object):
                 print msg
             log_comp = logComponents.LogComponents.msg_to_components(msg)
             if log_comp.level in utils.LOG_LEVELS:
+                # Don't log if level is too low compared to requested level.
+                if log_comp.level not in utils.filter_priority(logConfig.LOG_LEVEL):
+                    continue
                 log_fcn = utils.LOG_LEVELS[log_comp.level]
                 log_fcn(log_comp.payload)
 
@@ -147,8 +163,9 @@ def load_config_file(config_filename):
 
 
 def usage():
-    print 'logCollector [--log-file=logFilename] [-a] [-t]'
+    print 'logCollector [--log-file=logFilename] [port=<port#>] [-a] [-t]'
     print '     logFilename = name of file to place logs'
+    print '     --port=<port#> = port to listen for logs'
     print '     -a  Logs will be appended to logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
     print ''
@@ -161,6 +178,8 @@ def usage():
     print ''
     print 'To toggle printing of messages received:'
     print '    kill -USR1 <pid>'
+    print 'To cycle through levels of messages:'
+    print '    kill -USR2 <pid>'
     sys.exit(1)
 
 
@@ -224,6 +243,9 @@ def main():
             continue
         elif opt in ['--log-file']:
             config_dict['out_file'] = arg
+            continue
+        elif opt in ['--port']:
+            config_dict['port'] = arg
             continue
         elif opt in ['--config']:
             return_dict = load_config_file(arg)

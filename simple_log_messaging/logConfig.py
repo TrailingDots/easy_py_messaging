@@ -42,7 +42,15 @@ NOISY = False
 # ==============================================
 SCHEME = 'tcp'
 COLL_HOST = '*'         # Only the server collector uses this.
+# Logging Port
 PORT = 5570             # Do NOT change!
+def get_logging_port():
+    return PORT
+
+# Directory Service Port
+DIR_PORT = PORT + 1
+def get_directory_port():
+    return get_logging_port() + 1
 
 
 # Testing code needs to use this

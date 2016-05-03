@@ -22,6 +22,7 @@ class bcolors(object):
     BGGRAY = '\033[47m'
     ENDC = '\033[0m'
 
+
 # The log levels get used in multiple places.
 # The connection to logging gets used ONLY in logCollector.
 # All the log levels in the logger must use these on the log
@@ -37,6 +38,8 @@ LOG_LEVELS = {'DEBUG': logging.debug,
               'CRITICAL': logging.critical}
 
 # Priority of logging. Used in filter routines.
+# Key = priority name
+# Value = index of priority
 LOG_PRIORITY = {
                 'DEBUG': 0,
                 'INFO': 1,
@@ -45,6 +48,28 @@ LOG_PRIORITY = {
                 'ERROR': 4,
                 'CRITICAL': 5,
                 }
+
+# Key = index of priority
+# Value = Name of level
+LOG_PRIORITY_BY_NDX = {value: key for key, value in LOG_PRIORITY.items()}
+
+def cycle_priority(cur_level):
+    """
+    Given the current log level such as WARNING,
+    bump up to the next level, CMD. If at
+    the top, CRITICAL, cycle to DEBUG.
+
+    current_level = Name of the current level.
+
+    Return: log level cycled up one level. If at
+    CRITICAL, return DEBUG.
+    """
+    level = LOG_PRIORITY.get(cur_level, None)
+    if level is None:
+        return 'DEBUG'  # Bogus level name passed
+    if level == LOG_PRIORITY['CRITICAL']:
+        return 'DEBUG'
+    return LOG_PRIORITY_BY_NDX[level + 1]
 
 
 def filter_priority(initial_level):

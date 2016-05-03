@@ -1332,7 +1332,7 @@ app uses the direction only from processes to the loggerControler.</p>
         the line.</p>
 
 
-        <h1>TODO list</h1>
+        <h1>TODO List</h1>
 
         <p>Non-trivial software always has something missing. The missing
         something differs from person to person, from user to user.
@@ -1343,13 +1343,21 @@ app uses the direction only from processes to the loggerControler.</p>
         of couse, abound. No program can be considered dead until the
         last user has died. "Please close the door on the way out."</p>
 
-        <p>Some items I consider important:</p>
+        <p>Some items I consider important (in no particular order):</p>
 
         <ul>
 
-            <li>Security. No security currently exists. As more and more
-            systems get into the field, security becomes important. Do you
-            want your home infested by a hacker? Definitely needed.</li>
+            <li>Security. No security currently exists. As more and
+            more systems get into the field, security becomes
+            important. Do you want your home infested by a hacker?
+            Definitely needed. Security should be a layer on top of
+            the logging system.</li>
+
+            <li>An easy way to change logging levels while the
+            system is running. The <code>kill -USR1 &lt;pid&gr;</code>
+            toggle the logCollector to echo on the console or not.
+            Perhaps <code>USR2</code> could cycle around the 
+            log levels?</li>
 
             <li>Docs for expanding log filtering.</li>
 
@@ -1397,6 +1405,11 @@ app uses the direction only from processes to the loggerControler.</p>
             uniquely determine the source. What other scheme could
             allow exact identification?</li>
 
+            <li>Give some thought to stack-trace handling. Systems
+            inevitably crash and need sypport. The current incarnation
+            does not handle multi-line messages intelligently.
+            How should a stack-trace become encapsulated as a log?
+            What is a good API?</li>
         </ul>
 
 

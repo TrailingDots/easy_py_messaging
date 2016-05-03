@@ -7,6 +7,9 @@ import subprocess
 import datetime
 import logging
 import time
+import tempfile
+import json
+import traceback
 
 abs_file = os.path.abspath(__file__)
 abs_dir = os.path.dirname(abs_file)
@@ -16,13 +19,19 @@ sys.path.append(abs_dir + '/../../')
 
 from simple_log_messaging import apiLoggerInit
 from simple_log_messaging.utils import bcolors
+from simple_log_messaging.utils import cycle_priority
 from simple_log_messaging import logFilter
+from simple_log_messaging import logConfig
 from simple_log_messaging import utils
 from simple_log_messaging import logCollector
 from simple_log_messaging import loggingSpeedTest
 from simple_log_messaging import loggingClientTask
-import tempfile
-import json
+
+
+# Name/Directory services - both client and server
+import dirSvc
+import dirClient
+
 
 # Single test example:
 #    python -n unittest testLogging.RunTests.testNaming
@@ -648,6 +657,33 @@ def countKeyValueJSON(json_struct, key, value):
 
 class TestLogLevelsPriorities(unittest.TestCase):
     # python -m unittest testLogging.TestLogLevelsPriorities
+
+    def testCycles(self):
+        """Test the cycle priority changes."""
+        new_level = cycle_priority('DEBUG')
+        self.failUnless(new_level == 'INFO')
+
+        new_level = cycle_priority(new_level)
+        self.failUnless(new_level == 'WARNING')
+
+        new_level = cycle_priority(new_level)
+        self.failUnless(new_level == 'CMD')
+
+        new_level = cycle_priority(new_level)
+        self.failUnless(new_level == 'ERROR')
+
+        new_level = cycle_priority(new_level)
+        self.failUnless(new_level == 'CRITICAL')
+
+        new_level = cycle_priority(new_level)
+        self.failUnless(new_level == 'DEBUG')
+
+        # Garbage level name results in DEBUG
+        new_level = cycle_priority('FOO_BAR')
+        self.failUnless(new_level == 'DEBUG')
+
+        # Garbage level name results in DEBUG
+
     def testDebugLevel(self):
         debug_dict = utils.filter_priority('DEBUG')
         self.failUnless('DEBUG' in debug_dict)
@@ -725,6 +761,118 @@ class TestLogLevelsPriorities(unittest.TestCase):
         """Test an invalid logging level"""
         bogusDict = utils.filter_priority('BOGUS')
         self.failUnless(bogusDict == utils.LOG_LEVELS.keys())
+
+
+class TestDirectoryServices(unittest.TestCase):
+    """Test the various functions of a directory
+    service."""
+    # python -m unittest testLogging.TestDirectoryServices
+
+    # Use non-standard ports to allow test to
+    # proceed without worrying about existing
+    # logCollectors or directory services..
+    LOG_PORT = logConfig.PORT + 3
+    log_collector = None    # Process for log collector
+
+    DIR_SVC_PORT = LOG_PORT + 1
+    dir_svc = None          # Process for directory services
+
+    def StartLogServer(self):
+        """
+        Spawn the log server in their own 
+        separate procsses.
+        """
+        abs_path_server = os.path.abspath(logCollector.__file__)
+        abs_path_app = os.path.abspath(loggingClientTask.__file__)
+
+        log_filename = os.path.abspath('./logs.log')
+        print '***** log_filename:%s' % log_filename
+
+        # Remove existing log file
+        # Other tests will test for append mode.
+        if os.path.exists(log_filename) and \
+                os.path.isfile(log_filename):
+            os.remove(log_filename)
+
+        log_port = TestDirectoryServices.LOG_PORT
+        args = ['python',
+                abs_path_server,
+                '--port=%s'     % str(log_port),
+                '--log-file=%s' % log_filename,
+               ]
+        print 'starting dirSvc:%s' % ' '.join(args)
+        argv_collector = args
+        TestDirectoryServices.log_collector = subprocess.Popen(argv_collector)
+        print ' '.join(argv_collector)
+        print (bcolors.BGGREEN +
+            ('log_collector pid: %d' % TestDirectoryServices.log_collector.pid) +
+            bcolors.ENDC)
+
+        # Start the directory service.
+        # The port number is one above the log service.
+        self.StartDirService()
+
+
+    def StartDirService(self):
+        abs_path_server = os.path.abspath(dirSvc.__file__)
+
+        dir_svc_port = TestDirectoryServices.DIR_SVC_PORT
+        argv_client = ['python',
+                        abs_path_server, 
+                        '--port=%s' % str(dir_svc_port),
+                        '--memory-file=%s' % './logsDirSvc.log',
+                        '--clear',  # Wipe out old data
+                       ]
+        print 'starting dirSvc:' + ' '.join(argv_client)
+        TestDirectoryServices.dir_svc = subprocess.Popen(argv_client,
+            stderr=subprocess.STDOUT)
+        print (bcolors.BGGREEN +
+                ('dirSvc pid: %d' % TestDirectoryServices.dir_svc.pid) +
+                bcolors.ENDC)
+
+        # Allow some time to process.
+        seconds_to_sleep = 2
+        print '%d seconds to process subprocs' % seconds_to_sleep
+        time.sleep(seconds_to_sleep)
+
+    def KillLogServer(self):
+        os.kill(TestDirectoryServices.log_collector.pid, signal.SIGINT)
+
+    def KillDirService(self):
+        os.kill(TestDirectoryServices.dir_svc.pid, signal.SIGINT)
+
+    def testDirSvc_0(self):
+        self.StartLogServer()
+
+        dir_svc = TestDirectoryServices.dir_svc
+        log_col = TestDirectoryServices.log_collector
+
+        try:
+            # Add a few names to the directory
+            req0 = dirClient.port_request('testDirSvc')
+            req1 = dirClient.port_request('abc')
+            req2 = dirClient.port_request('xyz')
+
+            self.failUnless(req1 == dirClient.port_request('abc'))
+
+            dirClient.port_request('-abc')
+            # Since 'abc' was deleted, a request yields a new port
+            self.failUnless(req1 != dirClient.port_request('abc'))
+
+
+            msg = 'abc'
+
+            port1 = dirClient.port_request('abc')
+            self.failUnless(port1 is not None)
+
+        except Exception as err:
+            sys.stderr.write(str(err) + '\n')
+            traceback.print_stack()
+            print '-----------'
+            trackback.print_exc()
+        finally:
+            self.KillDirService()
+            self.KillLogServer()
 
 
 if __name__ == '__main__':
