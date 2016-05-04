@@ -1,50 +1,86 @@
 #!/usr/bin/env python
-# From: /home/cecilm/github.com/jldzeromq/src/scripts/jld0sub
 """
-    The collector for all clients.
+    A logging task that sends a log from the command line
+    to logCollector.
+
+    Simple, but useful at times.
+
+    The log collector must be running.
+    All defaults taken from logConfig.py
+    Therefore, set the proper port in logConfig.py .
 """
-__version__="1.0.0"
-import os, sys, argparse
-os_path = os.path
-import logging
+import sys
+import platform
+import loggingClientTask
+import logConfig
+import utils
 
-try:
-    import simple_log_messaging  #@UnusedImport
-except:
-    ### must be in dev mode then    
-    this_dir = os_path.dirname(__file__)
+def usage():
+    """Print the usage blurb."""
+    print 'logCmd [--port=<port#>] --level=<level>'
+    print '    --port = port to send to logCollector'
+    print '    --level = <level> where <level> is one of:'
+    print '          DEBUG, INFO, WARNING, CMD, ERROR, CRITICAL'
+    sys.exit(1)
 
-    """
-    lib_path = os_path.abspath(os_path.join(this_dir, ".."))
-    sys.path.insert(0, lib_path)
 
-    top_path = os_path.abspath(os_path.join(lib_path, ".."))
-    sys.path.insert(0, top_path)
+def parseOpts():
+    import getopt
 
-    slm_path = os_path.abspath(os_path.join(this_dir, '../../simple_log_messaging'))
-    sys.path.insert(0, slm_path)
-    """
+    try:
+        opts, args = getopt.gnu_getopt(
+            sys.argv[1:], 'ahnqt',
+            ['port=',     # Port # to send message
+             'level=',    # level of msg
+             'help'       # Help blurb
+            ]
+        )
+    except getopt.GetoptError as err:
+        print err
+        usage()
+        return 1
 
-    import simple_log_messaging 
+    # Number leading args to shift out
+    shift_out = 0
+    for opt, arg in opts:
+        if opt == '--help':
+            usage()
+            continue
+        elif opt == '--port':
+            logConfig.PORT = int(arg)
+            shift_out += 1
+            continue
+        elif opt == '--level':
+            if arg not in utils.LOG_LEVELS:
+                print 'Invalid log level: %s' % arg
+                usage()
+            shift_out += 1
+            logConfig.LOG_LEVEL = arg
+            continue
+    for ndx in range(shift_out):
+        del sys.argv[1]
 
-########################################################################
-
-DESC="simple_log_messaging - version %s" % __version__
-DEFAULTS={
-          }
+def level_name_to_fcn(client):
+    """Map a level name to the client send function. """
+    # All the log levels in the remote logger
+    REMOTE_LOG_LEVELS = {
+        'DEBUG': client.debug,
+        'CMD': client.cmd,
+        'INFO': client.info,
+        'WARNING': client.warning,
+        'ERROR': client.error,
+        'CRITICAL': client.critical}
+    client_fcn = REMOTE_LOG_LEVELS[logConfig.LOG_LEVEL]
+    return client_fcn
 
 def main():
-    try:
-        import simple_log_messaging.logCmd  as logCmd
-        
-        logCmd.main()
+    parseOpts()
+    client = loggingClientTask.LoggingClientClass(platform.node())
+    client.start()
 
-    except KeyboardInterrupt:
-        logging.info("...exiting")
-        sys.exit(0)
-        
-    except Exception, err:
-        logging.error(str(err))
-        sys.exit(1)
+    msg = ' '.join(sys.argv[1:])
+    client_fcn = level_name_to_fcn(client)
+    return client_fcn(msg)
 
-sys.exit(main())
+if __name__ == '__main__':
+    sys.exit(main())

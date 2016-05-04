@@ -44,10 +44,14 @@ simple_log_messaging/loggingLoopApp.py
 simple_log_messaging/loggingSpeedTest.py
 simple_log_messaging/utils.py
 simple_log_messaging/bin/__init__.py
+simple_log_messaging/bin/dirClient
+simple_log_messaging/bin/dirSvc
 simple_log_messaging/bin/listeningPort
 simple_log_messaging/bin/logCmd
 simple_log_messaging/bin/logCollector
 simple_log_messaging/bin/logFilterApp
+simple_log_messaging/bin/loggingLoopApp
+simple_log_messaging/bin/loggingSpeedTest
 simple_log_messaging/data/abc.log
 simple_log_messaging/data/bad.conf
 simple_log_messaging/data/bad2.conf
