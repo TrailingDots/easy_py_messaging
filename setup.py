@@ -40,6 +40,8 @@ setup_args = dict(
             'simple_log_messaging/bin/logFilterApp',
             'simple_log_messaging/bin/loggingLoopApp',
             'simple_log_messaging/bin/loggingSpeedTest',
+            'simple_log_messaging/bin/dirClient',
+            'simple_log_messaging/bin/dirSvc',
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',

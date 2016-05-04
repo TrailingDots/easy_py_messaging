@@ -13,7 +13,13 @@ RM=/usr/bin/rm
 RM=/usr/bin/rm
 CP=/usr/bin/cp
 
+# Python that get sent to bin
+APPS="logCollector listeningPort logCmd logFilterApp dirSvc dirClient"
+
 all: clean
+	-for afile in $$APPS; do \
+		cp $$LIBDIR/$$afile $$LIBDIR/bin; \
+	done
 	$(PYTHON) setup.py sdist --formats=zip,gztar 
 
 help:
@@ -35,13 +41,6 @@ install:
 
 wc:
 	$(PROJECT)/wc.sh
-
-lsfiles:
-	-for APP in logCollector listeningPort logCmd logFilterApp; do \
-		ls -l /home/cecilm/anaconda/bin/$$APP ; \
-		ls -l /usr/bin/$$APP ; \
-	done
-	ls -lh /home/cecilm/anaconda/lib/python2.7/site-packages/$(PROJECT)-1.0.0-py2.7.egg
 
 backup:
 	$(PROJECT)/backup.sh
