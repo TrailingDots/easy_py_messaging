@@ -869,7 +869,7 @@ class TestDirectoryServices(unittest.TestCase):
             sys.stderr.write(str(err) + '\n')
             traceback.print_stack()
             print '-----------'
-            trackback.print_exc()
+            traceback.print_exc()
         finally:
             self.KillDirService()
             self.KillLogServer()

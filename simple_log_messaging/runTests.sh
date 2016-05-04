@@ -96,9 +96,9 @@ ECHO () {
 }
 
 # Run various python metric utilities
-CMD "pyflakes *.py"
-CMD "pep8 *.py"
-CMD "pylint *.py"
+#CMD "pyflakes *.py"
+#CMD "pep8 *.py"
+#CMD "pylint *.py"
 
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
@@ -281,6 +281,48 @@ ECHO Syntax Error for start only
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14:08:00:00.000 "
 ECHO start and end dates
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 end=2016-03-14T08:05:15.876 "
+
+ECHO Work with dirSvc - Directory Services
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --help"
+ECHO Pass invalid run time option
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --FooBar"
+ECHO Pass invalid port number
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --port=XYZ"
+
+# Start the directory server in the background.
+ECHO coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py 
+coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py &
+dirSvcPID=$!
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py abc def ghi jkl"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @DIR"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @PERSIST"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @MEMORY_FILENAME"
+
+ECHO "Verify that abc gets deleted from the directory"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py abc | grep abc"
+ECHO "Delete a name from the directory"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py ~abc"
+CMD_PASS "$LIB_DIR/dirClient.py abc | grep abc"
+STATUS=$!
+if [ $STATUS -ne 0 ]
+then
+    CMD_FAIL 'echo Dir delete of abc failed.'
+fi
+
+
+ECHO "Try to delete a bogus name from the directory"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py ~bogusName"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @DIR"
+
+ECHO "Various commands to the driver dirClient for coverage purposes."
+ECHO "A request for help is considered a failure"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help abc def"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --port=XYZ"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --clear"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --bogusArg"
+
+# An orderly exit so coverage can collect the runs.
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @EXIT"
 
 
 ECHO Log Filter with configuration file. Notice in-file override

@@ -64,6 +64,17 @@ class DirOperations(object):
         # Time to persist dir. Seconds from epoch.
         self.is_dirty_persist = self.next_persist_time()
 
+        # logCollector connection
+        self.client = loggingClientTask.LoggingClientClass(platform.node())
+        self.client.start()
+        log_entry = 'Starting=DirectoryService,port=%d,pid=%d,memory=%s' % \
+            (self.PORT, os.getpid(), config['memory_filename'])
+        self.client.info(log_entry)
+        print log_entry
+
+        # Unless clear is set, logs from memory_filename.
+        self.from_pickle()
+
     def next_persist_time(self):
         self.is_dirty_persist = time.time() + \
                 self.DELTA_UPDATE_SECS   # update time.
@@ -75,11 +86,20 @@ class DirOperations(object):
         pickle.dump(self.directory,
                 open(self.pickle_filename, 'wb'))
         self.set_clean()
+        self.client.debug('pickled_to=' + self.pickle_filename)
+        return True
 
     def from_pickle(self):
         """Load from pickle file"""
-        self.directory = pickle.load(open(self.pickle_filename, 'rb'))
+        if os.path.isfile(self.pickle_filename):
+            self.directory = pickle.load(open(self.pickle_filename, 'rb'))
+        else:
+            self.client.critical('from_pickle=%s,status=not_found' %
+                    self.pickle_filename)
+            return
         self.set_clean()
+        self.client.debug('from_pickle=%s,status=OK' % \
+                self.pickle_filename)
 
     def persist_timeout_check(self):
         """On a time out, conditionally persist the dictionary 
@@ -91,6 +111,7 @@ class DirOperations(object):
             self.to_pickle()
 
     def to_JSON(self):
+        self.client.debug('to_json=True')
         return json.dumps(self.directory, default=lambda x: x.__dict__)
 
     def add_key_val(self, key, value):
@@ -108,6 +129,7 @@ class DirOperations(object):
             self.set_dirty()
         dir_entry = DirEntry(key, value)
         self.directory[key] = dir_entry
+        self.client.info('add_key_val=%s,value=%s' % (key, value))
         return value
 
     def handle_meta(self, key):
@@ -115,14 +137,50 @@ class DirOperations(object):
         Meta Queries - Queries that request info
         about directory services and not about ports.
 
-        All meta queries get bracketed with '%'
+        A delete request is the name prefixed by '~'.
+
+        All meta queries get prefixed with '@'
         on both ends:
-            %PERSIST% = Persist the dir immediately.
-            %ALL_PORTS% = Reply with all ports in the dir.
-            %MEMORY_FILENAME% = Reply with the name of the memory file
+            @PERSIST = Persist the dir immediately.
+            @DIR = Reply with all ports in the dir.
+            @CLEAR = Clears the directory
+            @CLEAR_DIRECTORY = Clears the directory
+            @MEMORY_FILENAME = Reply with the name of the memory file
+            @EXIT = Exit this program. Used for code coverage.
             
+        Returns: None is not a meta, else non-None.
         """
-        return None # key is not a meta query
+        if key[0] == '~':
+            resp = self.del_key(key)
+            return True
+        if key == '@DIR':
+            # Return entire directory in JSON
+            data = self.to_JSON()
+            self.client.info('@DIR=%s' % str(data))
+            return data
+        if key == '@PERSIST':
+            self.to_pickle()
+            self.client.info('@PERSIST=True')
+            return 'True'
+        if key == '@CLEAR' or key == '@CLEAR_DIRECTORY':
+            self.directory = {}
+            self.client.info('@CLEAR_DIRECTORY=True')
+            return True
+        if key == '@MEMORY_FILENAME':
+            self.client.info('@MEMORY_FILENAME=%s' % self.pickle_filename)
+            return self.pickle_filename
+            return '@EXIT'
+        if key == '@EXIT':
+            return '@EXIT'
+
+        # All valid meta commands compared. If the key
+        # is tagged meta, but is not in the above list,
+        # flag as unknown.
+        if key[0] == '@':
+            self.client.error('name=%s,status=unknown_meta_command' % key)
+            return key
+        return None     # No meta query found.
+
 
     def get_port(self, key):
         """
@@ -130,7 +188,7 @@ class DirOperations(object):
         exist in the directory, then increment to the
         next port and return that.
         
-        A name with a prefix of '-' means delete
+        A name with a prefix of '~' means delete
         that name. If the name does not exist, ignore it.
 
         Returns: port associated with name.
@@ -145,9 +203,6 @@ class DirOperations(object):
         if meta:
             return meta
 
-        if key[0] == '-':
-            return self.del_key(key[1:])
-
         port = self.directory.get(key, None)
         if port is None:
             self.PORT += 1
@@ -155,18 +210,26 @@ class DirOperations(object):
             port = self.add_key_val(key, self.PORT)
         else:
             port = port.value
+        self.client.info('get_port_key=%s,port=%s' % \
+                (key, port))
         if NOISY: print  'get_port(%s) = %s' % (key, port)
         return port
 
     def del_key(self, key):
-        """Delete the given key.
-        Returns value of delete key if any, else None"""
+        """
+        Delete the given key.
+        Returns True if key in directory, else None
+
+        A delete request has a leading '~' char.
+        """
+        key = key[1:]
         if key in self.directory:
-            value = self.directory[key]
             del self.directory[key]
             self.set_dirty()
-            return value
-        return None
+            self.client.info('del_key=%s,status=deleted' % key)
+            return 'DELETED'
+        self.client.info('del_key=%s,status=not_found' % key)
+        return 'not_found'
 
     def set_dirty(self):
         """Set a time for to automatically
@@ -255,7 +318,6 @@ def main():
     server = context.socket(zmq.REP)
     port = logConfig.get_directory_port()
     server.bind("tcp://*:%d" % port)
-    print 'Directory Service on port %d' % port
     
     dir_ops = DirOperations(config)
 
@@ -272,11 +334,14 @@ def main():
         port = dir_ops.get_port(request)
         if NOISY: print("I: Normal request (%s:%s)" % (request, str(port)))
         server.send(str(port))
+        if str(port) == '@EXIT':
+            break
         if sequence % 10 == 0:
             json_str = dir_ops.to_JSON()
             print json_str
         sequence += 1
 
+    # Shut down ZeroMQ sockets in an orderly manner.
     server.close()
     context.term()
 
