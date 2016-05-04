@@ -14,11 +14,11 @@ RM=/usr/bin/rm
 CP=/usr/bin/cp
 
 # Python that get sent to bin
-APPS="logCollector listeningPort logCmd logFilterApp dirSvc dirClient"
+APPS="logCollector listeningPort logCmd loggingLoopApp logFilterApp dirSvc dirClient"
 
 all: clean
 	-for afile in $$APPS; do \
-		cp $$LIBDIR/$$afile $$LIBDIR/bin; \
+		cp $$LIBDIR/$$afile.py $$LIBDIR/bin/$$afile; \
 	done
 	$(PYTHON) setup.py sdist --formats=zip,gztar 
 

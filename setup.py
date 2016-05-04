@@ -7,16 +7,6 @@ from os import path
 
 project = 'simple_log_messaging'
 
-"""
-    entry_points={
-        'console_scripts': [
-            'logCollector=simple_log_messaging.logCollector:main',
-            'logCmd=simple_log_messaging.logCmd:main',
-            'listeningPort=simple_log_messaging.listeningPort:main',
-            'logFilterApp=simple_log_messaging.logFilterApp:main',
-        ]
-    },
-"""
 setup_args = dict(
     name=project,
     package_dir={'': './'},
