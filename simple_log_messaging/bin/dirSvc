@@ -33,9 +33,9 @@ DEFAULTS={
 
 def main():
     try:
-        import simple_log_messaging.listeningPort as listeningPort
+        import simple_log_messaging.dirSvc as dirSvc
         
-        listeningPort.main()
+        dirSvc.main()
 
     except KeyboardInterrupt:
         logging.info("...exiting")

@@ -13,21 +13,8 @@ RM=/usr/bin/rm
 RM=/usr/bin/rm
 CP=/usr/bin/cp
 
-all: clean build_bin
+all: clean
 	$(PYTHON) setup.py sdist --formats=zip,gztar 
-
-# Python apps that get sent to bin for global access after install
-build_bin:
-	echo LIBDIR=$(LIBDIR)
-	echo PROJECTDIR=$(PROJECTDIR)
-	for file in abc def ghi; do \
-		echo file=$$file ; \
-	done
-	for X in logCollector listeningPort logCmd loggingSpeedTest loggingLoopApp logFilterApp dirSvc dirClient; \
-	do \
-		cp $(LIBDIR)/$$X.py $(LIBDIR)/bin/$$X; \
-	done
-	/bin/ls -l $(LIBDIR)/bin/*
 
 help:
 	@echo "make - Build source distributable package. Test locally"

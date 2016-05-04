@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # From: /home/cecilm/github.com/jldzeromq/src/scripts/jld0sub
 """
-    The collector for all clients.
+    The Speed Test - How fast do messages get xmitted?
 """
 __version__="1.0.0"
 import os, sys, argparse
@@ -35,7 +35,7 @@ def main():
     try:
         import simple_log_messaging.listeningPort as listeningPort
         
-        listeningPort.main()
+        loggingSpeedTest.main()
 
     except KeyboardInterrupt:
         logging.info("...exiting")
