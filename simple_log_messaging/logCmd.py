@@ -60,6 +60,7 @@ def parseOpts():
     for ndx in range(shift_out):
         del sys.argv[1]
 
+
 def level_name_to_fcn(client):
     """Map a level name to the client send function. """
     # All the log levels in the remote logger

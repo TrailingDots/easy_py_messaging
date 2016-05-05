@@ -50,7 +50,7 @@ def get_logging_port():
 # Directory Service Port
 DIR_PORT = PORT + 1
 def get_directory_port():
-    return get_logging_port() + 1
+    return DIR_PORT
 
 
 # Testing code needs to use this
@@ -69,7 +69,13 @@ else:
 # See: https://en.wikipedia.org/wiki/Uniform_Resource_Locator#Syntax
 # The socket name the applications should use.
 # The application should use this for the socket.
-APP_SOCKET = '%s://%s:%d' % (SCHEME, APP_HOST, PORT)
+def getAppSocket():
+    global SCHEME
+    global APP_HOST
+    global PORT
+
+    app_socket = '%s://%s:%d' % (SCHEME, APP_HOST, PORT)
+    return app_socket
 
 COLL_SOCKET = '%s://%s:%d' % (SCHEME, COLL_HOST, PORT)
 

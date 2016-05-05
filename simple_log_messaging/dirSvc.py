@@ -83,8 +83,16 @@ class DirOperations(object):
         """Persist the names in a pickle file.
         This unconditionally persists the directory.
         This may be due to a persist command."""
-        pickle.dump(self.directory,
-                open(self.pickle_filename, 'wb'))
+        try:
+            pickle.dump(self.directory,
+                    open(self.pickle_filename, 'wb'))
+        except Exception as err:
+            err_str = 'to_pickle=cannot_open,file=%s,err=%s' % \
+                    (self.pickle_filename, str(err))
+            self.client.critical(err_str)
+            sys.stderr.write(err_str + '\n')
+            sys.exit(1)
+
         self.set_clean()
         self.client.debug('pickled_to=' + self.pickle_filename)
         return True
@@ -92,7 +100,10 @@ class DirOperations(object):
     def from_pickle(self):
         """Load from pickle file"""
         if os.path.isfile(self.pickle_filename):
-            self.directory = pickle.load(open(self.pickle_filename, 'rb'))
+            try:
+                self.directory = pickle.load(open(self.pickle_filename, 'rb'))
+            except EOFError as err:
+                pass    # Ignore empty file
         else:
             self.client.critical('from_pickle=%s,status=not_found' %
                     self.pickle_filename)
@@ -148,7 +159,7 @@ class DirOperations(object):
             @MEMORY_FILENAME = Reply with the name of the memory file
             @EXIT = Exit this program. Used for code coverage.
             
-        Returns: None is not a meta, else non-None.
+        Returns: None if not a meta, else non-None.
         """
         if key[0] == '~':
             resp = self.del_key(key)
@@ -293,6 +304,7 @@ def parseOpts():
                 sys.stdout.write(str(err) + '\n')
                 usage()
             config['port'] = arg
+            logConfig.DIR_PORT = arg
             shift_out += 1
             continue
         elif opt in ['m', '--memory-file']:
@@ -317,8 +329,18 @@ def main():
     context = zmq.Context(1)
     server = context.socket(zmq.REP)
     port = logConfig.get_directory_port()
-    server.bind("tcp://*:%d" % port)
+    try:
+        server.bind("tcp://*:%s" % str(port))
+    except zmq.ZMQError as err:
+        sys.stderr.write('ZMQError: %s\n' % err)
+        sys.stderr.write('Please kill other instances of this program.\n')
+        sys.stderr.write('Or: another program may be using port %s\n' %
+            str(port))
+        sys.exit(1)
     
+    sys.stdout.write('dirSvc started. pid %s port %s\n' %
+            (str(os.getpid()), str(port)))
+
     dir_ops = DirOperations(config)
 
     sequence = 0

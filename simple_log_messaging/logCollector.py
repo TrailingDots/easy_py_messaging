@@ -76,12 +76,13 @@ class LogCollectorTask(object):
         signal.signal(signal.SIGUSR2, signalUSR2Handler)
 
         try:
-            self.frontend.bind(logConfig.COLL_SOCKET)
+            self.frontend.bind('tcp://*:%s' % 
+                    str(logConfig.get_logging_port()))
         except zmq.ZMQError as err:
             sys.stderr.write('ZMQError: %s\n' % err)
             sys.stderr.write('Please kill other instances of this program.\n')
-            sys.stderr.write('Or: another program may be using %s\n' %
-                    str(logConfig.COLL_SOCKET))
+            sys.stderr.write('Or: another program may be using port %s\n' %
+                    str(logConfig.get_logging_port()))
             sys.exit(1)
 
         while True:
@@ -100,6 +101,11 @@ class LogCollectorTask(object):
             if logConfig.NOISY:           # User has requested echo to console?
                 print msg
             log_comp = logComponents.LogComponents.msg_to_components(msg)
+
+            # Command to perform orderly exit
+            if '@EXIT@' in log_comp.payload:
+                break
+
             if log_comp.level in utils.LOG_LEVELS:
                 # Don't log if level is too low compared to requested level.
                 if log_comp.level not in utils.filter_priority(logConfig.LOG_LEVEL):
@@ -164,8 +170,10 @@ def load_config_file(config_filename):
 
 def usage():
     print 'logCollector [--log-file=logFilename] [port=<port#>] [-a] [-t]'
-    print '     logFilename = name of file to place logs'
+    print '     [--noisy]'
+    print '     --log-file=logFilename = name of file to place logs'
     print '     --port=<port#> = port to listen for logs'
+    print '     --noisy  = Logs echo to stdout. Normall not echoed.'
     print '     -a  Logs will be appended to logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
     print ''
@@ -284,8 +292,6 @@ def main():
     context = zmq.Context()
     server = LogCollectorTask(context, id_name)
     server.run()
-
-    server.join()
 
 
 if __name__ == "__main__":

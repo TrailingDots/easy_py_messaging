@@ -8,16 +8,43 @@ import subprocess
 # Default ZeroMQ port
 PORT = 5570
 
+def is_listening(port,
+        shortened=False, 
+        pid_only=False, 
+        proc_only=False,
+        silent=False):
+    """
+    More proper boolean fcn for easier
+    reading."""
+    status = listening(port, shortened,
+            pid_only, proc_only, silent)
+    if status == 0:
+        return True
+    return False
 
-def listening(port, shortened, pid_only, proc_only):
-    proc = subprocess.Popen('/usr/sbin/fuser %d/tcp' % port,
+def listening(port, 
+        shortened=False, 
+        pid_only=False, 
+        proc_only=False,
+        silent=False):
+    """
+    The silent=False arg means to write to stdout.
+
+    The return code seems to be reversed, but
+    it exists for the common command line
+    version:
+    return 0    # Indicate a found listener
+    return 1    # Indicates nobody listening
+    """
+    proc = subprocess.Popen('/usr/sbin/fuser %s/tcp' % 
+            str(port),
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT)
     line = proc.stdout.readline()
     items = line.split()
     if len(items) == 0:
-        print 'Port %d : Nobody listening' % port
+        print 'Port %s : Nobody listening' % str(port)
         return 0
     pid = items[-1]
     proc.wait()
@@ -43,8 +70,8 @@ def listening(port, shortened, pid_only, proc_only):
         elif proc_only:
             sys.stdout.write('%s\n' % items[-1])
         else:
-            sys.stdout.write('Port %d : listening thru pid %s named %s\n' %
-                    (port, pid, ' '.join(items[5:])))
+            sys.stdout.write('Port %s : listening thru pid %s named %s\n' %
+                    (str(port), pid, ' '.join(items[5:])))
         return 0    # Indicate a found listener
 
     # Nobody listening. fuser should have found this, but be careful.
@@ -113,14 +140,21 @@ def main():
 
     try:
         if len(remainder):
-            port_int = int(remainder[0])
+            for aport in remainder:
+                port_int = int(aport)
         else:
-            port_int = PORT
+            remainder = []
+            #port_int = PORT
+            remainder.append(PORT)
     except ValueError as err:
         sys.stderr.write('port number must be all numeric:%s\n' %
                 str(remainder))
         return 2
-    ret_code = listening(port_int, shortened, pid_only, proc_only)
+    for aport in remainder:
+        ret_code = listening(aport, shortened, pid_only, proc_only)
+    # This return code is valid only for the LAST port
+    # on the command line.
+    # If a single port, or none, was supplied, this is valid.
     return ret_code
 
 if __name__ == '__main__':

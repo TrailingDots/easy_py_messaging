@@ -26,9 +26,9 @@ from simple_log_messaging import utils
 from simple_log_messaging import logCollector
 from simple_log_messaging import loggingSpeedTest
 from simple_log_messaging import loggingClientTask
+import listeningPort
 
-
-# Name/Directory services - both client and server
+# Name/Directory service - both client and server
 import dirSvc
 import dirClient
 
@@ -763,27 +763,69 @@ class TestLogLevelsPriorities(unittest.TestCase):
         self.failUnless(bogusDict == utils.LOG_LEVELS.keys())
 
 
-class TestDirectoryServices(unittest.TestCase):
-    """Test the various functions of a directory
-    service."""
-    # python -m unittest testLogging.TestDirectoryServices
+class TestDirectoryService(unittest.TestCase):
+    """
+    Test the various functions of a directory
+    service.
+    """
+    # python -m unittest testLogging.TestDirectoryService
 
     # Use non-standard ports to allow test to
     # proceed without worrying about existing
     # logCollectors or directory services..
-    LOG_PORT = logConfig.PORT + 3
+    logConfig.PORT += 3
+    LOG_PORT = logConfig.get_logging_port()
     log_collector = None    # Process for log collector
 
-    DIR_SVC_PORT = LOG_PORT + 1
+    logConfig.DIR_PORT = logConfig.get_logging_port() + 1
+    DIR_SVC_PORT = logConfig.get_directory_port()
     dir_svc = None          # Process for directory services
+    
+    # True if logCollector was started, else False
+    LOG_COLLECTOR_STARTED = False
+
+    # True if directory services already runing, else False
+    DIRECTORY_SERVICE_STARTED = False
+
+    def setUp(self):
+        sys.stdout.write('--- TestDirectoryService: setUp()\n')
+        self.StartLogServer()
+        sys.stdout.write('--- TestDirectoryService: logCollector setUp()\n')
+        self.StartDirService()
+        sys.stdout.write('--- TestDirectoryService: dirSvc setUp()\n')
+        sys.stdout.write('--- setUp() finished.\n')
+        time.sleep(1)
+
+    def tearDown(self):
+        time.sleep(1)
+        sys.stdout.write('--- TestDirectoryService: tearDown()')
+        self.KillLogServer()
+        sys.stdout.write('--- TestDirectoryService: logCollector tearDown()')
+        self.KillDirService()
+        sys.stdout.write('--- TestDirectoryService: dirSvc tearDown()')
+
 
     def StartLogServer(self):
         """
         Spawn the log server in their own 
         separate procsses.
         """
-        abs_path_server = os.path.abspath(logCollector.__file__)
-        abs_path_app = os.path.abspath(loggingClientTask.__file__)
+        log_port = TestDirectoryService.LOG_PORT
+
+        # If a logCollector already exists on this
+        # port, ignore
+        if listeningPort.is_listening(log_port,
+                silent=True):
+            LOG_COLLECTOR_STARTED = False
+            # The log collector gets started
+            LOG_COLLECTOR_STARTED = True
+        else:
+            print '++++++ LOG Collector NOT started +++++'
+            return  # Nothing else to do.
+
+        print '++++++ LOG Collector started +++++'
+
+        abs_log_collector = os.path.abspath('../logCollector.py')
 
         log_filename = os.path.abspath('./logs.log')
         print '***** log_filename:%s' % log_filename
@@ -794,40 +836,51 @@ class TestDirectoryServices(unittest.TestCase):
                 os.path.isfile(log_filename):
             os.remove(log_filename)
 
-        log_port = TestDirectoryServices.LOG_PORT
+        log_port = TestDirectoryService.LOG_PORT
         args = ['python',
-                abs_path_server,
+                abs_log_collector,
+                '--noisy',      # Echo logs to console
                 '--port=%s'     % str(log_port),
                 '--log-file=%s' % log_filename,
                ]
-        print 'starting dirSvc:%s' % ' '.join(args)
+        print 'starting logCollector:%s' % ' '.join(args)
         argv_collector = args
-        TestDirectoryServices.log_collector = subprocess.Popen(argv_collector)
+        TestDirectoryService.log_collector = subprocess.Popen(argv_collector)
         print ' '.join(argv_collector)
         print (bcolors.BGGREEN +
-            ('log_collector pid: %d' % TestDirectoryServices.log_collector.pid) +
-            bcolors.ENDC)
-
-        # Start the directory service.
-        # The port number is one above the log service.
-        self.StartDirService()
+            ('log_collector pid: %d' % 
+                TestDirectoryService.log_collector.pid) +
+                bcolors.ENDC)
 
 
     def StartDirService(self):
-        abs_path_server = os.path.abspath(dirSvc.__file__)
+        """
+        Start the directory service. If already
+        running, ignore this request.
+        """
+        dir_svc_port = TestDirectoryService.DIR_SVC_PORT
+        if listeningPort.is_listening(dir_svc_port, silent=True):
+            DIRECTORY_SERVICE_STARTED = True
+        else:
+            DIRECTORY_SERVICE_STARTED = False
+            print '++++ Dir Service NOT started ++++'
+            return
+       
+        print '++++ Dir Service started ++++'
 
-        dir_svc_port = TestDirectoryServices.DIR_SVC_PORT
+        abs_dir_service = os.path.abspath(dirSvc.__file__)
+
         argv_client = ['python',
-                        abs_path_server, 
+                        abs_dir_service, 
                         '--port=%s' % str(dir_svc_port),
                         '--memory-file=%s' % './logsDirSvc.log',
                         '--clear',  # Wipe out old data
                        ]
         print 'starting dirSvc:' + ' '.join(argv_client)
-        TestDirectoryServices.dir_svc = subprocess.Popen(argv_client,
+        TestDirectoryService.dir_svc = subprocess.Popen(argv_client,
             stderr=subprocess.STDOUT)
         print (bcolors.BGGREEN +
-                ('dirSvc pid: %d' % TestDirectoryServices.dir_svc.pid) +
+                ('dirSvc pid: %d' % TestDirectoryService.dir_svc.pid) +
                 bcolors.ENDC)
 
         # Allow some time to process.
@@ -836,34 +889,55 @@ class TestDirectoryServices(unittest.TestCase):
         time.sleep(seconds_to_sleep)
 
     def KillLogServer(self):
-        os.kill(TestDirectoryServices.log_collector.pid, signal.SIGINT)
+        """
+        Kill the log collector only if the process
+        was not started by this process.
+        """
+        if TestDirectoryService.LOG_COLLECTOR_STARTED:
+            print 'killing logCollector at pid %d' % \
+                TestDirectoryService.log_collector.pid
+            os.kill(TestDirectoryService.log_collector.pid, signal.SIGKILL)
 
     def KillDirService(self):
-        os.kill(TestDirectoryServices.dir_svc.pid, signal.SIGINT)
+        """
+        Kill the directory service only if the process
+        was not started by this process.
+        """
+        if TestDirectoryService.DIRECTORY_SERVICE_STARTED:
+            print 'killing dirSvc at pid %d' % \
+                TestDirectoryService.dir_svc.pid
+            os.kill(TestDirectoryService.dir_svc.pid, signal.SIGKILL)
+
 
     def testDirSvc_0(self):
-        self.StartLogServer()
 
-        dir_svc = TestDirectoryServices.dir_svc
-        log_col = TestDirectoryServices.log_collector
+        print '---- TestDirectoryService.testDirSvc_0 - starting'
+
+        import pdb; pdb.set_trace()
+        dir_svc = TestDirectoryService.dir_svc
+        log_col = TestDirectoryService.log_collector
 
         try:
+            # Clear the directory
+            print '%s' % dirClient.port_request('@CLEAR')
+
             # Add a few names to the directory
             req0 = dirClient.port_request('testDirSvc')
             req1 = dirClient.port_request('abc')
             req2 = dirClient.port_request('xyz')
 
-            self.failUnless(req1 == dirClient.port_request('abc'))
+            print 'abc req1=%s' %  str(req1)
+            print 'abc port_request(abc)=%s' % str(dirClient.port_request('abc'))
+            print '%s' % dirClient.port_request('@DIR')
+            #import pdb; pdb.set_trace()
+            req1_again = dirClient.port_request('abc')
+            self.failUnless(req1 == req1_again)
 
-            dirClient.port_request('-abc')
+            # Delete name abc
+            dirClient.port_request('~abc')
+            print '~abc %s' % dirClient.port_request('@DIR')
             # Since 'abc' was deleted, a request yields a new port
             self.failUnless(req1 != dirClient.port_request('abc'))
-
-
-            msg = 'abc'
-
-            port1 = dirClient.port_request('abc')
-            self.failUnless(port1 is not None)
 
         except Exception as err:
             sys.stderr.write(str(err) + '\n')

@@ -44,7 +44,7 @@ class LoggingClientClass(threading.Thread):
         self.socket = self.context.socket(zmq.DEALER)
         identity = u'%s' % str(self.id_name)
         self.socket.identity = identity.encode('ascii')
-        self.socket.connect(logConfig.APP_SOCKET)
+        self.socket.connect(logConfig.getAppSocket())
         self.poll = zmq.Poller()
         self.poll.register(self.socket, zmq.POLLIN)
 

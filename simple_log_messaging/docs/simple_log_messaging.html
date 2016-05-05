@@ -771,6 +771,20 @@ Return codes:
 
         </ul>
 
+        <p>For convenience in debugging, listeningPort can accept multiple
+        ports on the same command line. This allows easier debugging
+        when dealing with coordinating multiple processes. However,
+        with multiple ports, the return code reflects only the state
+        of the last port on the command line.</p>
+
+        <pre>
+        listeningPort 5570 5571 5572 5573 5574
+        Port 5570 : listening thru pid 7647 named /usr/lib/...
+        Port 5571 : listening thru pid 7653 named /home/...
+        Port 5573 : Nobody listening
+        Port 5574 : Nobody listening
+        </pre>
+
         <p>Start <code>listeningPort</code> on some terminal. The response
         will be one of two possible output: (Of course, your pids will differ)</p>
 

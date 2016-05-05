@@ -11,9 +11,6 @@ import threading
 import logConfig
 import signal
 
-def my_sleep(secs):
-    time.sleep(secs)
-
 class ClientTask(threading.Thread):
     """ClientTask"""
     def __init__(self, id_name, iterations):
@@ -24,6 +21,7 @@ class ClientTask(threading.Thread):
         self.iterations = int(iterations)
 
         self.timeit = timeit
+        self.time = time
         self.zmq = zmq
         threading.Thread.__init__(self)
 
@@ -43,7 +41,7 @@ class ClientTask(threading.Thread):
             this_msg = 'request #%d' % reqs
             print('Req #%d sent "%s"' % (reqs, this_msg))
             socket.send_string(this_msg)
-            my_sleep(1)
+            self.time.sleep(1)
 
         elapsed = self.timeit.default_timer() - start_time
         print '%d logs, elapsed time: %f' % (self.iterations, elapsed)

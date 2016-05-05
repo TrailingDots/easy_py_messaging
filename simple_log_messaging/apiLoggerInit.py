@@ -43,7 +43,7 @@ def loggerInit():
                         format='%(asctime)s.%(msecs)03d\t%(levelname)s' +
                         '\t%(message)s',
                         datefmt='%Y-%m-%dT%H:%M:%S',
-                        level=logging.NOTSET)   # NOTSET is EVERYTHING!
+                        level=logging.NOTSET)   # NOTSET means log EVERYTHING!
     if logConfig.TESTING:
         # If testing, echo logs to stdout as well as logfile.
         log = logging.getLogger('')

@@ -96,9 +96,9 @@ ECHO () {
 }
 
 # Run various python metric utilities
-#CMD "pyflakes *.py"
-#CMD "pep8 *.py"
-#CMD "pylint *.py"
+CMD "pyflakes *.py"
+CMD "pep8 *.py"
+CMD "pylint *.py"
 
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
