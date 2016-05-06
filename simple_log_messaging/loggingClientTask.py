@@ -55,7 +55,7 @@ class LoggingClientClass(threading.Thread):
         """
         try:
             dummy = 0
-            while self.socket is None:  # TODO FIXME Potential hand!!!
+            while self.socket is None:  # TODO FIXME Potential hang!!!
                 dummy += 1
                 if dummy > 200:
                     # Sometimes the socket "disappears" for awhile.

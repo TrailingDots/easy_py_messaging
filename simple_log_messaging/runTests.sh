@@ -167,15 +167,15 @@ export DATA_LOG=$DATA_DIR/data.data
 CMD "$GEN_DATA >$DATA_LOG"
 $GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
-ECHO Need to get a timed alarm in case the collector does not start.
-ECHO Problems with logCollector - Need to get a proper term to close the coverage files.
+ECHO "Need to get a timed alarm in case the collector does not start."
+ECHO "Problems with logCollector - Need to get a proper term to close the coverage files."
 ECHO "echo starting logCollector"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py &
 COL_PID=$! 
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingClientTask.py "
 
-ECHO Test the listening port utility
+ECHO "Test the listening port utility"
 CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --help "
 CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570 "
 CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short 5570 "
@@ -210,6 +210,13 @@ CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
 ECHO "Passing logCmd"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py Testing a new log config option." 
+
+ECHO Misc logCmd testing
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --help"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --xxx stuff"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --port=XYZ stuff"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --level=XYZ"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --level=DEBUG Should be at debug level"
 
 ECHO Multiple runs passing various flags both valid and bogus.
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON "
@@ -252,7 +259,7 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --confi
 ECHO Expecte ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/end_before_start.conf "
 
-ECHO No infile. Reads from stdin
+ECHO "No infile. Reads from stdin"
 cat happy.data | coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py 
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --in-file=$DATA_LOG --JSON "
@@ -273,9 +280,9 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-fi
 ECHO Permission denied on input file.
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --in-file=/var/log/messages --CSV "
 
-ECHO Filter on dates as well.
-ECHO These test depend on the dates as set in ./test/getData.py and the $DATA_LOG file
-ECHO start only
+ECHO "Filter on dates as well."
+ECHO "These test depend on the dates as set in ./test/getData.py and the $DATA_LOG file"
+ECHO "start only"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 "
 ECHO Syntax Error for start only
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14:08:00:00.000 "
@@ -293,6 +300,8 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --port=XYZ"
 ECHO coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py 
 coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py &
 dirSvcPID=$!
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy foobar"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py abc def ghi jkl"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @DIR"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @PERSIST"
@@ -303,10 +312,10 @@ CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py abc | grep
 ECHO "Delete a name from the directory"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py ~abc"
 CMD_PASS "$LIB_DIR/dirClient.py abc | grep abc"
-STATUS=$!
+STATUS=$?
 if [ $STATUS -ne 0 ]
 then
-    CMD_FAIL 'echo Dir delete of abc failed.'
+    ECHO 'Dir delete of abc failed.'
 fi
 
 
@@ -371,14 +380,12 @@ fi
 CMD "rm $TMP"     # Clean up tmp file.
     
 
-CMD "kill -HUP $COL_PID"
-
 ECHO Test various command line options for the logCollector
 ECHO Set log file to ./abc.log
-$PYTHON $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log-file=$DATA_DIR/abc.log --trunc &
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log-file=$DATA_DIR/abc.log --trunc &
 COL_PID=$! 
 CMD_PASS "$LIB_DIR/logCmd.py Testing a new log config option." 
-kill -INT $COL_PID
+CMD_PASS "$LIB_DIR/logCmd.py @EXIT" 
 
 if [ -f ./abc.log ]
 then
@@ -398,13 +405,13 @@ cat >$TMP_CONF <<EOF
 }
 EOF
 
-$PYTHON $LIB_DIR/logCollector.py --config=$TMP_CONF &
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --config=$TMP_CONF &
 COL_PID=$! 
 CMD "sleep 1"   # Let the collector get started.
 CMD_PASS "$LIB_DIR/logCmd.py Testing log config in $TMP_CONF " 
 CMD_PASS "$LIB_DIR/logCmd.py Another testing log config in $TMP_CONF " 
 CMD "sleep 1"
-kill -INT $COL_PID
+CMD_PASS "$LIB_DIR/logCmd.py @EXIT" 
 
 if [ -f $TMP_LOG ]
 then

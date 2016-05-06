@@ -38,16 +38,18 @@ def parseOpts():
     except getopt.GetoptError as err:
         print err
         usage()
-        return 1
 
     # Number leading args to shift out
     shift_out = 0
     for opt, arg in opts:
         if opt == '--help':
             usage()
-            continue
         elif opt == '--port':
-            logConfig.PORT = int(arg)
+            try:
+                logConfig.PORT = int(arg)
+            except ValueError as err:
+                print 'Invalid port: %s' % str(err)
+                usage()
             shift_out += 1
             continue
         elif opt == '--level':

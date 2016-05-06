@@ -8,74 +8,101 @@
 
 import sys
 import platform
-import loggingClientTask
-import logConfig
 import utils
 import zmq
 
+import apiLoggerInit
 import logConfig
+import loggingClientTask
 
-NOISY = False   # Set to True for debug messages
 
-REQUEST_TIMEOUT = 2500
-REQUEST_RETRIES = 1000  # Wait a long time for the server
-port = logConfig.get_directory_port()
-SERVER_ENDPOINT = "tcp://127.0.0.1:%d" % port
+# Start the logger
+apiLoggerInit.loggerInit()
+loggingClient = loggingClientTask.LoggingClientClass(platform.node())
+if loggingClient is None:
+    sys.stderr.write('Cannot create LoggingClientClass!\n')
+    sys.exit(1)
+loggingClient.start()
+loggingClient.info('app=dirClient,status=started-inited')
 
-if NOISY: print("I: Connecting to server... port %d" % port)
 
-context = zmq.Context(1)
-client = context.socket(zmq.REQ)
-client.connect(SERVER_ENDPOINT)
-poll = zmq.Poller()
-poll.register(client, zmq.POLLIN)
+class DirClient(object):
+    default_config = {
+        'clear': False,
+        'memory_filename': './dirSvc.data',
+        'port': str(logConfig.DIR_PORT),
+        'noisy': False,
+    }
 
-def port_request(name):
-    """
-    Given a name, ask the directory service for the
-    associated port.
+    def __init__(self, in_config=default_config.copy()):
+        global loggingClient
+        self.zmq = zmq
+        self.request_timeout = 2500
+        self.request_retries = 1000  # Wait a long time for the server
+        self.config = DirClient.default_config.copy()
 
-    REFACTOR ME! Too damn long and complicated.
-    """
-    global client
-    global context
-    global poll
-    global NOISY
+        if 'port' in in_config:
+            self.config['port'] = in_config['port']
+        if 'memory_filename' in in_config:
+            self.config['memory_filename'] = in_config['memory_filename']
+        if 'clear' in in_config:
+            self.config['clear'] = in_config['clear']
+        logConfig.DIR_PORT = self.config['port']
+        self.server_endpoint = 'tcp://127.0.0.1:%s' % str(self.config['port'])
+        self.context = self.zmq.Context(1)
+        self.client = self.context.socket(self.zmq.REQ)
+        self.client.connect(self.server_endpoint)
+        self.poll = self.zmq.Poller()
+        self.poll.register(self.client, self.zmq.POLLIN)
+        if self.config['noisy']: print("I: Connecting to server... port %s" % 
+                str(self.config['port']))
+        loggingClient.info('app=DirClient,status=starting')
 
-    retries_left = REQUEST_RETRIES
-    while retries_left:
-        request = str(name)
-        if NOISY: print("I: Sending (%s)" % request)
-        client.send(request)
+    def port_request(self, name):
+        """
+        Given a name, ask the directory service for the
+        associated port.
 
-        expect_reply = True
-        while expect_reply:
-            socks = dict(poll.poll(REQUEST_TIMEOUT))
-            if socks.get(client) == zmq.POLLIN:
-                reply = client.recv()
-                if not reply:
-                    break
-                if NOISY: print("I: Server replied (%s)" % reply)
-                return reply
+        REFACTOR ME! Too damn long and complicated.
+        """
+        global loggingClient
+        retries_left = self.request_retries
+        while retries_left:
+            request = str(name)
+            if self.config['noisy']: print("I: Sending (%s)" % request)
+            loggingClient.debug('app=dirClient,request=%s' % name)
+            self.client.send(request)
 
-            else:
-                if NOISY: print("W: No response from server, retrying...")
-                # Socket is confused. Close and remove it.
-                client.setsockopt(zmq.LINGER, 0)
-                client.close()
-                poll.unregister(client)
-                retries_left -= 1
-                if retries_left == 0:
-                    if NOISY: print("E: Server seems to be offline, abandoning")
-                    break
-                if NOISY: print("I: Reconnecting and resending (%s)" % request)
-                # Create new connection
-                client = context.socket(zmq.REQ)
-                client.connect(SERVER_ENDPOINT)
-                poll.register(client, zmq.POLLIN)
-                client.send(request)
+            expect_reply = True
+            while expect_reply:
+                socks = dict(self.poll.poll(self.request_timeout))
+                if socks.get(self.client) == self.zmq.POLLIN:
+                    reply = self.client.recv()
+                    if not reply:
+                        break
+                    if self.config['noisy']: print("I: Server replied (%s)" % reply)
+                    loggingClient.debug('app=dirClient,request=%s,reply=%s' %
+                            (str(request), str(reply)))
+                    return reply
 
-    context.term()
+                else:
+                    if self.config['noisy']: print("W: No response from server, retrying...")
+                    # Socket is confused. Close and remove it.
+                    self.client.setsockopt(self.zmq.LINGER, 0)
+                    self.client.close()
+                    self.poll.unregister(self.client)
+                    retries_left -= 1
+                    if retries_left == 0:
+                        if self.config['noisy']: print("E: Server seems to be offline, abandoning")
+                        break
+                    if self.config['noisy']: print("I: Reconnecting and resending (%s)" % request)
+                    # Create new connection
+                    self.client = self.context.socket(self.zmq.REQ)
+                    self.client.connect(self.server_endpoint)
+                    self.poll.register(self.client, self.zmq.POLLIN)
+                    self.client.send(request)
+
+        self.context.term()
 
 
 def usage():
@@ -98,8 +125,8 @@ def main():
     Run a single request and exit.
     Both logCollector and dirSvc must be running.
     """
-    global NOISY
     import getopt
+    global loggingClient
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:], 'cpmnh',
@@ -116,17 +143,13 @@ def main():
 
     # Number leading args to shift out
     shift_out = 0
-    config = {
-            'clear': False,
-            'memory_filename': './dirSvc.data',
-            'port': str(logConfig.PORT),
-            }
+    config = DirClient.default_config.copy()
     for opt, arg in opts:
         if opt in ['-h', '--help']:
             usage()
             continue
         elif opt in ['-n', '--noisy']:
-            NOISY = True
+            config['noisy'] = True
             shift_out += 1
             continue
         elif opt in ['p', '--port']:
@@ -151,12 +174,18 @@ def main():
     for ndx in range(shift_out):
         del sys.argv[1]
 
+    dir_client = DirClient(config)
+
+    if config['noisy']:
+        print 'options: %s' % str(config)
+
     for request in sys.argv[1:]:
         sys.stdout.write(str(request) + ' ')
-        response = port_request(request)
+        response = dir_client.port_request(request)
         sys.stdout.write(str(response) + '\n')
     sys.exit(0)
 
 if __name__ == '__main__':
     """Command line for mapping name to port."""
     main()
+

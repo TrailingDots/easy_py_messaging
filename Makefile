@@ -52,9 +52,7 @@ clean:
 	$(RM) -rf $(LOCALDIR)/lib/python2.7/site-packages/$(PROJECT)
 	$(RM) -rf $(LOCALDIR)/lib/python2.7/site-packages/$(PROJECT)-*
 	-for APP in logCollector listeningPort logCmd logFilterApp; do \
-		$(RM) -f $(HOME)/anaconda/bin/$$APP || true; \
 		sudo $(RM) -f /usr/bin/$$APP || true; \
 		$(RM) $(LOCALDIR)/bin/$$APP; \
 	done
-	$(RM) -rf /home/cecilm/anaconda/lib/python2.7/site-packages/$(PROJECT)-1.0.0-py2.7.egg
 

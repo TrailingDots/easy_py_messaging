@@ -30,7 +30,7 @@ class ClientTask(threading.Thread):
         socket = self.context.socket(self.zmq.DEALER)
         identity = u'worker-%s' % self.id_name
         socket.identity = identity.encode('ascii')
-        socket.connect(logConfig.APP_SOCKET)
+        socket.connect(logConfig.getAppSocket())
         print('loggingApp: Client %s started' % (identity))
         poll = self.zmq.Poller()
         poll.register(socket, self.zmq.POLLIN)

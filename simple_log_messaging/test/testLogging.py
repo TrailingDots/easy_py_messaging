@@ -487,6 +487,14 @@ class TestISO8601(unittest.TestCase):
         secStr = utils.seconds_to_ISO8601(secsNow)
         self.failUnless(date_str == secStr)
 
+    def testTimeNowISO8601(self):
+        """
+        Can not really tell now() in a convenient testable manner.
+        What to do? All this routine does in increase coverage.
+        """
+        secs_str = utils.time_now_ISO8601()
+        print 'time_now_ISO8601=' + secs_str
+
     def testISO8601ToSecs(self):
         """
         From ISO 8601 to unix seconds.
@@ -820,15 +828,15 @@ class TestDirectoryService(unittest.TestCase):
             # The log collector gets started
             LOG_COLLECTOR_STARTED = True
         else:
-            print '++++++ LOG Collector NOT started +++++'
+            print '------ LOG Collector NOT started ------'
             return  # Nothing else to do.
 
-        print '++++++ LOG Collector started +++++'
+        print '------ LOG Collector started ------'
 
-        abs_log_collector = os.path.abspath('../logCollector.py')
+        abs_log_collector = os.path.abspath(logCollector.__file__)
 
         log_filename = os.path.abspath('./logs.log')
-        print '***** log_filename:%s' % log_filename
+        print 'log_filename:%s' % log_filename
 
         # Remove existing log file
         # Other tests will test for append mode.
@@ -866,7 +874,7 @@ class TestDirectoryService(unittest.TestCase):
             print '++++ Dir Service NOT started ++++'
             return
        
-        print '++++ Dir Service started ++++'
+        print '------ Dir Service started ------'
 
         abs_dir_service = os.path.abspath(dirSvc.__file__)
 
@@ -897,6 +905,7 @@ class TestDirectoryService(unittest.TestCase):
             print 'killing logCollector at pid %d' % \
                 TestDirectoryService.log_collector.pid
             os.kill(TestDirectoryService.log_collector.pid, signal.SIGKILL)
+            time.sleep(1)
 
     def KillDirService(self):
         """
@@ -907,37 +916,42 @@ class TestDirectoryService(unittest.TestCase):
             print 'killing dirSvc at pid %d' % \
                 TestDirectoryService.dir_svc.pid
             os.kill(TestDirectoryService.dir_svc.pid, signal.SIGKILL)
+            time.sleep(1)
 
 
     def testDirSvc_0(self):
 
         print '---- TestDirectoryService.testDirSvc_0 - starting'
 
-        import pdb; pdb.set_trace()
         dir_svc = TestDirectoryService.dir_svc
         log_col = TestDirectoryService.log_collector
 
+        testDirClient = dirClient.DirClient(in_config={
+            'clear': True,
+            'memory_filename': './dirSvc.data',
+            'port': str(logConfig.DIR_PORT),
+            'noisy': True,
+            })
         try:
             # Clear the directory
-            print '%s' % dirClient.port_request('@CLEAR')
+            print '%s' % testDirClient.port_request('@CLEAR')
 
             # Add a few names to the directory
-            req0 = dirClient.port_request('testDirSvc')
-            req1 = dirClient.port_request('abc')
-            req2 = dirClient.port_request('xyz')
+            req0 = testDirClient.port_request('testDirSvc')
+            req1 = testDirClient.port_request('abc')
+            req2 = testDirClient.port_request('xyz')
 
             print 'abc req1=%s' %  str(req1)
-            print 'abc port_request(abc)=%s' % str(dirClient.port_request('abc'))
-            print '%s' % dirClient.port_request('@DIR')
-            #import pdb; pdb.set_trace()
-            req1_again = dirClient.port_request('abc')
+            print 'abc port_request(abc)=%s' % str(testDirClient.port_request('abc'))
+            print '%s' % testDirClient.port_request('@DIR')
+            req1_again = testDirClient.port_request('abc')
             self.failUnless(req1 == req1_again)
 
             # Delete name abc
-            dirClient.port_request('~abc')
-            print '~abc %s' % dirClient.port_request('@DIR')
+            testDirClient.port_request('~abc')
+            print '~abc %s' % testDirClient.port_request('@DIR')
             # Since 'abc' was deleted, a request yields a new port
-            self.failUnless(req1 != dirClient.port_request('abc'))
+            self.failUnless(req1 != testDirClient.port_request('abc'))
 
         except Exception as err:
             sys.stderr.write(str(err) + '\n')

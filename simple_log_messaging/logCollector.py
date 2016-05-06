@@ -87,14 +87,23 @@ class LogCollectorTask(object):
 
         while True:
             try:
-                ident, msg = self.frontend.recv_multipart()
+                #ident, msg = self.frontend.recv_multipart()
+                msgs = self.frontend.recv_multipart()
+                if len(msgs) != 2:
+                    import pdb; pdb.set_trace()
+                ident, msg = msgs[:2]
+
             except KeyboardInterrupt as err:
                 sys.stderr.write('Keyboard interrupt\n')
                 print 'ident:%s, msg:%s' % (str(ident), str(msg))
                 exiting('keyboard interrupt')
             except Exception as err:
                 sys.stderr.write('Exception: %s\n' % str(err))
+                import pdb; pdb.set_trace()
                 exiting('exception')
+
+            if ident is None or msg is None:
+                import pdb; pdb.set_trace()
 
             msg += utils.PAYLOAD_CONNECTOR + \
                     ('host=%s' % ident)   # Track by hostname as well
@@ -103,7 +112,7 @@ class LogCollectorTask(object):
             log_comp = logComponents.LogComponents.msg_to_components(msg)
 
             # Command to perform orderly exit
-            if '@EXIT@' in log_comp.payload:
+            if '@EXIT' in log_comp.payload:
                 break
 
             if log_comp.level in utils.LOG_LEVELS:

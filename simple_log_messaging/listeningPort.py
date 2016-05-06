@@ -64,11 +64,11 @@ def listening(port,
         if items[0] != pid:
             continue
         if shortened:
-            sys.stdout.write('%d %s %s\n' % (port, pid, ' '.join(items[5:])))
+            sys.stdout.write('%s %s %s\n' % (str(port), pid, ' '.join(items[5:])))
         elif pid_only:
             sys.stdout.write('%s\n' % pid)
         elif proc_only:
-            sys.stdout.write('%s\n' % items[-1])
+            sys.stdout.write('%s\n' % ' '.join(items[4:]))
         else:
             sys.stdout.write('Port %s : listening thru pid %s named %s\n' %
                     (str(port), pid, ' '.join(items[5:])))
@@ -86,12 +86,22 @@ def usage():
     list the processes that are listening to that port.
 
     Use by:
-      listening [--help] [--short] <port>
+      listening [--help] [--short | --pid | --proc] <port> [<port> ...]
     e.g.:
-      listening 5570      # The ZeroMQ default port
+      listening 5570             # The ZeroMQ default port
+      listening 5570 5571 5572   # Multiple ports may be checked
+      listening --short 5570
+
+    For the case of a free port, output similar to:
+      Port 5571 : Nobody listening
+
     --help = this message
+
+    Only one of the following can be supplied:
     --short = Output consists of only three space separated fields:
         <port> <pid of listener> <process name of listener>
+    --pid  = Output consists only of a pid
+    --proc = Output consists only of process names
 
     Return codes:
       0 = Someone is listening. stdout has details.
