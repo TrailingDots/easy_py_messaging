@@ -17,8 +17,9 @@ import utils
 
 def usage():
     """Print the usage blurb."""
-    print 'logCmd [--port=<port#>] --level=<level>'
+    print 'logCmd [--port=<port#>] --node=<node> --level=<level>'
     print '    --port = port to send to logCollector'
+    print '    --node = Node name or IP address to send messages'
     print '    --level = <level> where <level> is one of:'
     print '          DEBUG, INFO, WARNING, CMD, ERROR, CRITICAL'
     sys.exit(1)
@@ -31,6 +32,7 @@ def parseOpts():
         opts, args = getopt.gnu_getopt(
             sys.argv[1:], 'ahnqt',
             ['port=',     # Port # to send message
+             'node=',     # Node to send message
              'level=',    # level of msg
              'help'       # Help blurb
             ]
@@ -44,6 +46,11 @@ def parseOpts():
     for opt, arg in opts:
         if opt == '--help':
             usage()
+        elif opt == '--node':
+            logConfig.DEFAULT_SERVER = arg
+            logConfig.APP_HOST = arg
+            shift_out += 1
+            break;
         elif opt == '--port':
             try:
                 logConfig.PORT = int(arg)

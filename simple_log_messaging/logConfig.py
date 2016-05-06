@@ -77,5 +77,13 @@ def getAppSocket():
     app_socket = '%s://%s:%d' % (SCHEME, APP_HOST, PORT)
     return app_socket
 
+def getDirAppSocket():
+    global SCHEME
+    global APP_HOST
+    global DIR_PORT
+
+    app_socket = '%s://%s:%d' % (SCHEME, APP_HOST, DIR_PORT)
+    return app_socket
+
 COLL_SOCKET = '%s://%s:%d' % (SCHEME, COLL_HOST, PORT)
 

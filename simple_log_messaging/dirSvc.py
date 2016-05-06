@@ -271,6 +271,7 @@ def usage():
 
 def parseOpts():
     import getopt
+    global NOISY
 
     try:
         opts, args = getopt.gnu_getopt(
@@ -278,6 +279,7 @@ def parseOpts():
             ['port=',           # Port # to expect messages
              'memory-file=',    # Which file to persist names
              'help',            # Help blurb
+             'noisy',           # Turn noise on 
              'clear'            # If set, clean memory-file at start
             ]
         )
@@ -296,6 +298,8 @@ def parseOpts():
         if opt in ['-h', '--help']:
             usage()
             continue
+        elif opt in ['noise']:
+            NOISY = True
         elif opt in ['p', '--port']:
             try:
                 # Ensure a valid integer port

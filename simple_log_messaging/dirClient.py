@@ -47,8 +47,7 @@ class DirClient(object):
             self.config['memory_filename'] = in_config['memory_filename']
         if 'clear' in in_config:
             self.config['clear'] = in_config['clear']
-        logConfig.DIR_PORT = self.config['port']
-        self.server_endpoint = 'tcp://127.0.0.1:%s' % str(self.config['port'])
+        self.server_endpoint = logConfig.getDirAppSocket()
         self.context = self.zmq.Context(1)
         self.client = self.context.socket(self.zmq.REQ)
         self.client.connect(self.server_endpoint)
@@ -111,6 +110,7 @@ def usage():
     print '\t\t[--clear]'
     print '\t--help         = This blurb'
     print '\t--port=aport   = Port to expect queries.'
+    print '\t--node=node_name = On which nodes is dirSvc running?'
     print '\t--noisy        = Noisy reporting. Echo progress.'
     print '\t--memory-file=memory_filename   = File to persist names'
     print '\t\tDefault: ./dirSvc.data'
@@ -132,6 +132,7 @@ def main():
             sys.argv[1:], 'cpmnh',
             ['port=',           # Port # to expect messages
              'memory-file=',    # Which file to persist names
+             'node=',           # On which node is dirSvc runnnig.
              'noisy',           # Noisy reporting
              'help',            # Help blurb
              'clear'            # If set, clean memory-file at start
@@ -148,6 +149,10 @@ def main():
         if opt in ['-h', '--help']:
             usage()
             continue
+        elif opt in ['--node']:
+            logConfig.DEFAULT_SERVER = arg
+            logConfig.APP_HOST = arg
+            break;
         elif opt in ['-n', '--noisy']:
             config['noisy'] = True
             shift_out += 1
