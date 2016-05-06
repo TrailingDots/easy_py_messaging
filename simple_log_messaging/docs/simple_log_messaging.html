@@ -254,8 +254,14 @@
 
         <ul>
 
-            <li>Install the <a href="http://zeromq.org/area:download#toc5">ZMQ C libraries</a>.
-            Alternatively, a download of binaries should work equally well. <a href="zeromq.org">ZeroMQ</a> has detailed procedures for installation if necessary.</li>
+            <li>Install the <a href="http://zeromq.org/area:download#toc5">ZMQ
+                C libraries</a>.  Alternatively, a download of binaries should
+            work equally well. <a href="zeromq.org">ZeroMQ</a> has detailed
+            procedures for installation if necessary. <b>Hint</b>: If you run
+            into troubles with a message related to <code>sodium</code> in
+            either the configure or make steps, find the line in configure that
+            reads "<code>have_sodium_library="yes"</code> and change
+            <code>"yes"</code> to <code>"no"</code></li>
 
             <li>Install <a
             href="https://github.com/zeromq/pyzmq.git">PyZMQ</a>,

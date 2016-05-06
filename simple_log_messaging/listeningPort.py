@@ -82,15 +82,15 @@ def usage():
     """Write a usage statment and exit."""
 
     sys.stderr.write("""
-    Give a port that defaults to ZeroMQ of 5570,
-    list the processes that are listening to that port.
+    List the processes that are listening to a port.
+    Defaults to ZeroMQ port of 5570.
 
     Use by:
-      listening [--help] [--short | --pid | --proc] <port> [<port> ...]
+      listeningPort [--help] [--short | --pid | --proc] <port> [<port> ...]
     e.g.:
-      listening 5570             # The ZeroMQ default port
-      listening 5570 5571 5572   # Multiple ports may be checked
-      listening --short 5570
+      listeningPort 5570             # The ZeroMQ default port
+      listeningPort 5570 5571 5572   # Multiple ports may be checked
+      listeningPort --short 5570
 
     For the case of a free port, output similar to:
       Port 5571 : Nobody listening
@@ -106,7 +106,17 @@ def usage():
     Return codes:
       0 = Someone is listening. stdout has details.
       !0 = Nobody listening to <port> or invalid cmd line args.
-    \n""")
+    \n
+    NOTICE: This routine does NOT work on OSX!
+    Replace this with:
+        lsof -i<port> | awk '{ print $2; }' | head -2
+        PID
+        18101
+    This prints only the pid of the process using this port.
+    Now use "ps" to find the process:
+        ps ax | grep 18191 | grep -v grep
+        10191 s001  S+    0:00.00 /usr/bin/python /usr/local/bin/logCollector
+    """)
     sys.exit(1)
 
 
