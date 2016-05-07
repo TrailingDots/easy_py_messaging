@@ -52,7 +52,6 @@ simple_log_messaging/bin/logCollector
 simple_log_messaging/bin/logFilterApp
 simple_log_messaging/bin/loggingLoopApp
 simple_log_messaging/bin/loggingSpeedTest
-simple_log_messaging/data/abc.log
 simple_log_messaging/data/bad.conf
 simple_log_messaging/data/bad2.conf
 simple_log_messaging/data/bad3.conf
