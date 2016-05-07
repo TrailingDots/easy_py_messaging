@@ -8,7 +8,6 @@
 
 import sys
 import platform
-import utils
 import zmq
 
 import apiLoggerInit
@@ -16,7 +15,7 @@ import logConfig
 import loggingClientTask
 
 
-# Start the logger
+# Start the logger interface
 apiLoggerInit.loggerInit()
 loggingClient = loggingClientTask.LoggingClientClass(platform.node())
 if loggingClient is None:
@@ -27,6 +26,14 @@ loggingClient.info('app=dirClient,status=started-inited')
 
 
 class DirClient(object):
+    """
+    Class that encapsulates sending names to the
+    directory service. This client sends a port
+    name to  dirSvc. dirSvc looks up the name and
+    replies with the port for that name.
+    If no port exists for that name, dirSvc
+    assigns a new port and returns the port number.
+    """
     default_config = {
         'clear': False,
         'memory_filename': './dirSvc.data',
@@ -53,8 +60,8 @@ class DirClient(object):
         self.client.connect(self.server_endpoint)
         self.poll = self.zmq.Poller()
         self.poll.register(self.client, self.zmq.POLLIN)
-        if self.config['noisy']: print("I: Connecting to server... port %s" % 
-                str(self.config['port']))
+        if self.config['noisy']: print("I: Connecting to server... port %s" %
+            str(self.config['port']))
         loggingClient.info('app=DirClient,status=starting')
 
     def port_request(self, name):
@@ -118,13 +125,15 @@ def usage():
     print '\t\tDefault: False, do not clear but load memory-file'
     print ''
     sys.exit(1)
-       
+
+
 def main():
     """
     Command line code to drive dirSvc.
     Run a single request and exit.
     Both logCollector and dirSvc must be running.
     """
+
     import getopt
     global loggingClient
     try:

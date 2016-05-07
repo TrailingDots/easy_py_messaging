@@ -6,7 +6,6 @@ import zmq
 import os
 import sys
 import time
-import timeit
 import threading
 import logConfig
 import signal

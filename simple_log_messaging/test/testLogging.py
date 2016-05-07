@@ -796,13 +796,24 @@ class TestDirectoryService(unittest.TestCase):
     DIRECTORY_SERVICE_STARTED = False
 
     def setUp(self):
-        sys.stdout.write('--- TestDirectoryService: setUp()\n')
-        self.StartLogServer()
-        sys.stdout.write('--- TestDirectoryService: logCollector setUp()\n')
-        self.StartDirService()
-        sys.stdout.write('--- TestDirectoryService: dirSvc setUp()\n')
-        sys.stdout.write('--- setUp() finished.\n')
-        time.sleep(1)
+        """
+        Start logCollector and dirSvc only it they are not
+        currently running.
+        """
+        if listeningPort.is_listening(TestDirectoryService.LOG_PORT, silent=True):
+            sys.stdout.write('logCollector already running.\n')
+        else:
+            sys.stdout.write('--- TestDirectoryService: setUp()\n')
+            self.StartLogServer()
+            sys.stdout.write('--- TestDirectoryService: logCollector setUp()\n')
+            time.sleep(1)
+
+        if listeningPort.is_listening(TestDirectoryService.DIR_SVC_PORT, silent=True):
+            self.StartDirService()
+            sys.stdout.write('--- TestDirectoryService: dirSvc setUp()\n')
+            sys.stdout.write('--- setUp() finished.\n')
+            time.sleep(1)
+
 
     def tearDown(self):
         time.sleep(1)

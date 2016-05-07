@@ -76,7 +76,7 @@ class LogCollectorTask(object):
         signal.signal(signal.SIGUSR2, signalUSR2Handler)
 
         try:
-            self.frontend.bind('tcp://*:%s' % 
+            self.frontend.bind('tcp://*:%s' %
                     str(logConfig.get_logging_port()))
         except zmq.ZMQError as err:
             sys.stderr.write('ZMQError: %s\n' % err)
@@ -87,10 +87,8 @@ class LogCollectorTask(object):
 
         while True:
             try:
-                #ident, msg = self.frontend.recv_multipart()
+                # ident, msg = self.frontend.recv_multipart()
                 msgs = self.frontend.recv_multipart()
-                if len(msgs) != 2:
-                    import pdb; pdb.set_trace()
                 ident, msg = msgs[:2]
 
             except KeyboardInterrupt as err:
@@ -99,7 +97,6 @@ class LogCollectorTask(object):
                 exiting('keyboard interrupt')
             except Exception as err:
                 sys.stderr.write('Exception: %s\n' % str(err))
-                import pdb; pdb.set_trace()
                 exiting('exception')
 
             if ident is None or msg is None:
@@ -143,12 +140,10 @@ def load_config(config_filename=None):
     def try_to_load_config(filename):
         try:
             file_handle = open(filename, 'r')
-        except IOError as err:
+        except IOError:
             return None
         if file_handle:
             return parse_config(file_handle)
-
-    config_dict = {}
 
     dir_config = None
     home_config = None
@@ -229,10 +224,6 @@ def main():
     # Any user flags will override config file settings.
     config_dict = load_config()
 
-    log_filename = None  # Default for log is stdout
-    append = True
-    config_filename = None  # Load and parse this config file instead of .logcollectorrc
-
     if config_dict is None:
         config_dict = {
             "append":True,          # Append logs to existing log file
@@ -245,7 +236,6 @@ def main():
     for opt, arg in opts:
         if opt in ['-h', '--help']:
             usage()
-            continue
         elif opt in ['-a']:
             config_dict['append'] = True
             continue

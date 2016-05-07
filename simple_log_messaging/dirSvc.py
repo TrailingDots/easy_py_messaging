@@ -1,6 +1,6 @@
 #!/bin/env python
 """
-Directory services for 
+Directory services for
     simple_log_messaging - Log messaging client and servers
     control_messaging    - Control messaging structure
 """
@@ -9,22 +9,16 @@ import sys
 import os
 import time
 import zmq
-import signal
 import json
 import pickle
+import atexit
 
 import logConfig
-import apiLoggerInit
-import utils
-import logComponents
 import platform
 import loggingClientTask
 
-import pdb
-
 NOISY = False   # Set to True for debug/trace
 
-import atexit
 def exiting(exit_msg):
     print('dirSvc: exiting:' + exit_msg)
 
@@ -38,10 +32,8 @@ class DirEntry(object):
     def to_JSON(self):
         return json.dumps(self)
 
-# 
 class DirOperations(object):
     """Various operations on the directory."""
-
     def __init__(self, config):
         # All the entries for this directory.
         # Key = name of entry
@@ -55,9 +47,9 @@ class DirOperations(object):
         self.PORT = int(config['port'])
 
         # Seconds to start persistence unless reset
-        self.DELTA_UPDATE_SECS = 5   
+        self.DELTA_UPDATE_SECS = 5
 
-        # Is the in-core database dirty? 
+        # Is the in-core database dirty?
         # (Does it need saving?)
         self.set_clean()
 
@@ -102,7 +94,7 @@ class DirOperations(object):
         if os.path.isfile(self.pickle_filename):
             try:
                 self.directory = pickle.load(open(self.pickle_filename, 'rb'))
-            except EOFError as err:
+            except EOFError:
                 pass    # Ignore empty file
         else:
             self.client.critical('from_pickle=%s,status=not_found' %
@@ -113,7 +105,7 @@ class DirOperations(object):
                 self.pickle_filename)
 
     def persist_timeout_check(self):
-        """On a time out, conditionally persist the dictionary 
+        """On a time out, conditionally persist the dictionary
         only if the directory  is dirty."""
         if not self.is_dirty:
             return
@@ -158,11 +150,11 @@ class DirOperations(object):
             @CLEAR_DIRECTORY = Clears the directory
             @MEMORY_FILENAME = Reply with the name of the memory file
             @EXIT = Exit this program. Used for code coverage.
-            
+
         Returns: None if not a meta, else non-None.
         """
         if key[0] == '~':
-            resp = self.del_key(key)
+            self.del_key(key)
             return True
         if key == '@DIR':
             # Return entire directory in JSON
@@ -198,7 +190,7 @@ class DirOperations(object):
         Get a port by name. If the name does not
         exist in the directory, then increment to the
         next port and return that.
-        
+
         A name with a prefix of '~' means delete
         that name. If the name does not exist, ignore it.
 
@@ -249,7 +241,7 @@ class DirOperations(object):
         self.is_dirty_persist = self.next_persist_time()
 
     def set_clean(self):
-        """Set clean. Then set a time 
+        """Set clean. Then set a time
         to automatically persist the DB."""
         self.is_dirty = True
         self.is_dirty_persist = self.next_persist_time()
@@ -267,7 +259,7 @@ def usage():
     print '\t\tDefault: False, do not clear but load memory-file'
     print ''
     sys.exit(1)
-       
+
 
 def parseOpts():
     import getopt
@@ -279,7 +271,7 @@ def parseOpts():
             ['port=',           # Port # to expect messages
              'memory-file=',    # Which file to persist names
              'help',            # Help blurb
-             'noisy',           # Turn noise on 
+             'noisy',           # Turn noise on
              'clear'            # If set, clean memory-file at start
             ]
         )
@@ -327,8 +319,10 @@ def parseOpts():
 
 
 def main():
-    """Main processing loop.
-    Pattern is Lazy Pirate """
+    """
+    Main processing loop.
+    The ZeroMQ pattern is The Lazy Pirate 
+    """
     config = parseOpts()
     context = zmq.Context(1)
     server = context.socket(zmq.REP)
@@ -341,9 +335,9 @@ def main():
         sys.stderr.write('Or: another program may be using port %s\n' %
             str(port))
         sys.exit(1)
-    
+
     sys.stdout.write('dirSvc started. pid %s port %s\n' %
-            (str(os.getpid()), str(port)))
+        (str(os.getpid()), str(port)))
 
     dir_ops = DirOperations(config)
 
@@ -355,6 +349,7 @@ def main():
         # Notice this recv waits forever. This implies
         # a dirty directory will not get cleared.
         # Should a timeout change this logic?
+        if NOISY: print("I: Normal receive port: %s)" % port)
         request = server.recv()
 
         port = dir_ops.get_port(request)

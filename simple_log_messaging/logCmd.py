@@ -15,6 +15,7 @@ import loggingClientTask
 import logConfig
 import utils
 
+
 def usage():
     """Print the usage blurb."""
     print 'logCmd [--port=<port#>] --node=<node> --level=<level>'
@@ -50,7 +51,7 @@ def parseOpts():
             logConfig.DEFAULT_SERVER = arg
             logConfig.APP_HOST = arg
             shift_out += 1
-            break;
+            break
         elif opt == '--port':
             try:
                 logConfig.PORT = int(arg)
@@ -82,6 +83,7 @@ def level_name_to_fcn(client):
         'CRITICAL': client.critical}
     client_fcn = REMOTE_LOG_LEVELS[logConfig.LOG_LEVEL]
     return client_fcn
+
 
 def main():
     parseOpts()

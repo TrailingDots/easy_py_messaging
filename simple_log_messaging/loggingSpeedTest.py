@@ -4,7 +4,6 @@
     log controller to get a speed test in terms
     of max logs per second.
 """
-import os
 import platform
 import timeit
 import loggingClientTask

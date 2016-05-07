@@ -42,10 +42,13 @@ NOISY = False
 # ==============================================
 SCHEME = 'tcp'
 COLL_HOST = '*'         # Only the server collector uses this.
+
+
 # Logging Port
 PORT = 5570             # Do NOT change!
 def get_logging_port():
     return PORT
+
 
 # Directory Service Port
 DIR_PORT = PORT + 1
@@ -64,6 +67,7 @@ if platform.node() == DEFAULT_SERVER or TESTING:
 else:
     APP_HOST = DEFAULT_SERVER
 
+
 # Connect socket string
 # Likely to change only the HOST and PORT
 # See: https://en.wikipedia.org/wiki/Uniform_Resource_Locator#Syntax
@@ -77,6 +81,7 @@ def getAppSocket():
     app_socket = '%s://%s:%d' % (SCHEME, APP_HOST, PORT)
     return app_socket
 
+# Same as getAppSocket() but for  directory service.
 def getDirAppSocket():
     global SCHEME
     global APP_HOST

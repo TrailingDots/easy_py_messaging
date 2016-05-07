@@ -8,9 +8,10 @@ import subprocess
 # Default ZeroMQ port
 PORT = 5570
 
+
 def is_listening(port,
-        shortened=False, 
-        pid_only=False, 
+        shortened=False,
+        pid_only=False,
         proc_only=False,
         silent=False):
     """
@@ -22,9 +23,10 @@ def is_listening(port,
         return True
     return False
 
-def listening(port, 
-        shortened=False, 
-        pid_only=False, 
+
+def listening(port,
+        shortened=False,
+        pid_only=False,
         proc_only=False,
         silent=False):
     """
@@ -36,7 +38,7 @@ def listening(port,
     return 0    # Indicate a found listener
     return 1    # Indicates nobody listening
     """
-    proc = subprocess.Popen('/usr/sbin/fuser %s/tcp' % 
+    proc = subprocess.Popen('/usr/sbin/fuser %s/tcp' %
             str(port),
             shell=True,
             stdout=subprocess.PIPE,

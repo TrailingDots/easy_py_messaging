@@ -298,20 +298,20 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --port=XYZ"
 
 # Start the directory server in the background.
 ECHO coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py 
-coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py &
+coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --noisy &
 dirSvcPID=$!
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy foobar"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py abc def ghi jkl"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @DIR"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @PERSIST"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @MEMORY_FILENAME"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy abc def ghi jkl"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @DIR"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @PERSIST"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @MEMORY_FILENAME"
 
 ECHO "Verify that abc gets deleted from the directory"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py abc | grep abc"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy abc | grep abc"
 ECHO "Delete a name from the directory"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py ~abc"
-CMD_PASS "$LIB_DIR/dirClient.py abc | grep abc"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy ~abc"
+CMD_PASS "$LIB_DIR/dirClient.py --noisy abc | grep abc"
 STATUS=$?
 if [ $STATUS -ne 0 ]
 then
@@ -321,17 +321,17 @@ fi
 
 ECHO "Try to delete a bogus name from the directory"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py ~bogusName"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @DIR"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @DIR"
 
 ECHO "Various commands to the driver dirClient for coverage purposes."
 ECHO "A request for help is considered a failure"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help abc def"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --port=XYZ"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --clear"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy --clear"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --bogusArg"
 
 # An orderly exit so coverage can collect the runs.
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py @EXIT"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @EXIT"
 
 
 ECHO Log Filter with configuration file. Notice in-file override
