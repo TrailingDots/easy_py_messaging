@@ -33,7 +33,7 @@ class DirEntry(object):
         return json.dumps(self)
 
 class DirOperations(object):
-    """Various operations on the directory."""
+    """Various operations on the directory service."""
     def __init__(self, config):
         # All the entries for this directory.
         # Key = name of entry
@@ -43,8 +43,8 @@ class DirOperations(object):
         self.pickle_filename = config['memory_filename']
         self.clear = config['clear']
 
-        # Start at this port.
-        self.PORT = int(config['port'])
+        # receive requests on this port.
+        self.dir_port = int(config['port'])
 
         # Seconds to start persistence unless reset
         self.DELTA_UPDATE_SECS = 5
@@ -60,7 +60,7 @@ class DirOperations(object):
         self.client = loggingClientTask.LoggingClientClass(platform.node())
         self.client.start()
         log_entry = 'Starting=DirectoryService,port=%d,pid=%d,memory=%s' % \
-            (self.PORT, os.getpid(), config['memory_filename'])
+            (self.dir_port, os.getpid(), config['memory_filename'])
         self.client.info(log_entry)
         print log_entry
 
@@ -153,9 +153,6 @@ class DirOperations(object):
 
         Returns: None if not a meta, else non-None.
         """
-        if key[0] == '~':
-            self.del_key(key)
-            return True
         if key == '@DIR':
             # Return entire directory in JSON
             data = self.to_JSON()
@@ -172,16 +169,15 @@ class DirOperations(object):
         if key == '@MEMORY_FILENAME':
             self.client.info('@MEMORY_FILENAME=%s' % self.pickle_filename)
             return self.pickle_filename
-            return '@EXIT'
         if key == '@EXIT':
             return '@EXIT'
 
-        # All valid meta commands compared. If the key
-        # is tagged meta, but is not in the above list,
-        # flag as unknown.
+        # All valid meta commands compared. If the key tags as meta by a
+        # leading '@', but is not in the above list, flag as unknown meta
+        # command.
         if key[0] == '@':
             self.client.error('name=%s,status=unknown_meta_command' % key)
-            return key
+            return '@UNKNOWN_META_COMMAND'
         return None     # No meta query found.
 
 
@@ -201,16 +197,19 @@ class DirOperations(object):
         if len(key) == 0:
             return 0    # bogus port - let user handle
 
-        # Handle meta queries if any
-        meta = self.handle_meta(key)
-        if meta:
-            return meta
+        # Handle delete request, if requested.
+        if key[0] == '~':
+            self.del_key(key)
+            return True
+        
+        # Handle meta query if requested.
+        if key[0] == '@':
+            return self.handle_meta(key)
 
         port = self.directory.get(key, None)
         if port is None:
-            self.PORT += 1
-            port = self.PORT
-            port = self.add_key_val(key, self.PORT)
+            port = logConfig.incDirNamePort()
+            port = self.add_key_val(key, port)
         else:
             port = port.value
         self.client.info('get_port_key=%s,port=%s' % \
@@ -284,14 +283,14 @@ def parseOpts():
     config = {
             'clear': False,
             'memory_filename': './dirSvc.data',
-            'port': str(logConfig.PORT),
+            'port': str(logConfig.DIR_PORT),
             }
     for opt, arg in opts:
         if opt in ['-h', '--help']:
             usage()
-            continue
-        elif opt in ['noise']:
+        elif opt in ['--noisy']:
             NOISY = True
+            continue
         elif opt in ['p', '--port']:
             try:
                 # Ensure a valid integer port

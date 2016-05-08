@@ -52,10 +52,8 @@ class LogCollectorTask(object):
         self.frontend = self.context.socket(zmq.ROUTER)
 
     def signal_handler(self, signum, frame):
-        SIGNALS_TO_NAMES_DICT = dict((getattr(signal, n), n)
-            for n in dir(signal) if n.startswith('SIG') and '_' not in n)
         sys.stderr.write("logCollector terminated by signal %s" %
-                SIGNALS_TO_NAMES_DICT[signum])
+                utils.SIGNALS_TO_NAMES_DICT[signum])
         self.frontend.close()
         self.context.term()
         sys.exit(1)
@@ -67,8 +65,11 @@ class LogCollectorTask(object):
     def run(self):
         """
         SIGINT and SIGTERM kill the process.
-        SIGUSR1 toggle the NOISY debug of incoming logs.
-            kill -USR1 1234 # "1234" is pid of this process.
+        SIGUSR1 toggles the NOISY debug of incoming logs.
+        SIGUSR1 toggles the log level of incoming logs.
+            Logs below the current level get discarded.
+
+        kill -USR1 1234 # "1234" is pid of this process.
         """
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
@@ -98,9 +99,6 @@ class LogCollectorTask(object):
             except Exception as err:
                 sys.stderr.write('Exception: %s\n' % str(err))
                 exiting('exception')
-
-            if ident is None or msg is None:
-                import pdb; pdb.set_trace()
 
             msg += utils.PAYLOAD_CONNECTOR + \
                     ('host=%s' % ident)   # Track by hostname as well

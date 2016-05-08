@@ -15,16 +15,6 @@ import logConfig
 import loggingClientTask
 
 
-# Start the logger interface
-apiLoggerInit.loggerInit()
-loggingClient = loggingClientTask.LoggingClientClass(platform.node())
-if loggingClient is None:
-    sys.stderr.write('Cannot create LoggingClientClass!\n')
-    sys.exit(1)
-loggingClient.start()
-loggingClient.info('app=dirClient,status=started-inited')
-
-
 class DirClient(object):
     """
     Class that encapsulates sending names to the
@@ -42,7 +32,6 @@ class DirClient(object):
     }
 
     def __init__(self, in_config=default_config.copy()):
-        global loggingClient
         self.zmq = zmq
         self.request_timeout = 2500
         self.request_retries = 1000  # Wait a long time for the server
@@ -57,12 +46,33 @@ class DirClient(object):
         self.server_endpoint = logConfig.getDirAppSocket()
         self.context = self.zmq.Context(1)
         self.client = self.context.socket(self.zmq.REQ)
-        self.client.connect(self.server_endpoint)
+
+        try:
+            self.client.connect(self.server_endpoint)
+        except zmq.ZMQError as err:
+            sys.stderr.write('Server endpoint: %s  Error:%s\n' %
+                    (self.server_endpoint, str(err)))
+            sys.stderr.write('Likely an invalid node designation\n')
+            sys.exit(1) # Cannot continue  - invalid endpoint!
+
         self.poll = self.zmq.Poller()
         self.poll.register(self.client, self.zmq.POLLIN)
         if self.config['noisy']: print("I: Connecting to server... port %s" %
             str(self.config['port']))
-        loggingClient.info('app=DirClient,status=starting')
+        self.loggingClient = self.logCollectorSetup()
+        self.loggingClient.info('app=DirClient,status=starting')
+
+    def logCollectorSetup(self):
+        global loggingClient
+        # Start the logger interface
+        apiLoggerInit.loggerInit()
+        loggingClient = loggingClientTask.LoggingClientClass(platform.node())
+        if loggingClient is None:
+            sys.stderr.write('Cannot create LoggingClientClass!\n')
+            sys.exit(1)
+        loggingClient.start()
+        loggingClient.info('app=dirClient,status=started-inited')
+        return loggingClient
 
     def port_request(self, name):
         """
@@ -71,12 +81,11 @@ class DirClient(object):
 
         REFACTOR ME! Too damn long and complicated.
         """
-        global loggingClient
         retries_left = self.request_retries
         while retries_left:
             request = str(name)
             if self.config['noisy']: print("I: Sending (%s)" % request)
-            loggingClient.debug('app=dirClient,request=%s' % name)
+            self.loggingClient.debug('app=dirClient,request=%s' % name)
             self.client.send(request)
 
             expect_reply = True
@@ -87,7 +96,7 @@ class DirClient(object):
                     if not reply:
                         break
                     if self.config['noisy']: print("I: Server replied (%s)" % reply)
-                    loggingClient.debug('app=dirClient,request=%s,reply=%s' %
+                    self.loggingClient.debug('app=dirClient,request=%s,reply=%s' %
                             (str(request), str(reply)))
                     return reply
 
@@ -135,7 +144,6 @@ def main():
     """
 
     import getopt
-    global loggingClient
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:], 'cpmnh',
@@ -157,7 +165,6 @@ def main():
     for opt, arg in opts:
         if opt in ['-h', '--help']:
             usage()
-            continue
         elif opt in ['--node']:
             logConfig.DEFAULT_SERVER = arg
             logConfig.APP_HOST = arg

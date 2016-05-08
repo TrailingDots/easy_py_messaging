@@ -7,6 +7,7 @@ setup.cfg
 setup.py
 ./simple_log_messaging/__init__.py
 ./simple_log_messaging/apiLoggerInit.py
+./simple_log_messaging/dec.py
 ./simple_log_messaging/dirClient.py
 ./simple_log_messaging/dirSvc.py
 ./simple_log_messaging/listeningPort.py
@@ -30,6 +31,7 @@ simple_log_messaging/.coveragerc
 simple_log_messaging/.logcollectorrc
 simple_log_messaging/__init__.py
 simple_log_messaging/apiLoggerInit.py
+simple_log_messaging/dec.py
 simple_log_messaging/dirClient.py
 simple_log_messaging/dirSvc.py
 simple_log_messaging/listeningPort.py
@@ -52,6 +54,7 @@ simple_log_messaging/bin/logCollector
 simple_log_messaging/bin/logFilterApp
 simple_log_messaging/bin/loggingLoopApp
 simple_log_messaging/bin/loggingSpeedTest
+simple_log_messaging/data/abc.log
 simple_log_messaging/data/bad.conf
 simple_log_messaging/data/bad2.conf
 simple_log_messaging/data/bad3.conf

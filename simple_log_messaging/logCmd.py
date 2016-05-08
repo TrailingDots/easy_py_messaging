@@ -71,8 +71,10 @@ def parseOpts():
         del sys.argv[1]
 
 
-def level_name_to_fcn(client):
+def level_name_to_fcn(client, level=None):
     """Map a level name to the client send function. """
+    if level is None:
+        level = logConfig.LOG_LEVEL
     # All the log levels in the remote logger
     REMOTE_LOG_LEVELS = {
         'DEBUG': client.debug,
@@ -81,7 +83,7 @@ def level_name_to_fcn(client):
         'WARNING': client.warning,
         'ERROR': client.error,
         'CRITICAL': client.critical}
-    client_fcn = REMOTE_LOG_LEVELS[logConfig.LOG_LEVEL]
+    client_fcn = REMOTE_LOG_LEVELS[level]
     return client_fcn
 
 
@@ -91,8 +93,7 @@ def main():
     client.start()
 
     msg = ' '.join(sys.argv[1:])
-    client_fcn = level_name_to_fcn(client)
-    return client_fcn(msg)
+    return level_name_to_fcn(client)(msg)
 
 if __name__ == '__main__':
     sys.exit(main())

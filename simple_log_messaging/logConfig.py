@@ -45,16 +45,30 @@ COLL_HOST = '*'         # Only the server collector uses this.
 
 
 # Logging Port
+# Send logs to the logCollector on this port.
 PORT = 5570             # Do NOT change!
 def get_logging_port():
     return PORT
 
 
-# Directory Service Port
+# Directory Service Port. 
+# dirSvc receives requests on this port.
 DIR_PORT = PORT + 1
 def get_directory_port():
     return DIR_PORT
 
+# Base port for directory naming of user port names
+DIRECTORY_NAME_BASE_PORT = PORT + 10
+def getDirNameBasePort():
+    return DIRECTORY_NAME_BASE_PORT
+
+# Increment the free port numbers for user requested
+# port names.
+# Return the new directory port number.
+def incDirNamePort():
+    global DIRECTORY_NAME_BASE_PORT
+    DIRECTORY_NAME_BASE_PORT += 1
+    return DIRECTORY_NAME_BASE_PORT
 
 # Testing code needs to use this
 # All testing is performed on localhost.

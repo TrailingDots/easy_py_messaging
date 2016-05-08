@@ -9,32 +9,23 @@ import subprocess
 PORT = 5570
 
 
-def is_listening(port,
-        shortened=False,
-        pid_only=False,
-        proc_only=False,
-        silent=False):
+def is_listening(port):
     """
-    More proper boolean fcn for easier
-    reading."""
-    status = listening(port, shortened,
-            pid_only, proc_only, silent)
-    if status == 0:
-        return True
-    return False
+    More proper boolean operator for easier
+    reading.
+    return 1    # Indicate a found listener
+    return 0    # Indicates nobody listening
+    """
+    return not listening(port)
 
 
 def listening(port,
         shortened=False,
         pid_only=False,
-        proc_only=False,
-        silent=False):
+        proc_only=False):
     """
-    The silent=False arg means to write to stdout.
-
     The return code seems to be reversed, but
-    it exists for the common command line
-    version:
+    it exists for the common command line version:
     return 0    # Indicate a found listener
     return 1    # Indicates nobody listening
     """
@@ -46,8 +37,8 @@ def listening(port,
     line = proc.stdout.readline()
     items = line.split()
     if len(items) == 0:
-        print 'Port %s : Nobody listening' % str(port)
-        return 0
+        sys.stdout.write('Port %s : Nobody listening\n' % str(port))
+        return 1
     pid = items[-1]
     proc.wait()
 
@@ -61,10 +52,12 @@ def listening(port,
     if err and len(err):
         sys.stderr.write(err + '\n')
     out = out.splitlines()
+    status = 0
     for line in out:
         items = line.split()
-        if items[0] != pid:
+        if items[0] != pid:     # Ignore all but requested pid
             continue
+        # Branch on requested output
         if shortened:
             sys.stdout.write('%s %s %s\n' % (str(port), pid, ' '.join(items[5:])))
         elif pid_only:
@@ -74,10 +67,9 @@ def listening(port,
         else:
             sys.stdout.write('Port %s : listening thru pid %s named %s\n' %
                     (str(port), pid, ' '.join(items[5:])))
-        return 0    # Indicate a found listener
+        status += 1    # Indicate a found listener
 
-    # Nobody listening. fuser should have found this, but be careful.
-    return 1
+    return status
 
 
 def usage():
@@ -126,8 +118,9 @@ def main():
     """
     Process run-time args.
     Based on the args, run the program.
+    Return the number of listeners for all
+    provided ports. 100 == error for port #
     """
-
     import getopt
 
     try:
@@ -171,12 +164,11 @@ def main():
     except ValueError as err:
         sys.stderr.write('port number must be all numeric:%s\n' %
                 str(remainder))
-        return 2
+        return 100
+    ret_code = 0
     for aport in remainder:
-        ret_code = listening(aport, shortened, pid_only, proc_only)
-    # This return code is valid only for the LAST port
-    # on the command line.
-    # If a single port, or none, was supplied, this is valid.
+        ret_code += not listening(aport, shortened, pid_only, proc_only)
+
     return ret_code
 
 if __name__ == '__main__':

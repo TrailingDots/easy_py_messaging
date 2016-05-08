@@ -6,6 +6,7 @@ import sys
 import logging
 import datetime
 import time
+import signal
 
 
 class bcolors(object):
@@ -21,6 +22,10 @@ class bcolors(object):
     BGBLUE = '\033[94m'
     BGGRAY = '\033[47m'
     ENDC = '\033[0m'
+
+
+SIGNALS_TO_NAMES_DICT = dict((getattr(signal, n), n)
+    for n in dir(signal) if n.startswith('SIG') and '_' not in n)
 
 
 # The log levels get used in multiple places.

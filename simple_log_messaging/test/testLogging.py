@@ -4,6 +4,7 @@ import os
 import sys
 import signal
 import subprocess
+import platform
 import datetime
 import logging
 import time
@@ -26,19 +27,28 @@ from simple_log_messaging import utils
 from simple_log_messaging import logCollector
 from simple_log_messaging import loggingSpeedTest
 from simple_log_messaging import loggingClientTask
-import listeningPort
+from simple_log_messaging import listeningPort
 
 # Name/Directory service - both client and server
-import dirSvc
-import dirClient
+from simple_log_messaging import dirSvc
+from simple_log_messaging import dirClient
 
 
 # Single test example:
 #    python -n unittest testLogging.RunTests.testNaming
 
 
+
+def fcnName(func):
+    """Decorator to print function name before running test."""
+    def wrapper(*func_args, **func_kwargs):
+        print('=== test fcn: ' + func.__name__)
+        return func(*func_args, **func_kwargs)
+    return wrapper
+
 class RunTests(unittest.TestCase):
 
+    @fcnName
     def testConfigSettings(self):
         """
         Spawn the server and client loggers
@@ -113,6 +123,7 @@ class RunTests(unittest.TestCase):
             self.failUnless(msg in log_lines)
         """
 
+    @fcnName
     def testLoggingSpeed(self):
         """How many messages per second?"""
         abs_path_server = os.path.abspath(logCollector.__file__)
@@ -129,8 +140,7 @@ class RunTests(unittest.TestCase):
         print 'starting collector'
         argv_collector = ['python',
                           abs_path_server,
-                          '--log-file',
-                          log_filename,
+                          '--log-file', log_filename,
                           '-t']
         proc_collector = subprocess.Popen(argv_collector)
         print ' '.join(argv_collector)
@@ -165,6 +175,7 @@ class RunTests(unittest.TestCase):
         os.kill(proc_collector.pid, signal.SIGINT)
 
 
+@fcnName
 def gen_happy_path(sep_char=utils.PAYLOAD_CONNECTOR,
         key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
@@ -185,6 +196,7 @@ def gen_happy_path(sep_char=utils.PAYLOAD_CONNECTOR,
     return testData
 
 
+@fcnName
 def gen_missing_data(sep_char=utils.PAYLOAD_CONNECTOR,
         key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
@@ -210,6 +222,7 @@ def gen_missing_data(sep_char=utils.PAYLOAD_CONNECTOR,
     testData = testData.replace('&', sep_char)
     return testData
 
+@fcnName
 def gen_mixed_data(sep_char=utils.PAYLOAD_CONNECTOR,
         key_val_sep=utils.KEY_VALUE_SEPARATOR):
     """
@@ -318,6 +331,7 @@ def gen_mixed_data(sep_char=utils.PAYLOAD_CONNECTOR,
 
 class TestLogs2CSV(unittest.TestCase):
     # python -m unittest testLogging.TestLogs2CSV
+    @fcnName
     def testHappyPath_1(self):
         print 'testHappyPath'
         testData = gen_happy_path()
@@ -340,6 +354,7 @@ class TestLogs2CSV(unittest.TestCase):
         self.failUnless('item' in csv.log_dict)
         self.failUnless(csv.log_dict['item'] == 'Good Stuff')
 
+    @fcnName
     def testHappyPath_Warning(self):
         print 'testHappyPath_Warning'
         testData = gen_happy_path()
@@ -361,6 +376,7 @@ class TestLogs2CSV(unittest.TestCase):
         self.failUnless('item' in log_dict)
         self.failUnless(log_dict['item'] == 'Good Stuff')
 
+    @fcnName
     def testMissingData(self):
         print 'testMissingData'
         testData = gen_missing_data()
@@ -382,6 +398,7 @@ class TestLogs2CSV(unittest.TestCase):
         self.failUnless('item' in log_dict)
         self.failUnless(log_dict['item'] == 'Good Stuff')
 
+    @fcnName
     def testMixedData(self):
         print 'testMixedData'
         testData = gen_mixed_data()
@@ -443,6 +460,7 @@ class TestISO8601(unittest.TestCase):
         date -u -d '1970-01-01 946684800 seconds' +"%Y-%m-%d %T %z"
         2000-01-01 00:00:00 +0000
     """
+    @fcnName
     def testUnixToISO8601_0(self):
         """ From unix time to external local ISO8601 """
 
@@ -469,12 +487,13 @@ class TestISO8601(unittest.TestCase):
         # 2016-03-14T08:00:09.123456000
         self.failUnless(sec_epoch == date_now)
 
+    @fcnName
     def testUnixToISO8601_1(self):
         """
-        From unix time to external local ISO8601
+            From unix time to external local ISO8601
 
-        User needs to convert internal unix floating point
-        seconds into an ISO 8601 string.
+            User needs to convert internal unix floating point
+            seconds into an ISO 8601 string.
         """
 
         date_str = '2016-03-14T08:00:09.123456'
@@ -487,21 +506,23 @@ class TestISO8601(unittest.TestCase):
         secStr = utils.seconds_to_ISO8601(secsNow)
         self.failUnless(date_str == secStr)
 
+    @fcnName
     def testTimeNowISO8601(self):
         """
-        Can not really tell now() in a convenient testable manner.
-        What to do? All this routine does in increase coverage.
+            Can not really tell now() in a convenient testable manner.
+            What to do? All this routine does in increase coverage.
         """
         secs_str = utils.time_now_ISO8601()
         print 'time_now_ISO8601=' + secs_str
 
+    @fcnName
     def testISO8601ToSecs(self):
         """
-        From ISO 8601 to unix seconds.
+            From ISO 8601 to unix seconds.
 
-        App reads DATE field from log file and converts to
-        internal unix floating point seconds in local time.
-        """
+            App reads DATE field from log file and converts to
+            internal unix floating point seconds in local time.
+            """
         date_str = '2016-03-14T08:00:09.123456'
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
 
@@ -511,38 +532,42 @@ class TestISO8601(unittest.TestCase):
         secs = utils.ISO8601_to_seconds(date_str)
         self.failUnless(secs == secsNow)
 
+    @fcnName
     def testISO8601ToSecsErrors(self):
         """
-        From ISO 8601 to unix seconds with errors in input
+            From ISO 8601 to unix seconds with errors in input
 
-        App reads DATE field from log file and converts to
-        internal unix floating point seconds in local time.
-        """
+            App reads DATE field from log file and converts to
+            internal unix floating point seconds in local time.
+            """
         date_str = '2016-03-14T:11:00:09.123456'
         # date --date='2016-03-14T08:00:09.123456' +%s.%6N
 
         secs = utils.ISO8601_to_seconds(date_str)
         self.failUnless(secs is None)
 
+    @fcnName
     def testTimeNow(self):
         """
-        Simple test of time now.
+            Simple test of time now.
         """
         the_time = utils.time_now()
         # Ignore the value as "the_time" always changes.
         self.failUnless(type(the_time) == type(1.0))
 
+    @fcnName
     def testTimeNowISO8601(self):
         """
-        Simple test of the time now in ISO8601 format
+            Simple test of the time now in ISO8601 format
         """
         iso = utils.time_now_ISO8601()
         self.failUnless(type(iso) == type(''))
 
+    @fcnName
     def testISOError(self):
         """
-        Test error conditions.
-        Pass in bogus ISO8601 formats. Should get None seconds
+            Test error conditions.
+            Pass in bogus ISO8601 formats. Should get None seconds
         """
         seconds = utils.ISO8601_to_seconds('2016-XX-01T00:00:00.000')
         self.failUnless(seconds is None)
@@ -579,6 +604,7 @@ class TestISO8601(unittest.TestCase):
 
 class TestLogs2JSON(unittest.TestCase):
     # python -m unittest testLogging.TestLogs2JSON
+    @fcnName
     def testLogs2JSON_HappyPath(self):
         print '\ntestLogs2JSON_HappyPath'
         testData = gen_happy_path()
@@ -610,6 +636,7 @@ class TestLogs2JSON(unittest.TestCase):
         self.failUnless(py_internal[1]['temp'] == '34.5')
         self.failUnless(py_internal[1]['item'] == 'Good Stuff')
 
+    @fcnName
     def testLogs2JSON_Mixed(self):
         print '\ntestLogs2JSON_Missing'
         testData = gen_mixed_data()
@@ -639,6 +666,7 @@ class TestLogs2JSON(unittest.TestCase):
         self.failUnless(json_internal[0]['device'] == 'water01')
         self.failUnless(json_internal[0]['state'] == 'LOW')
 
+    @fcnName
     def testLogs2JSON_Bogus_filename(self):
         print '\ntestLogs2JSON_Bogus_filename'
         log_filters = logFilter.LogFilters.copy()
@@ -651,6 +679,7 @@ class TestLogs2JSON(unittest.TestCase):
         self.failUnless(result is None)
 
 
+@fcnName
 def countKeyValueJSON(json_struct, key, value):
     """
     Count the number of keys with specified value in json_struct.
@@ -666,6 +695,7 @@ def countKeyValueJSON(json_struct, key, value):
 class TestLogLevelsPriorities(unittest.TestCase):
     # python -m unittest testLogging.TestLogLevelsPriorities
 
+    @fcnName
     def testCycles(self):
         """Test the cycle priority changes."""
         new_level = cycle_priority('DEBUG')
@@ -692,11 +722,13 @@ class TestLogLevelsPriorities(unittest.TestCase):
 
         # Garbage level name results in DEBUG
 
+    @fcnName
     def testDebugLevel(self):
         debug_dict = utils.filter_priority('DEBUG')
         self.failUnless('DEBUG' in debug_dict)
         self.failUnless('CRITICAL' in debug_dict)
 
+    @fcnName
     def testWarningLevel(self):
         debug_dict = utils.filter_priority('WARNING')
         self.failUnless('DEBUG' not in debug_dict)
@@ -704,6 +736,7 @@ class TestLogLevelsPriorities(unittest.TestCase):
         self.failUnless('ERROR' in debug_dict)
         self.failUnless('CRITICAL' in debug_dict)
 
+    @fcnName
     def testERRORLevel_0(self):
         debug_dict = utils.filter_priority('ERROR')
         self.failUnless('DEBUG' not in debug_dict)
@@ -712,6 +745,7 @@ class TestLogLevelsPriorities(unittest.TestCase):
         self.failUnless('ERROR' in debug_dict)
         self.failUnless('CRITICAL' in debug_dict)
 
+    @fcnName
     def testCRITICALLevel_0(self):
         debug_dict = utils.filter_priority('CRITICAL')
         self.failUnless('DEBUG' not in debug_dict)
@@ -720,6 +754,7 @@ class TestLogLevelsPriorities(unittest.TestCase):
         self.failUnless('ERROR' not in debug_dict)
         self.failUnless('CRITICAL' in debug_dict)
 
+    @fcnName
     def testErrorLevelJSON_1(self):
         print '\ntestErrorLevelJSON - filter to >= ERROR'
         testData = gen_happy_path()
@@ -765,6 +800,7 @@ class TestLogLevelsPriorities(unittest.TestCase):
         self.failUnless(json_internal[0]['level'] == 'ERROR')
         self.failUnless(json_internal[0]['temp'] == '999')
 
+    @fcnName
     def testCRITICALLevel_BogusLevel(self):
         """Test an invalid logging level"""
         bogusDict = utils.filter_priority('BOGUS')
@@ -778,14 +814,13 @@ class TestDirectoryService(unittest.TestCase):
     """
     # python -m unittest testLogging.TestDirectoryService
 
-    # Use non-standard ports to allow test to
+    # Use standard ports to allow test to
     # proceed without worrying about existing
     # logCollectors or directory services..
-    logConfig.PORT += 3
     LOG_PORT = logConfig.get_logging_port()
     log_collector = None    # Process for log collector
 
-    logConfig.DIR_PORT = logConfig.get_logging_port() + 1
+    logConfig.DIR_PORT = logConfig.get_directory_port()
     DIR_SVC_PORT = logConfig.get_directory_port()
     dir_svc = None          # Process for directory services
     
@@ -795,35 +830,56 @@ class TestDirectoryService(unittest.TestCase):
     # True if directory services already runing, else False
     DIRECTORY_SERVICE_STARTED = False
 
+    @fcnName
     def setUp(self):
         """
         Start logCollector and dirSvc only it they are not
         currently running.
         """
-        if listeningPort.is_listening(TestDirectoryService.LOG_PORT, silent=True):
+        # Setup log collector object
+        # TBD: Does this track changing ports? TODO BUG?
+        self.log_client = loggingClientTask.LoggingClientClass(platform.node())
+        self.log_client.start()
+
+        log_entry = 'Starting=TestDirectoryService,log_port=%d' % \
+                TestDirectoryService.LOG_PORT
+        self.log_client.info(log_entry)
+
+        if listeningPort.is_listening(TestDirectoryService.LOG_PORT):
             sys.stdout.write('logCollector already running.\n')
         else:
-            sys.stdout.write('--- TestDirectoryService: setUp()\n')
+            sys.stdout.write('--- TestDirectoryService: setUp() port %s\n' %
+                    TestDirectoryService.LOG_PORT)
             self.StartLogServer()
             sys.stdout.write('--- TestDirectoryService: logCollector setUp()\n')
             time.sleep(1)
 
-        if listeningPort.is_listening(TestDirectoryService.DIR_SVC_PORT, silent=True):
+        if listeningPort.is_listening(TestDirectoryService.DIR_SVC_PORT):
+            sys.stdout.write('dirSvc already running.\n')
+        else:
+            sys.stdout.write('--- TestDirectoryService: dirSvc setUp() port %s\n' %
+                    TestDirectoryService.DIR_SVC_PORT)
             self.StartDirService()
-            sys.stdout.write('--- TestDirectoryService: dirSvc setUp()\n')
             sys.stdout.write('--- setUp() finished.\n')
             time.sleep(1)
 
+        self.testDirClient = dirClient.DirClient(in_config={
+            'clear': True,
+            'memory_filename': './dirSvc.data',
+            'port': str(logConfig.DIR_PORT),
+            'noisy': True,
+            })
 
+    @fcnName
     def tearDown(self):
-        time.sleep(1)
-        sys.stdout.write('--- TestDirectoryService: tearDown()')
-        self.KillLogServer()
-        sys.stdout.write('--- TestDirectoryService: logCollector tearDown()')
-        self.KillDirService()
+        sys.stdout.write('--- Kill the dirSvc before the logCollector. ---\n')
         sys.stdout.write('--- TestDirectoryService: dirSvc tearDown()')
+        self.KillDirService()
+        sys.stdout.write('--- TestDirectoryService: logCollector tearDown()')
+        self.KillLogServer()
 
 
+    @fcnName
     def StartLogServer(self):
         """
         Spawn the log server in their own 
@@ -831,18 +887,7 @@ class TestDirectoryService(unittest.TestCase):
         """
         log_port = TestDirectoryService.LOG_PORT
 
-        # If a logCollector already exists on this
-        # port, ignore
-        if listeningPort.is_listening(log_port,
-                silent=True):
-            LOG_COLLECTOR_STARTED = False
-            # The log collector gets started
-            LOG_COLLECTOR_STARTED = True
-        else:
-            print '------ LOG Collector NOT started ------'
-            return  # Nothing else to do.
-
-        print '------ LOG Collector started ------'
+        print '------ LOG Collector starting ------'
 
         abs_log_collector = os.path.abspath(logCollector.__file__)
 
@@ -870,22 +915,18 @@ class TestDirectoryService(unittest.TestCase):
             ('log_collector pid: %d' % 
                 TestDirectoryService.log_collector.pid) +
                 bcolors.ENDC)
+        TestDirectoryService.LOG_COLLECTOR_STARTED = True
 
 
+    @fcnName
     def StartDirService(self):
         """
         Start the directory service. If already
         running, ignore this request.
         """
         dir_svc_port = TestDirectoryService.DIR_SVC_PORT
-        if listeningPort.is_listening(dir_svc_port, silent=True):
-            DIRECTORY_SERVICE_STARTED = True
-        else:
-            DIRECTORY_SERVICE_STARTED = False
-            print '++++ Dir Service NOT started ++++'
-            return
        
-        print '------ Dir Service started ------'
+        print '------ Directory Service starting ------'
 
         abs_dir_service = os.path.abspath(dirSvc.__file__)
 
@@ -906,7 +947,9 @@ class TestDirectoryService(unittest.TestCase):
         seconds_to_sleep = 2
         print '%d seconds to process subprocs' % seconds_to_sleep
         time.sleep(seconds_to_sleep)
+        TestDirectoryService.DIRECTORY_SERVICE_STARTED = True
 
+    @fcnName
     def KillLogServer(self):
         """
         Kill the log collector only if the process
@@ -915,9 +958,13 @@ class TestDirectoryService(unittest.TestCase):
         if TestDirectoryService.LOG_COLLECTOR_STARTED:
             print 'killing logCollector at pid %d' % \
                 TestDirectoryService.log_collector.pid
-            os.kill(TestDirectoryService.log_collector.pid, signal.SIGKILL)
+            #os.kill(TestDirectoryService.log_collector.pid, signal.SIGKILL)
+            self.log_client.info('@EXIT')
             time.sleep(1)
+        else:
+            print 'Not killing pre-existing logCollector'
 
+    @fcnName
     def KillDirService(self):
         """
         Kill the directory service only if the process
@@ -926,10 +973,12 @@ class TestDirectoryService(unittest.TestCase):
         if TestDirectoryService.DIRECTORY_SERVICE_STARTED:
             print 'killing dirSvc at pid %d' % \
                 TestDirectoryService.dir_svc.pid
-            os.kill(TestDirectoryService.dir_svc.pid, signal.SIGKILL)
-            time.sleep(1)
+            self.testDirClient.port_request('@EXIT')
+        else:
+            print 'Not killing pre-existing dirSvc'
 
 
+    @fcnName
     def testDirSvc_0(self):
 
         print '---- TestDirectoryService.testDirSvc_0 - starting'
@@ -937,41 +986,33 @@ class TestDirectoryService(unittest.TestCase):
         dir_svc = TestDirectoryService.dir_svc
         log_col = TestDirectoryService.log_collector
 
-        testDirClient = dirClient.DirClient(in_config={
-            'clear': True,
-            'memory_filename': './dirSvc.data',
-            'port': str(logConfig.DIR_PORT),
-            'noisy': True,
-            })
         try:
             # Clear the directory
-            print '%s' % testDirClient.port_request('@CLEAR')
+            print '%s' % self.testDirClient.port_request('@CLEAR')
+            print 'dirNameBasePort: %s' % logConfig.getDirNameBasePort()
 
             # Add a few names to the directory
-            req0 = testDirClient.port_request('testDirSvc')
-            req1 = testDirClient.port_request('abc')
-            req2 = testDirClient.port_request('xyz')
+            req0 = self.testDirClient.port_request('testDirSvc')
+            req1 = self.testDirClient.port_request('abc')
+            req2 = self.testDirClient.port_request('xyz')
 
             print 'abc req1=%s' %  str(req1)
-            print 'abc port_request(abc)=%s' % str(testDirClient.port_request('abc'))
-            print '%s' % testDirClient.port_request('@DIR')
-            req1_again = testDirClient.port_request('abc')
+            print 'abc port_request(abc)=%s' % str(self.testDirClient.port_request('abc'))
+            print '%s' % self.testDirClient.port_request('@DIR')
+            req1_again = self.testDirClient.port_request('abc')
             self.failUnless(req1 == req1_again)
 
             # Delete name abc
-            testDirClient.port_request('~abc')
-            print '~abc %s' % testDirClient.port_request('@DIR')
+            print '~abc ' + self.testDirClient.port_request('~abc')
+            print 'after ~abc @DIR: %s' % self.testDirClient.port_request('@DIR')
             # Since 'abc' was deleted, a request yields a new port
-            self.failUnless(req1 != testDirClient.port_request('abc'))
+            self.failUnless(req1 != self.testDirClient.port_request('abc'))
 
         except Exception as err:
             sys.stderr.write(str(err) + '\n')
             traceback.print_stack()
             print '-----------'
             traceback.print_exc()
-        finally:
-            self.KillDirService()
-            self.KillLogServer()
 
 
 if __name__ == '__main__':

@@ -47,6 +47,8 @@ CMD () {
     echo "Return code: $?"
 }
 
+trap "echo +++ signal received +++; exit" SIGHUP SIGINT SIGTERM
+
 # Total number of tested commands
 TEST_COUNT=0
 
@@ -96,9 +98,9 @@ ECHO () {
 }
 
 # Run various python metric utilities
-CMD "pyflakes *.py"
-CMD "pep8 *.py"
-CMD "pylint *.py"
+#CMD "pyflakes *.py"
+#CMD "pep8 *.py"
+#CMD "pylint *.py"
 
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
@@ -140,8 +142,8 @@ rm $(find . -name '.coverge.*' -type f)
 ECHO Remove .coverage_html/*
 CMD "rm -rf .coverage_html"
 
-ECHO Before starting, make sure the logCollector exists.
-CMD "$TOOLS_DIR/listeningPort.py 5570"
+ECHO "Before starting, make sure the logCollector exists."
+CMD "$TOOLS_DIR/listeningPort.py 5570 5571 5572 5573 5574 5575"
 if [ $? -ne 0 ]
 then
     # Determine the pid holding this port. Then error out.
@@ -157,7 +159,6 @@ then
 fi
 
 #
-ECHO Run a coverage report on unit test
 #
 export COVERAGE=1 
 CMD "coverage erase "
@@ -167,12 +168,37 @@ export DATA_LOG=$DATA_DIR/data.data
 CMD "$GEN_DATA >$DATA_LOG"
 $GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
-ECHO "Need to get a timed alarm in case the collector does not start."
-ECHO "Problems with logCollector - Need to get a proper term to close the coverage files."
-ECHO "echo starting logCollector"
-coverage run --branch --parallel-mode $LIB_DIR/logCollector.py &
-COL_PID=$! 
 
+echo "=============== Run unit tests ================"
+ECHO "logCollector still going before testLogging.py ...\?"
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py "
+
+CMD_PASS "coverage run --branch --parallel-mode $TEST_DIR/testLogging.py "
+
+ECHO "logCollector still going after testLogging.py  ...\?"
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
+echo "=============== End of unit tests ================"
+
+
+ECHO "Need to get a timed alarm in case the collector does not start."
+ECHO "echo ====starting logCollector===="
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py &
+COL_PID=$!
+ps x | grep logCollector
+
+ECHO "the logCollector must be running in port 5570"
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
+
+ECHO "Test the operations of 'kill -USR[12] <pid>"
+CMD_PASS "kill -USR1 $COL_PID"
+CMD_PASS "kill -USR2 $COL_PID"
+CMD_PASS "kill -USR2 $COL_PID"
+CMD_PASS "kill -USR2 $COL_PID"
+CMD_PASS "kill -USR2 $COL_PID"
+CMD_PASS "kill -USR2 $COL_PID"
+CMD_PASS "kill -USR2 $COL_PID"
+
+ECHO "Run a few simple logs to the logCollector"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingClientTask.py "
 
 ECHO "Test the listening port utility"
@@ -189,8 +215,22 @@ CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --bo
 CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py bogus-port "
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py  "
+
+ECHO "logCollector still going...\?"
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
+
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingLoopApp.py 10   "
-CMD_PASS "coverage run --branch --parallel-mode $TEST_DIR/testLogging.py "
+
+ECHO "Passing logCmd"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py Testing a new log config option." 
+
+ECHO Misc logCmd testing
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --help"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --xxx stuff"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --port=XYZ stuff"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --level=XYZ"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --level=DEBUG Should be at debug level"
+
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA --happy   "
 CMD_PASS "coverage run --branch --parallel-mode $GEN_DATA --missing "
@@ -208,16 +248,8 @@ CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
-ECHO "Passing logCmd"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py Testing a new log config option." 
-
-ECHO Misc logCmd testing
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --help"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --xxx stuff"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --port=XYZ stuff"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --level=XYZ"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --level=DEBUG Should be at debug level"
-
+ECHO "logCollector still going...\?"
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
 ECHO Multiple runs passing various flags both valid and bogus.
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --level=ERROR "
@@ -233,30 +265,30 @@ ECHO Expect ERRORs
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --CSV --level=ERROR "
 ECHO Expect ERRORs
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=/dev/null --JSON --level=ERROR "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/csv.conf --in-file=/dev/null --JSON --level=ERROR "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/happy.conf "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/mixed.conf "
 
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad2.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad3.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_start.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_end.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_end1.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/no_start1.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad_start.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/bad_end.conf "
-ECHO Expecte ERRORS 
+ECHO Expect ERRORS 
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --config=$DATA_DIR/end_before_start.conf "
 
 ECHO "No infile. Reads from stdin"
@@ -289,23 +321,40 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-fi
 ECHO start and end dates
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 end=2016-03-14T08:05:15.876 "
 
-ECHO Work with dirSvc - Directory Services
+ECHO "Work with dirSvc - Directory Service"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --help"
 ECHO Pass invalid run time option
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --FooBar"
 ECHO Pass invalid port number
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --port=XYZ"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --clear --port=XYZ"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --noisy --memory-file=/ --port=1234"
+
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
 
 # Start the directory server in the background.
 ECHO coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py 
 coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --noisy &
-dirSvcPID=$!
+
+# Start a logCollector in the background as well
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --noisy &
+
+CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
+
+echo " If dirClient passes, it means it could send the params to dirSvc."
+echo " Passing does not mean the parameter is valid!"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy foobar"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy abc def ghi jkl"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @DIR"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @CLEAR"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @CLEAR_DIRECTORY"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @PERSIST"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --node=abc @PERSIST"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --memory-file=/ "
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --clear "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @MEMORY_FILENAME"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @DOES_NOT_EXIST"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy --port=5599 stuff"
 
 ECHO "Verify that abc gets deleted from the directory"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy abc | grep abc"
@@ -330,8 +379,14 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --port=XYZ
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy --clear"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --bogusArg"
 
+CMD "$TOOLS_DIR/listeningPort.py 5570 5571 5572 5573 5574 5575"
+
 # An orderly exit so coverage can collect the runs.
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @EXIT"
+CMD "$TOOLS_DIR/listeningPort.py 5570 5571 5572 5573 5574 5575"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT"
+
+CMD "$TOOLS_DIR/listeningPort.py 5570 5571 5572 5573 5574 5575"
 
 
 ECHO Log Filter with configuration file. Notice in-file override
@@ -380,10 +435,9 @@ fi
 CMD "rm $TMP"     # Clean up tmp file.
     
 
-ECHO Test various command line options for the logCollector
-ECHO Set log file to ./abc.log
+ECHO "Test various command line options for the logCollector"
+ECHO "Set log file to ./abc.log"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log-file=$DATA_DIR/abc.log --trunc &
-COL_PID=$! 
 CMD_PASS "$LIB_DIR/logCmd.py Testing a new log config option." 
 CMD_PASS "$LIB_DIR/logCmd.py @EXIT" 
 
@@ -406,7 +460,6 @@ cat >$TMP_CONF <<EOF
 EOF
 
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --config=$TMP_CONF &
-COL_PID=$! 
 CMD "sleep 1"   # Let the collector get started.
 CMD_PASS "$LIB_DIR/logCmd.py Testing log config in $TMP_CONF " 
 CMD_PASS "$LIB_DIR/logCmd.py Another testing log config in $TMP_CONF " 
@@ -430,10 +483,9 @@ fi
 CMD "rm $TMP_CONF"
 CMD "rm $TMP_LOG"
 
-
 CMD "coverage combine  "
-CMD "coverage report -m --omit=./logCollector.py "
-CMD "coverage html -d .coverage_html  --omit=./logCollector.py "
+CMD "coverage report -m "
+CMD "coverage html -d .coverage_html  "
 
 ECHO Paste into browser for details: file://$PWD/.coverage_html/index.html
 
