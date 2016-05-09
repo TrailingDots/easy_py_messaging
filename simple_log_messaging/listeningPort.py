@@ -32,7 +32,7 @@ def listening(port,
     """
     if platform.system != 'Linux':
         sys.stderr.write('listeningPort available only under Linux!\n')
-        sys.exit(1)
+        sys.exit(127)
 
     proc = subprocess.Popen('/usr/sbin/fuser %s/tcp' %
             str(port),
