@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Map a port to a process listening to the port.
+#
+# If nobody listening, return code is 1
+#
+# If somebody is listening, return code is 0
+# Output when listening:
+# <port#> <pid> <program_listening> [<params to prog>]
+#
+# To check a range of ports:
+#    for port in $(seq <start_port> <end_port>)
+#    do
+#        listen $port
+#    done
+# or write your own script to perform the above...
+
+function listening() {
+    # Caller must supply port number
+    if [ x$1 == x ]
+    then
+        echo "Usage: $0 <port#>"
+        return 1
+    fi
+
+    PID=$(lsof -i TCP:$1 | grep LISTEN | awk '{print $2}')
+
+    # If no port used, return 1
+    if [ x"$PID" = x"" ]
+    then
+        return 1
+    fi
+
+    # Report on program listening
+    echo -n $1  " "  # Display the port
+    /bin/ps x | grep $PID | \
+        grep -v grep | \
+        awk '{print $1; for (i=5; i<= NF; i++) print $i}' | \
+        tr '\n' ' ' 
+    echo ''
+    # Success - port used by a program.
+    return 0
+}
+
+listening $1

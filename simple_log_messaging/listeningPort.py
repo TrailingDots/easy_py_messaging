@@ -4,6 +4,7 @@
 
 import sys
 import subprocess
+import platform
 
 # Default ZeroMQ port
 PORT = 5570
@@ -29,6 +30,10 @@ def listening(port,
     return 0    # Indicate a found listener
     return 1    # Indicates nobody listening
     """
+    if platform.system != 'Linux':
+        sys.stderr.write('listeningPort available only under Linux!\n')
+        sys.exit(1)
+
     proc = subprocess.Popen('/usr/sbin/fuser %s/tcp' %
             str(port),
             shell=True,
