@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Simple Py Messaging: Distributed Systems for Raspberry Pi</title>
+        <script src="./javascript/toc.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/article.css" type="text/css" />
+    </head>
+
+    <body onload="generateTOC(document.getElementById('toc'));">
+
+        <h1>Simple Py Messaging</h1>
+
+        <div id="toc"></div>
+
+
+        <h2>Features of Simple Py Messaging</h2>
+
+        <p><i>Simple Py Messaging</i> provides a small cross-platform python
+        coded toolkit for easy, reliable communications between nodes, within a
+        single desktop for multiple processes or just within a single process.
+        Just send message and the API delivers your message.</p>
+
+        <p>Simple Py Messaging provides a wrapper around <a href="http://zeromq.org">ZeroMQ</a>
+        to implement a logger, a directory naming service and an API for
+        user implementions. Multiple additional utilites support the code.</p>
+
+        <h2>Feature Overview</h2>
+
+        <ul>
+
+            <li>Python API using the industry standard <a href="http://www.zeromq.org">ZeroMQ</a>
+            library. ZeroMQ has a proven track record for speed of
+            delivery and a robust API.</li>
+
+            <li>Asynchronous handling. Messages queues provide the
+            ability to fire-and-forget. For input, a queue query
+            may either await a message or contnue.</li>
+
+            <li>Robust messaging. ZeroMQ permits various processes to
+            go down while supplying recovery connections when the
+            processes restarts. Sorry, persistence is not currently
+            implemented.</li>
+
+            <li>Symmetrical connections. Messages use TCP for
+            bi-directional connections.</li>
+
+            <li>Multiple support utilties. These utilities support
+            your development and debugging efforts.</li>
+
+            <ul>
+
+                <li>logCollector. The primary tool for collecting
+                and storing logs.</li>
+
+                <li>logCmd. Send logs and commands from the shell
+                command line.</li>
+
+                <li>loggingLoopApp. Send a log message once a second
+                for debugging configurations.</li>
+
+                <li>logFilterApp. Given a log file, extract relevant
+                information.</li>
+
+                <li>dirSvc. A directory naming service. Connect your
+                applications by name instead of port. This greatly
+                simplifies your configuation files.</li>
+
+                <li>loggingSpeedTest. How fast does this system
+                operate with your network configuration?</li>
+
+            </ul>
+
+        </ul>
+
+        <h2>The Tools</h2>
+
+        <h3><a href="./logCollector.html">logCollector</a> - Collect the logs</h3>
+
+        <p>The <a href="simple_log_messaging.html">logCollector</a>
+        documentation provides a thorough overview of this system. A decent
+        logging system significantly eases development because it allows simple
+        tracking of information between various nodes and processes.</p>
+
+        <h3><a href="./logFilterApp">logFilterApp</a> - analyze logs</h3>
+
+        <p>Once logs get written to a file, what happens? Log files can easily
+        get large and manually skimming them becomes boring and prone to
+        overlooking relevant information. logFilter provides elementary
+        processing and filtering of these log files.</p>
+
+        <h3><a href="./loggingLoopApp.html">LoggingLoopApp</a> - loop testing configurations</h3>
+
+        <p>The loggingLoopApp gets used while developing applications.
+        It sends logs to the logger once per second and provides
+        feedback that the system for logs has a proper configuration.</p>
+
+        <h3><a href="./loggingSpeedTest.html">loggingSpeedTest</a> - how fast can you communicate?</h3>
+
+        <p>How fast is your system? While speeds depend primarily
+        upon your network, this utility will send 100,000 logs
+        and report the time. What is yout timing for internal
+        only, connected with ethernet cables, wireless
+        connection?</p>
+
+        <h3><a href="./dirSvc.html">dirSvc</a> - Directory for Naming Servies</h3>
+
+        <p><a href="simple_naming_service">Simple Naming Service</a>
+        eases the configuration problems by supplying a symbolic
+        naming connection between various services in your
+        systems.</p>
+
+
+        <h3>The Simple Messaging Utilties</h3>
+
+        <p>This package contains multiple utilities to enhance the
+        simple environment of the basic package.</p>
+
+        <h4><a href="./logCmd.html">logCmd</a> - Command line messaging</h4>
+
+        <p>The basic code of <a href="./logCmd.html">logCmd</a> displays the
+        ease of sending messages from an app. The additional command line
+        options turn this code into a powerful command line utility.
+        Interested developers could use this as the basis for a chat app.</p>
+
+        <h4><a href="./dirSvc.html">dirSvc</a> - The directory naming service</h4>
+
+        <p>A directory naming service allows much more flexible
+        configurations by using names for the various components
+        of your system instead of obscure items such as IP
+        addresses.</p>
+
+        <h4><a href="./dirClient.html">dirClient</a> - Interrogating the nameing service.</h4>
+
+        <p>This utility exercises the naming service. Useful for
+        checking out configurations in development.</p>
+
+        <h4><a href="./listening.html">listening</a> - Determing what process listens to a port</h4>
+
+        <p>In the process of developing and debugging your
+        systems, processes frequently continue to run while
+        listening to a port. Unless a utility such as
+        <a href="./listening.html">listening</a> provides
+        a mapping between the port number and the process,
+        interpreting the output error message can prove
+        tricky. This utility answers the frequent question on various forums
+        "How do I find out which process is listening to a port?"</p>
+
+    </body>
+
+</html>
+

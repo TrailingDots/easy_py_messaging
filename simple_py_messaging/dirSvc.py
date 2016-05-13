@@ -27,9 +27,10 @@ def exiting(exit_msg):
 class DirEntry(object):
     """A single directory entry."""
 
-    def __init__(self, key, value):
+    def __init__(self, key, value, node):
         self.key = key
         self.value = value
+        self.node = node
 
     def to_JSON(self):
         return json.dumps(self)
@@ -120,7 +121,7 @@ class DirOperations(object):
         self.client.debug('to_json=True')
         return json.dumps(self.directory, default=lambda x: x.__dict__)
 
-    def add_key_val(self, key, value):
+    def add_key_val(self, key, value, node):
         """
         add key and value to Directory.
 
@@ -130,12 +131,14 @@ class DirOperations(object):
         associated with this object and this makes
         extensions much easier.  (We'll see...)
         """
-        if NOISY: print 'add_key_val(%s, %s)' % (str(key), str(value))
+        if NOISY: print 'add_key_val(%s, %s, %s)' % (str(key), str(value),
+                str(node))
         if key not in self.directory:
             self.set_dirty()
-        dir_entry = DirEntry(key, value)
+        dir_entry = DirEntry(key, value, node)
         self.directory[key] = dir_entry
-        self.client.info('add_key_val=%s,value=%s' % (key, value))
+        self.client.info('add_key_val=%s,value=%s,node=%s' % 
+                (key, value, node))
         return value
 
     def handle_meta(self, key):
@@ -183,7 +186,7 @@ class DirOperations(object):
             return '@UNKNOWN_META_COMMAND'
         return None     # No meta query found.
 
-    def get_port(self, key):
+    def get_port(self, key, node=None):
         """
         Get a port by name. If the name does not
         exist in the directory, then increment to the
@@ -192,9 +195,9 @@ class DirOperations(object):
         A name with a prefix of '~' means delete
         that name. If the name does not exist, ignore it.
 
-        Returns: port associated with name.
+        Returns: port and node associated with name.
             If the name did not exist, it gets
-            stored with a new port.
+            stored with a new port with a node of "localhost".
         """
         if len(key) == 0:
             return 0    # bogus port - let user handle
