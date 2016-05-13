@@ -162,7 +162,7 @@ class LogFilter(object):
                     utils.PAYLOAD_CONNECTOR
 
         if 'level' not in self.log_filters.keys():
-            self.log_filters['level'] = 'DEBUG' # Pass all logs
+            self.log_filters['level'] = 'DEBUG'  # Pass all logs
         self.filter_dict = \
                 utils.filter_priority(self.log_filters['level'])
 

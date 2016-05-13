@@ -1,7 +1,7 @@
 #!/bin/env python
 """
 Directory services for
-    simple_log_messaging - Log messaging client and servers
+    simple_py_messaging - Log messaging client and servers
     control_messaging    - Control messaging structure
 """
 
@@ -19,8 +19,10 @@ import loggingClientTask
 
 NOISY = False   # Set to True for debug/trace
 
+
 def exiting(exit_msg):
     print('dirSvc: exiting:' + exit_msg)
+
 
 class DirEntry(object):
     """A single directory entry."""
@@ -31,6 +33,7 @@ class DirEntry(object):
 
     def to_JSON(self):
         return json.dumps(self)
+
 
 class DirOperations(object):
     """Various operations on the directory service."""
@@ -101,7 +104,7 @@ class DirOperations(object):
                     self.pickle_filename)
             return
         self.set_clean()
-        self.client.debug('from_pickle=%s,status=OK' % \
+        self.client.debug('from_pickle=%s,status=OK' %
                 self.pickle_filename)
 
     def persist_timeout_check(self):
@@ -180,7 +183,6 @@ class DirOperations(object):
             return '@UNKNOWN_META_COMMAND'
         return None     # No meta query found.
 
-
     def get_port(self, key):
         """
         Get a port by name. If the name does not
@@ -201,7 +203,7 @@ class DirOperations(object):
         if key[0] == '~':
             self.del_key(key)
             return True
-        
+       
         # Handle meta query if requested.
         if key[0] == '@':
             return self.handle_meta(key)
@@ -320,7 +322,7 @@ def parseOpts():
 def main():
     """
     Main processing loop.
-    The ZeroMQ pattern is The Lazy Pirate 
+    The ZeroMQ pattern is The Lazy Pirate
     """
     config = parseOpts()
     context = zmq.Context(1)

@@ -96,10 +96,8 @@ def filter_priority(initial_level):
         return filtered_priorities
 
 
-"""
-  A log message contains a date, a log level and a payload
-  separated by the separation character.
-"""
+#  A log message contains a date, a log level and a payload
+#  separated by the separation character.
 SEPARATION_CHAR = '\t'
 
 # The payload consists of name=value pairs separated

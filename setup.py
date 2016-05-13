@@ -5,7 +5,7 @@
 from setuptools import setup, find_packages
 from os import path
 
-project = 'simple_log_messaging'
+project = 'simple_py_messaging'
 
 setup_args = dict(
     name=project,
@@ -24,14 +24,14 @@ setup_args = dict(
     packages=find_packages(exclude=['*.test', 'test', '*tools', 'tools']),
     include_package_data=True,
     scripts = [
-            'simple_log_messaging/bin/logCollector',
-            'simple_log_messaging/bin/logCmd',
-            'simple_log_messaging/bin/listeningPort',
-            'simple_log_messaging/bin/logFilterApp',
-            'simple_log_messaging/bin/loggingLoopApp',
-            'simple_log_messaging/bin/loggingSpeedTest',
-            'simple_log_messaging/bin/dirClient',
-            'simple_log_messaging/bin/dirSvc',
+            'simple_py_messaging/bin/logCollector',
+            'simple_py_messaging/bin/logCmd',
+            'simple_py_messaging/bin/listeningPort',
+            'simple_py_messaging/bin/logFilterApp',
+            'simple_py_messaging/bin/loggingLoopApp',
+            'simple_py_messaging/bin/loggingSpeedTest',
+            'simple_py_messaging/bin/dirClient',
+            'simple_py_messaging/bin/dirSvc',
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',

@@ -62,10 +62,12 @@ DIRECTORY_NAME_BASE_PORT = PORT + 10
 def getDirNameBasePort():
     return DIRECTORY_NAME_BASE_PORT
 
-# Increment the free port numbers for user requested
-# port names.
-# Return the new directory port number.
 def incDirNamePort():
+    """
+    Increment the free port numbers for user requested
+    port names.
+    Return the new directory port number.
+    """
     global DIRECTORY_NAME_BASE_PORT
     DIRECTORY_NAME_BASE_PORT += 1
     return DIRECTORY_NAME_BASE_PORT
@@ -82,12 +84,14 @@ else:
     APP_HOST = DEFAULT_SERVER
 
 
-# Connect socket string
-# Likely to change only the HOST and PORT
-# See: https://en.wikipedia.org/wiki/Uniform_Resource_Locator#Syntax
-# The socket name the applications should use.
-# The application should use this for the socket.
 def getAppSocket():
+    """ 
+    Connect socket string
+    Likely to change only the HOST and PORT
+    See: https://en.wikipedia.org/wiki/Uniform_Resource_Locator#Syntax
+    The socket name the applications should use.
+    The application should use this for the socket.
+    """
     global SCHEME
     global APP_HOST
     global PORT
@@ -95,8 +99,8 @@ def getAppSocket():
     app_socket = '%s://%s:%d' % (SCHEME, APP_HOST, PORT)
     return app_socket
 
-# Same as getAppSocket() but for  directory service.
 def getDirAppSocket():
+    """ Same as getAppSocket() but for  directory service."""
     global SCHEME
     global APP_HOST
     global DIR_PORT

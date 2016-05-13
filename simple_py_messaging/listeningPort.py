@@ -30,7 +30,7 @@ def listening(port,
     return 0    # Indicate a found listener
     return 1    # Indicates nobody listening
     """
-    if platform.system != 'Linux':
+    if platform.system() != 'Linux':
         sys.stderr.write('listeningPort available only under Linux!\n')
         sys.exit(127)
 
@@ -164,7 +164,6 @@ def main():
                 port_int = int(aport)
         else:
             remainder = []
-            #port_int = PORT
             remainder.append(PORT)
     except ValueError as err:
         sys.stderr.write('port number must be all numeric:%s\n' %

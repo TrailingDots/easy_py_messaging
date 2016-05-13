@@ -154,7 +154,6 @@ def load_config(config_filename=None):
         param_dict = try_to_load_config(config_filename)
         return param_dict
 
-    file_handle = None
     param_dict = try_to_load_config(dir_config)
     if param_dict is not None:
         return param_dict
@@ -224,10 +223,10 @@ def main():
 
     if config_dict is None:
         config_dict = {
-            "append":True,          # Append logs to existing log file
-            "out_file":'logs.log',  # Name of log file (could be absolute filename)
-            "port":5570,            # Port to receive logs
-            "noisy":False           # Silent. Toggle with Ctrl-D
+            "append": True,          # Append logs to existing log file
+            "out_file": 'logs.log',  # Name of log file (could be absolute filename)
+            "port": 5570,            # Port to receive logs
+            "noisy": False           # Silent. Toggle with Ctrl-D
         }
 
     return_dict = {}        # User provided config dict - if any.

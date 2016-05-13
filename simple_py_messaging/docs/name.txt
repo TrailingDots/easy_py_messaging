@@ -1,0 +1,8 @@
+What to name this app?
+
+"Simple Messaging" is a work in progress for an XMPP like
+protocol.
+
+Easy Py Messaging
+
+

@@ -1,7 +1,7 @@
 
 # DRAFT ONLY - This code is under heavy development. PLEASE do not use!!
 
-# simple_log_messaging - version 1.0.0
+# simple_py_messaging - version 1.0.0
 A simple to use wrapper around ZeroMQ for distributed systems to use for logging.
 
 ## Welcome
@@ -26,15 +26,15 @@ systems.
 
 ## Building and installation
 
-See the [INSTALL](./simple_log_messaging/docs/simple_log_messaging.html)
+See the [INSTALL](./simple_py_messaging/docs/simple_py_messaging.html)
 file included with the distribution.
 
 ## Resources
 
 Extensive documentation is provided with the distribution. Refer to
-[Simple Log Messaging](./simple_log_messaging/docs/simple_log_messaging.html).
+[Simple Log Messaging](./simple_py_messaging/docs/simple_py_messaging.html).
 
-Git repository: [Simple Log Messaging](http://github.com/trailingdots/simple_log_messaging).
+Git repository: [Simple Log Messaging](http://github.com/trailingdots/simple_py_messaging).
 
 ## License
 

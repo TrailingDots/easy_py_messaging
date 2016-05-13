@@ -30,7 +30,7 @@
 #PS4='$LINENO: '
 
 # Start a timer for this entire script.
-SECONDS = 0
+SECONDS=0
 
 
 # Future versions may use python3
@@ -44,7 +44,9 @@ CMD () {
     echo
     echo "CMD ${BASH_LINENO[0]}: $*"
     $1
-    echo "Return code: $?"
+    ret_code=$?
+    echo return code $ret_code
+    return $ret_code
 }
 
 trap "echo +++ signal received +++; exit" SIGHUP SIGINT SIGTERM
@@ -143,7 +145,7 @@ ECHO Remove .coverage_html/*
 CMD "rm -rf .coverage_html"
 
 ECHO "Before starting, make sure the logCollector exists."
-CMD "$TOOLS_DIR/listeningPort.py 5570 5571 5572 5573 5574 5575"
+CMD "$TOOLS_DIR/listening 5570 5571 5572 5573 5574 5575"
 if [ $? -ne 0 ]
 then
     # Determine the pid holding this port. Then error out.
@@ -214,12 +216,21 @@ CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --pr
 CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --bogus 6666 "
 CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py bogus-port "
 
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py  "
+ECHO "kill logCollector and restart with output to /dev/null for Speed test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
+ECHO " coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --log-file=/dev/null  " 
+$LIB_DIR/logCollector.py --log-file=/dev/null & 
+$LIB_DIR/loggingSpeedTest.py
 
-ECHO "logCollector still going...\?"
-CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570  5571 5572 5573 5574"
+ECHO "Stop logCollector with /dev/null output, open again with echo"
+coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT
 
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingLoopApp.py 10   "
+ECHO "logCollector still going...\? Should have been killed."
+CMD_PASS "$TOOLS_DIR/listening 5570  5571 5572 5573 5574"
+
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py &
+
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingLoopApp.py 5   "
 
 ECHO "Passing logCmd"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py Testing a new log config option." 

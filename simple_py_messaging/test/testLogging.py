@@ -18,20 +18,20 @@ abs_dir = os.path.dirname(abs_file)
 sys.path.append(abs_dir + '/..')
 sys.path.append(abs_dir + '/../../')
 
-from simple_log_messaging import apiLoggerInit
-from simple_log_messaging.utils import bcolors
-from simple_log_messaging.utils import cycle_priority
-from simple_log_messaging import logFilter
-from simple_log_messaging import logConfig
-from simple_log_messaging import utils
-from simple_log_messaging import logCollector
-from simple_log_messaging import loggingSpeedTest
-from simple_log_messaging import loggingClientTask
-from simple_log_messaging import listeningPort
+from simple_py_messaging import apiLoggerInit
+from simple_py_messaging.utils import bcolors
+from simple_py_messaging.utils import cycle_priority
+from simple_py_messaging import logFilter
+from simple_py_messaging import logConfig
+from simple_py_messaging import utils
+from simple_py_messaging import logCollector
+from simple_py_messaging import loggingSpeedTest
+from simple_py_messaging import loggingClientTask
+from simple_py_messaging import listeningPort
 
 # Name/Directory service - both client and server
-from simple_log_messaging import dirSvc
-from simple_log_messaging import dirClient
+from simple_py_messaging import dirSvc
+from simple_py_messaging import dirClient
 
 
 # Single test example:
@@ -129,7 +129,7 @@ class RunTests(unittest.TestCase):
         abs_path_server = os.path.abspath(logCollector.__file__)
         abs_path_app = os.path.abspath(loggingSpeedTest.__file__)
 
-        log_filename = os.path.abspath('./SpeedLogs.log')
+        log_filename = os.path.abspath('/dev/null')
         print '***** log_filename:%s' % log_filename
 
         # Remove existing log file

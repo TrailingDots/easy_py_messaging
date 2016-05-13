@@ -53,7 +53,7 @@ class DirClient(object):
             sys.stderr.write('Server endpoint: %s  Error:%s\n' %
                     (self.server_endpoint, str(err)))
             sys.stderr.write('Likely an invalid node designation\n')
-            sys.exit(1) # Cannot continue  - invalid endpoint!
+            sys.exit(1)     # Cannot continue  - invalid endpoint!
 
         self.poll = self.zmq.Poller()
         self.poll.register(self.client, self.zmq.POLLIN)
@@ -168,7 +168,7 @@ def main():
         elif opt in ['--node']:
             logConfig.DEFAULT_SERVER = arg
             logConfig.APP_HOST = arg
-            break;
+            break
         elif opt in ['-n', '--noisy']:
             config['noisy'] = True
             shift_out += 1
