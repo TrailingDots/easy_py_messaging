@@ -213,7 +213,6 @@ def main():
     except getopt.GetoptError as err:
         print err
         usage()
-        return 1
 
     # Read the config file if any. Look in the current
     # directory for .logcollectorrc .
@@ -249,7 +248,12 @@ def main():
             config_dict['out_file'] = arg
             continue
         elif opt in ['--port']:
-            config_dict['port'] = arg
+            try:
+                port = int(arg)
+            except ValueError as err:
+                sys.stderr.write('Port must be numeric: %s\n' % str(err))
+                usage()
+            config_dict['port'] = port
             continue
         elif opt in ['--config']:
             return_dict = load_config_file(arg)
@@ -261,13 +265,6 @@ def main():
             config_dict['out_file'] = return_dict.get('out_file', config_dict['out_file'])
             config_dict['port']     = return_dict.get('port', config_dict['port'])
             config_dict['noisy']    = return_dict.get('noisy', config_dict['noisy'])
-            continue
-        elif opt in ['--port']:
-            try:
-                port = int(arg)
-            except ValueError as err:
-                sys.strerr.write('Port must be numeric: %s' % str(err))
-                usage()
             continue
         else:
             print 'Unknown option:' + opt

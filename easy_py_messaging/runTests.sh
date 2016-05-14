@@ -220,7 +220,7 @@ ECHO "kill logCollector and restart with output to /dev/null for Speed test"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
 ECHO " coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --log-file=/dev/null  " 
 $LIB_DIR/logCollector.py --log-file=/dev/null & 
-$LIB_DIR/loggingSpeedTest.py
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py "
 
 ECHO "Stop logCollector with /dev/null output, open again with echo"
 coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT
@@ -493,6 +493,73 @@ else
 fi
 CMD "rm $TMP_CONF"
 CMD "rm $TMP_LOG"
+
+CMD "$TOOLS_DIR/listening 5570 5571 5572 5573 5574 5575"
+
+ECHO ""
+ECHO "Cover signal interrupt handlers in logCollector"
+ECHO ""
+ECHO "Use kill -INT pid"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py&
+PID=$!
+CMD_PASS "sleep 2"  # Let the log collector start
+ECHO PID logCollector=$PID
+CMD_PASS "kill -INT $PID"
+
+
+ECHO "Use kill -TERM pid"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py&
+PID=$!
+CMD_PASS "sleep 2"  # Let the log collector start
+ECHO PID logCollector=$PID
+CMD_PASS "kill -TERM $PID"
+
+
+ECHO "Use kill -USR1 pid"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py&
+PID=$!
+CMD_PASS "sleep 2"  # Let the log collector start
+ECHO PID logCollector=$PID
+CMD_PASS "kill -USR1 $PID"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
+
+CMD "$TOOLS_DIR/listening 5570 5571 5572 5573 5574 5575"
+
+ECHO "Various options to logCollector"
+ECHO "help option passed"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --help
+
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py -a &
+PID=$!
+CMD_PASS "sleep 1"  # Let the log collector start
+ECHO PID logCollector=$PID
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
+
+ECHO "Non-numeric port test"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --port=XYZ
+
+ECHO "Bogus options --BOGUS"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --BOGUS=XYZ
+
+ECHO "Bogus configuration file"
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --config=/XYZ/does_not_exist
+PID=$!
+
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --quiet &
+PID=$!
+CMD_PASS "sleep 1"  # Let the log collector start
+ECHO PID logCollector=$PID
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
+
+
+coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --port=5572 &
+PID=$!
+CMD_PASS "sleep 1"  # Let the log collector start
+ECHO PID logCollector=$PID
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --port=5572 @EXIT "
+
+CMD "$TOOLS_DIR/listening 5570 5571 5572 5573 5574 5575"
+
 
 CMD "coverage combine  "
 CMD "coverage report -m "

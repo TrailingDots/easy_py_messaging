@@ -9,7 +9,7 @@ os_path = os.path
 import logging
 
 try:
-    import easy_log_messaging  #@UnusedImport
+    import easy_py_messaging  #@UnusedImport
 except:
     ### must be in dev mode then    
     this_dir = os_path.dirname(__file__)
@@ -20,20 +20,20 @@ except:
     top_path = os_path.abspath(os_path.join(lib_path, ".."))
     sys.path.insert(0, top_path)
 
-    slm_path = os_path.abspath(os_path.join(this_dir, '../../easy_log_messaging'))
+    slm_path = os_path.abspath(os_path.join(this_dir, '../../easy_py_messaging'))
     sys.path.insert(0, slm_path)
 
-    import easy_log_messaging 
+    import easy_py_messaging 
 
 ########################################################################
 
-DESC="easy_log_messaging - version %s" % __version__
+DESC="easy_py_messaging - version %s" % __version__
 DEFAULTS={
           }
 
 def main():
     try:
-        import easy_log_messaging.logCollector  as logCollector
+        import easy_py_messaging.logCollector  as logCollector
         
         logCollector.main()
 

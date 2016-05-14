@@ -18,20 +18,20 @@ abs_dir = os.path.dirname(abs_file)
 sys.path.append(abs_dir + '/..')
 sys.path.append(abs_dir + '/../../')
 
-from easy_log_messaging import apiLoggerInit
-from easy_log_messaging.utils import bcolors
-from easy_log_messaging.utils import cycle_priority
-from easy_log_messaging import logFilter
-from easy_log_messaging import logConfig
-from easy_log_messaging import utils
-from easy_log_messaging import logCollector
-from easy_log_messaging import loggingSpeedTest
-from easy_log_messaging import loggingClientTask
-from easy_log_messaging import listeningPort
+from easy_py_messaging import apiLoggerInit
+from easy_py_messaging.utils import bcolors
+from easy_py_messaging.utils import cycle_priority
+from easy_py_messaging import logFilter
+from easy_py_messaging import logConfig
+from easy_py_messaging import utils
+from easy_py_messaging import logCollector
+from easy_py_messaging import loggingSpeedTest
+from easy_py_messaging import loggingClientTask
+from easy_py_messaging import listeningPort
 
 # Name/Directory service - both client and server
-from easy_log_messaging import dirSvc
-from easy_log_messaging import dirClient
+from easy_py_messaging import dirSvc
+from easy_py_messaging import dirClient
 
 
 # Single test example:

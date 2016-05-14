@@ -6,10 +6,10 @@ include *.py
 include Makefile
 include COPYING
 include COPYING.LESSER
-recursive-include easy_log_messaging  *.py
-recursive-include easy_log_messaging  .coveragerc
-recursive-include easy_log_messaging  .logcollectorrc
-recursive-include easy_log_messaging/test *.py
-recursive-include easy_log_messaging/data  *.*
-recursive-include easy_log_messaging/docs  *.*
+recursive-include easy_py_messaging  *.py
+recursive-include easy_py_messaging  .coveragerc
+recursive-include easy_py_messaging  .logcollectorrc
+recursive-include easy_py_messaging/test *.py
+recursive-include easy_py_messaging/data  *.*
+recursive-include easy_py_messaging/docs  *.*
 

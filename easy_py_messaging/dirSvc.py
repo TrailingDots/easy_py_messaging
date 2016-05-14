@@ -1,7 +1,7 @@
 #!/bin/env python
 """
 Directory services for
-    easy_log_messaging - Log messaging client and servers
+    easy_py_messaging    - easy messaging client and servers
     control_messaging    - Control messaging structure
 """
 
