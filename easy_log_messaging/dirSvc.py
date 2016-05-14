@@ -1,7 +1,7 @@
 #!/bin/env python
 """
 Directory services for
-    simple_py_messaging - Log messaging client and servers
+    easy_log_messaging - Log messaging client and servers
     control_messaging    - Control messaging structure
 """
 
@@ -27,10 +27,9 @@ def exiting(exit_msg):
 class DirEntry(object):
     """A single directory entry."""
 
-    def __init__(self, key, value, node):
+    def __init__(self, key, value):
         self.key = key
         self.value = value
-        self.node = node
 
     def to_JSON(self):
         return json.dumps(self)
@@ -121,7 +120,7 @@ class DirOperations(object):
         self.client.debug('to_json=True')
         return json.dumps(self.directory, default=lambda x: x.__dict__)
 
-    def add_key_val(self, key, value, node):
+    def add_key_val(self, key, value):
         """
         add key and value to Directory.
 
@@ -131,14 +130,12 @@ class DirOperations(object):
         associated with this object and this makes
         extensions much easier.  (We'll see...)
         """
-        if NOISY: print 'add_key_val(%s, %s, %s)' % (str(key), str(value),
-                str(node))
+        if NOISY: print 'add_key_val(%s, %s)' % (str(key), str(value))
         if key not in self.directory:
             self.set_dirty()
-        dir_entry = DirEntry(key, value, node)
+        dir_entry = DirEntry(key, value)
         self.directory[key] = dir_entry
-        self.client.info('add_key_val=%s,value=%s,node=%s' % 
-                (key, value, node))
+        self.client.info('add_key_val=%s,value=%s' % (key, value))
         return value
 
     def handle_meta(self, key):
@@ -186,7 +183,7 @@ class DirOperations(object):
             return '@UNKNOWN_META_COMMAND'
         return None     # No meta query found.
 
-    def get_port(self, key, node=None):
+    def get_port(self, key):
         """
         Get a port by name. If the name does not
         exist in the directory, then increment to the
@@ -195,9 +192,7 @@ class DirOperations(object):
         A name with a prefix of '~' means delete
         that name. If the name does not exist, ignore it.
 
-        Returns: port and node associated with name.
-            If the name did not exist, it gets
-            stored with a new port with a node of "localhost".
+        Returns: port associated with name.
         """
         if len(key) == 0:
             return 0    # bogus port - let user handle

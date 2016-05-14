@@ -2,19 +2,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>Simple Log Messaging: Distributed Logs for Raspberry Pi</title>
+        <title>Easy Log Messaging: Distributed Logs for Raspberry Pi</title>
         <script src="./javascript/toc.js" type="text/javascript"></script>
         <link rel="stylesheet" href="css/article.css" type="text/css" />
     </head>
 
     <body onload="generateTOC(document.getElementById('toc'));">
 
-        <h1>Simple Log Messaging</h1>
+        <h1>Easy Log Messaging</h1>
 
         <div id="toc"></div>
 
 
-        <h2>Benefits of Simple Log Messaging</h2>
+        <h2>Benefits of Easy Log Messaging</h2>
 
         <center>
         <div style="width:300px;border:1px solid #cecece; padding:10px;">
@@ -35,7 +35,7 @@
         small projects. The learning curve should require only a minimal
         amount of python coding to produce acceptable results.</p>
 
-        <p>This simple log messaging package offers a first installment for a
+        <p>This easy log messaging package offers a first installment for a
         succession of future package specifically targeting implementors of
         Raspberry Pi, Arduino, etc. boards: a name server and a control
         service. Managing multiple nodes should be easy.</p> 
@@ -123,20 +123,20 @@
 
         <h2>Logging within a Single System</h2>
 
-        <p>This simple log messaging solution extends beautifully to multiple
+        <p>This easy log messaging solution extends beautifully to multiple
         systems.  However, a single system can definitely use this logging
         system to great advantage. Starting with a single system with easy
         logging this can greatly simplify expansion to multi-node systems. That
         single system can become a wealth of information for further
         implementations.</p>
 
-        <p>This simple log messaging solution can even live as a thread within
+        <p>This easy log messaging solution can even live as a thread within
         a single process! The degree of flexibility offered along with ease of
         implementation allows this solution to shine!</p>
 
-        <h2>Using the Simple Log Messaging Application</h2>
+        <h2>Using the Easy Log Messaging Application</h2>
 
-        <p>The simple log messaging application greatly eases the problem of
+        <p>The easy log messaging application greatly eases the problem of
         tracking what happens in your multi-node systems. It provides a central
         logging system that collects logs from one or more application and
         stores them into either a simple text file or a database. The messaging
@@ -164,7 +164,7 @@
         that crash. Your crashed system may or may not have information
         necessary to fixing that crash.</p>
 
-        <p>As the various parts of the simple log messaging system are
+        <p>As the various parts of the easy log messaging system are
         presented, the necessary debugging techniques will also be explained.
         When I am learning a new system and attempting to follow the steps for
         installing or implementing that system, I notice that the authors
@@ -174,7 +174,7 @@
 
         <h2>The Primary Goal</h2>
 
-        <p>This simple log messaging application offers a logging server
+        <p>This easy log messaging application offers a logging server
         capable of collecting logs from multiple sources and storing them into
         a text file or database system. The initial release saves only to a
         text file.</p>
@@ -198,7 +198,7 @@
         <h2>Python as an Implementation Language</h2>
 
         <p>Because Python has demonstrated global acceptance for many projects
-        on our tageted boards, the simple log messaging app will continue this
+        on our tageted boards, the easy log messaging app will continue this
         tradition. Python provides an easy-to-code implementation language as
         well as convenient debugger support. This project combines the python
         power with ZeroMQ to create a powerful logging system.</p>
@@ -279,21 +279,21 @@
         <p>If errors get emitted, please refer to the web for
         workarounds.</p>
 
-        <p>Continue to install the simple_py_messaging code:</p>
+        <p>Continue to install the easy_log_messaging code:</p>
 
 
         <p><code>cd</code> to a work directory.</p>
 
-        <p>Install the simple log messagng application: <br/>
+        <p>Install the easy log messagng application: <br/>
         <code class="indent">git clone
-            https://github.com/TrailingDots/simple_py_messaging.git</code><br/>
+            https://github.com/TrailingDots/easy_log_messaging.git</code><br/>
         If you get "permission denied", then you need to prefix the
         previous command with <code>sudo</code> to install with root
         access.</p>
 
         <p>Move into the just-downloaded code:<br/>
         <code class=indent>cd
-            simple_py_messaging</code></p>
+            easy_log_messaging</code></p>
 
         <p>Finish the installation with a final install:<br/><code class=indent>python
             setup.py install</code><br/>Again, for "permission denied" error,
@@ -644,7 +644,7 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         <p>Later additions will offer better filtering options.</p>
 
 
-        <h2>logCmd - Simple logging for shell commands</h2>
+        <h2>logCmd - Easy logging for shell commands</h2>
 
         <p>logCmd fills the need to log information from the
         linux shell. Either the console or shell scripts may
@@ -673,7 +673,7 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         utility has been deliverately left as simple as possible.<p>
 
         <p>See an explanation of logCmd and its coding as
-        a simple example of using simple log messaging in
+        a simple example of using easy log messaging in
         your own code.</p>
 
         <p><b>Exercise:</b> Add a timeout to logCmd is the logCollector
@@ -832,7 +832,7 @@ Port 5570 : Nobody listening
     from a terminal. Shell commands provide a convenient way to
     record significant events of functioning systems. The code for
     <code>logCmd</code> also provides convenient tutorial for the
-    use of the simple log messaging tools.</p>
+    use of the easy log messaging tools.</p>
 
     <p>The code that implements logCmd:</p>
 
@@ -1133,7 +1133,7 @@ client.info(msg)
         data. The ISO8601 standard provide an unambiguous and well-defined
         method of representing dates and time.</p>
 
-        <p>For purposes of simple log messaging, each individual
+        <p>For purposes of easy log messaging, each individual
         log entry gets tags with the ISO8601 date-time when
         logCollector receives the log.</p>
         
@@ -1145,12 +1145,12 @@ client.info(msg)
         audience, Raspberry Pi/Arduino/..., this should not
         pose a problem.</p>
 
-        <p>A deviation from the ISO8601 standard: simple log messaging
+        <p>A deviation from the ISO8601 standard: easy log messaging
         uses local time as defined by the logCollector node. The
         standard demands UTC time. This was deemed confusing for purposes
         of this application.</p>
 
-        <p>Simple log messaging uses local time, and when daylight
+        <p>Easy log messaging uses local time, and when daylight
         savings time switches, the timestamps follow system time.
         This means an hour may be repeated or ignored depending
         upon the time of year.</p>
@@ -1268,13 +1268,13 @@ Often it is better to output UTC-relative date and time:
         <h1>Original Ideas: ZeroMQ</h1>
 
         <p>This code uses ZeroMQ, also known as 0MQ or zmq, with python
-        bindings, PyZMQ, to build this simple log messaging.  The <a
+        bindings, PyZMQ, to build this easy log messaging.  The <a
         href="http://zeromq.org/intro:read-the-manual">Asynchronous
     Client/Server Pattern</a> pattern forms the basic idea of this logger. The full
-ZeroMQ pattern implements bidirectional messages while the simple log messaging
+ZeroMQ pattern implements bidirectional messages while the easy log messaging
 app uses the direction only from processes to the loggerControler.</p>
 
-        <p>The simple log messaging app implementation derives from the
+        <p>The easy log messaging app implementation derives from the
         Asynchronous Client/Server Pattern  in <a
         href="http://www.zeromq.com">ZeroMQ</a>, p. 111:<br/><center><img
         src="./images/AsyncClientServer1.svg"/></center></p>
@@ -1287,9 +1287,9 @@ app uses the direction only from processes to the loggerControler.</p>
         through wireless transmission or an ethernet cable.  How is <i>that</i>
         for flexibility?</p>
 
-        <h1>The Simple Messaging System - A Larger Vision</h1>
+        <h1>The Easy Messaging System - A Larger Vision</h1>
 
-        <p>Simple log messaging just starts a suite of applications
+        <p>Easy log messaging just starts a suite of applications
         that provide an easy way to communicate with multiple
         nodes, be they Raspberry Pi, Arguino, Beagle Board
         and even desktop linux systems.</p>
@@ -1312,7 +1312,7 @@ app uses the direction only from processes to the loggerControler.</p>
         <p>To fully use the power of ZeroMQ for messaging requires
         two more basic modules: a name server and a control module.</p>
 
-        <h2>Simple Name Server</h2>
+        <h2>Easy Name Server</h2>
 
         <p>Maintaining multiple nodes with coordinated communications
         can be a nightmare unless proper tools exist to support
@@ -1323,7 +1323,7 @@ app uses the direction only from processes to the loggerControler.</p>
         "logCollector" with the the proper port. This dictionary should
         persist between reboots.</p>
 
-        <h2>Simple Control</h2>
+        <h2>Easy Control</h2>
 
         <p>Supplying commands to nodes must exist in some way. A unified
         command processing should ease application requirements for
@@ -1401,7 +1401,7 @@ app uses the direction only from processes to the loggerControler.</p>
             on what gets logged and user tolerance. Build a process
             that performs rollover periodically or by size?</li>
 
-            <li>Simple date intervals. Filtering by "YESTERDAY", "TODAY",
+            <li>Easy date intervals. Filtering by "YESTERDAY", "TODAY",
             "LAST_WEEK", "LAST_HOUR", etc.</li>
 
             <li>Strange loss of "namespace": sometimes vars set in the
@@ -1464,7 +1464,7 @@ app uses the direction only from processes to the loggerControler.</p>
 
         <p>The project license is specified in COPYING and COPYING.LESSER.</p>
 
-        <p>The simple log messaging app is free software; you can redistribute
+        <p>The easy log messaging app is free software; you can redistribute
         it and/or modify it under the terms of the GNU Lesser General Public
         License (LGPL) as published by the Free Software Foundation; either
         version 3 of the License, or (at your option) any later version.</p>
@@ -1479,7 +1479,7 @@ app uses the direction only from processes to the loggerControler.</p>
         this library.  If you modify this library, you must extend this
         exception to your version of the library.</p>
 
-        <p>The simple log messaging app is distributed in the hope that it will
+        <p>The easy log messaging app is distributed in the hope that it will
         be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
         of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
         Lesser General Public License for more details.</p>
