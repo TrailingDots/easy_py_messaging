@@ -5,9 +5,9 @@ import logFilter
 
 def usage():
     sys.stderr.write('logFilterApp [--config=config_file]\n' +
-            '\t[--out-file=outfile] [--in-file=infile]\n' +
-            '\t[--start=<ISO8601 start date>] [--end=>iso8601 end date]\n' +
-            '\t[--JSON|--CSV] [--help]\n' +
+            '\t[--out-file=outfile]\n[--in-file=infile]\n' +
+            '\t[--start=<ISO8601 start date>]\n[--end=>iso8601 end date]\n' +
+            '\t[--JSON|--CSV]\n[--help]\n' +
             '\t[--level=<level name>]\n')
     sys.stderr.write('--config=config_file   # Take parameters from config file\n')
     sys.stderr.write('--out-file=output file # output goes here. Default: stdout\n')
@@ -123,7 +123,7 @@ def main():
 
     try:
         opts, args = getopt.gnu_getopt(
-            sys.argv[1:], '',
+            sys.argv[1:], 'cioeslJCh',
             ['config=',     # config file
              'in-file=',    # input log file.
              'out-file=',   # Output file
@@ -142,7 +142,7 @@ def main():
     params = logFilter.LogFilters
 
     for opt, arg in opts:
-        if opt in ['--help']:
+        if opt in ['-h', '--help']:
             usage()
 
         elif opt in ['--config']:
@@ -164,11 +164,11 @@ def main():
             params['level'] = arg
             continue
 
-        elif opt in ['--JSON']:
+        elif opt in ['-J', '--JSON']:
             params['out_format'] = 'JSON'
             continue
 
-        elif opt in ['--CSV']:
+        elif opt in ['-C', '--CSV']:
             params['out_format'] = 'CSV'
             continue
 
