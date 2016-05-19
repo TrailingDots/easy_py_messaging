@@ -737,6 +737,46 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         record this event. Don't forget proper setting of return
         codes.</p>
 
+        <h2 id="loggingSpeedTest">loggingSpeedTest - How fast can your system go?</h2>
+
+        <p>We all like to know how fast our system can process data. This quick
+        and dirty utility send 100,000 messages to the logCollector and reports
+        on the timing.</p>
+
+        <p>Due to the volume of messages, start the <code>logCollector</code>
+        with an output to <code>/dev/null</code> to discard logging output:<br/>
+        <code class="indent">logCollector --log-file=/dev/null</code><br/></p>
+
+        <p>Do not rely on a single timing, but run multiple times and get an
+        average:</p>
+
+        <pre>
+for ndx in $(seq 10)
+&gt; do
+&gt;    python loggingSpeedTest.py
+&gt; done
+100000 logs, elapsed time: 1.387242
+72085 messages per second
+100000 logs, elapsed time: 1.339986
+74627 messages per second
+100000 logs, elapsed time: 1.356970
+73693 messages per second
+100000 logs, elapsed time: 1.364641
+73279 messages per second
+100000 logs, elapsed time: 1.414089
+70716 messages per second
+100000 logs, elapsed time: 1.299567
+76948 messages per second
+100000 logs, elapsed time: 1.351263
+74004 messages per second
+100000 logs, elapsed time: 1.305027
+76626 messages per second
+100000 logs, elapsed time: 1.385899
+72155 messages per second
+100000 logs, elapsed time: 1.273577
+78519 messages per second
+        </pre>
+
         <h2 id="loggingLoopApp">loggingLoopApp - For debugging your logging system</h2>
 
         <p>In the process of development the requirement may arise
@@ -781,7 +821,7 @@ Req #2 sent "request #2"
         <p>Kill both the loggingLoopApp and logCollector with 
         ctrl-C in each terminal when finished.</p>
 
-        <h2>listening - Who is listening to that port?</h2>
+        <h2 id="listening">listening - Who is listening to that port?</h2>
 
         <p>Many times when developing software manual testing
         requires repeating the same process over and over.
