@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Easy Messaging Example Code</title>
+        <script src="./javascript/toc.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/article.css" type="text/css" />
+    </head>
+
+    <body onload="generateTOC(document.getElementById('toc'));">
+
+        <h1>Easy Messaging Example Code</h1>
+
+        <div id="toc"></div>
+
+        <p> The following code provides examples of the various
+        messaging this package offers:</p>
+
+        <p>Based on Async Client/Server pattern. p. 111</p>
+
+        <p>Send forget - Send message, then continue</p>
+
+        <p>Send reliable - Reliably send a message. Msg queued,
+        sender continues</p>
+
+        <p>Send reliabe/continue - Queue msg to be sent when receiver
+        ready</p>
+
+        <p>Send reliable with receipt - Reliable send with receipt.
+        Asynchronous.</p>
+
+        <p>Sender checks for receipt at a later time.</p>
+
+
+        <p>The easy messaging app implementation derives from the
+        Asynchronous Client/Server Pattern  in <a
+        href="http://www.zeromq.com">ZeroMQ</a>, p. 111: <br/><center><img
+        src="./images/AsyncClientServerPattern.png"/></center></p>
+
+        <h2>Overall Example Requirements</h2>
+
+
+        <p>Examples of messaging apps that sends messages
+         to another task and handles the return
+         message.</p>
+
+         <p>This section discusses the various kinds of messaging
+         (with and without timeout). Please perform the following
+         in an empty directory:<br/><code class="indent">https://github.com/imatix/zguide.git</code><br/>
+         This creates a directory of example code for ZeroMQ.
+         This section will cover some, but not all, of these
+         samples and provide comments on their application to
+         easy messaging.</p>
+
+         <p>After downloading the above code, <code class="ident">cd cd zguide/examples/Py</code><br/>to view ZeroMQs example code for Python.</p>
+
+             <h3>Request with Reply</h3> 
+            
+             <p>The reference for this example: <a href="http://zguide.zeromq.org/page:all#Ask-and-Ye-Shall-Receive">0MQ - The Guide: Ask and Ye Shall Receive</a></p>
+
+             <p>In this scenario, the simplest messaging to
+             understand, sends a message to a reciever. The
+             receiver then prints that message.</br/><center>
+                 <img src="./images/RequestWithReply.png"/><br/></center></p>
+             <p>To test this exchange, use two terminal and <code>cd</code> to the directory of the python examples. In one terminal start the sender:<br/><code class="indent">python hwserver.py</code><br/>
+             and in the other terminal send some messages:<br/>
+             <code class="indent">python hwclient.py</code>.
+
+             <p>Experiment with variations. Start hwclient.py, wait
+             a few seconds, then start hwserver.py. Start both
+             programs, kill one, wait, then restart. Unless
+             you learn to "play" with your code, you cannot
+             consider it your own.</p>
+             
+             <p>Notice hwclient.py
+             waits until hwserver.py can accept the messages. 
+             hwclient.py becomes <i>blocked</i> until hwserver.py
+             accepts the message. Additionally, hwclient.py waits
+             again blocks until hwserver.py sends the response.</p>
+
+             <p>Thus, hwclient.py and hwserver.py work in lockstop
+             with each other. This may or may not yield desirable
+             behavior for your project!</p>
+             
+             <p>This behavior simulates an implementation of raw
+             sockets unfortunately common to many elementary
+             communications applications. ZeroMQ offers much more
+             in the form of resilience, time outs, and 
+             automatic retries.</p>
+
+             <p>If you have found the above interesting,
+             please read the original ZeroMQ exposition
+             at <a href="http://zguide.zeromq.org/page:all#Ask-and-Ye-Shall-Receive">0MQ - The Guide: Ask and Ye Shall Receive</a>.</p>
+
+
+             <h3>Reliable send with response and no wait</h3>
+
+             <p>This version implements <a
+             href="http://zguide.zeromq.org/page:all#The-Asynchronous-Client-Server-Pattern">the
+             Asynchronous Client/Server Pattern</a>. In plain terms this
+             means you send a message and continue processing. Later,
+             whenever the logic in you application can take a break, the
+             response queue gets polled for a response to previously sent
+             messages.</p>
+
+             <p>"Asynchronous" means the sending and receiving of a message
+             run indenpendently from other portions of your application. This
+             creates a great deal of freedom in that the application has
+             relief from performing the messaging tasks; the ZeroMQ threads
+             handle this. <b>Both</b> sender and receiver handle the messages
+             asynchronously - another benefit.</p>
+
+        <p>Parms:</p>
+        <ul>
+            <li>fire reliable/forget</li>
+            <li>fire response/no response</li>
+            <li>response wait/no wait</li>
+        </ul>
+
+        <p>Approach:</p>
+        <ul>
+            <li>Write server/client for each of the ten types as examples</li>
+            <li>Write a readable integration of all these.</li>
+        </ul>
+
+        <h2>Send and Forget</h2>
+
+        <h2>Send Reliable tagged Messages with Reply</h2>
+
+        <ul>
+
+            <li>The sender connects to the receiver and sends
+            requests. Each request gets tagged with a unique
+            identifier specfic to that message.  The sender does not
+            wait, but can continues processing.</li>
+
+            <li>The receiver then sends one or more responses.  Each
+            response includes the original tag from the requesting
+            message for identification.</li>
+
+            <li>Senders can send multiple requests without waiting
+            for reponses.</li>
+
+            <li>Receivers can send multiple responses wihtout waiting
+            for new requests.</li>
+
+            <li>Multiple senders can send requests to a single
+            receiver. The receiver reponds to each sender for each
+            request.</li>
+
+        </ul>
+
+
+
+
+
+
+    </body>
+</html>
