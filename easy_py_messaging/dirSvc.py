@@ -1,8 +1,9 @@
 #!/bin/env python
 """
-Directory services for
-    easy_py_messaging    - easy messaging client and servers
-    control_messaging    - Control messaging structure
+Server:
+    Directory services for
+        easy_py_messaging    - easy messaging client and servers
+        control_messaging    - Control messaging structure
 """
 
 import sys

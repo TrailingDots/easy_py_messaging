@@ -164,7 +164,86 @@
         a mapping between the port number and the process,
         interpreting the "Address already in use" error message can prove
         tricky.</p>
+
+        <h1>Glossary</h1>
+
+        <h2>Client/Server</h2>
+
+        <p>The terms of client and server describe which component
+        sends a message and which component receives a message.</p>
+
+        <p>Traditionally servers contain powerful computers or
+        processes dedicated to managing disk drives, printers
+        or network connections. Clients, on the other hand,
+        talk to server to obtain necessary information to
+        perform their operations.</p>
+
+        <p>In the Easy Py Messaging systems the use of client
+        and server does not necessarily hint at power, but of
+        sources and consumers of information.</p>
+
+        <h3>Servers as Resource Providers</h3>
+
+        <p>In Easy Py Messaging a server defines a source of
+        information that communicates with clients. A server
+        may exist on a separate node from a client or it may
+        run on the same node as a client or it may even
+        exist as a separate thread within the same process.</p>
+
+        <p>A server provides some kind of information or resource
+        within a system or distributed system. When a client
+        requests a resource, the server shares the resource
+        with the requesting client.</p>
+
+        <h3>Clients as Resource Consumers</h3>
+
+        <p>A client requests a service from a server.
+        Multiple clients may use a single server for resources.
+        A client may exist on the same hardware as a server
+        or may even run on the same process. Clients and servers
+        may also run on different hardware boxes. In this case
+        clients and servers typically talk to each other
+        through a network.</p>
+
+        <h3>Client/Server Discussion</h3>
+
+        <p>In the Easy Py Messaging model, messages typically start
+        with a client requesting a resource from some server.
+        A client sends a request to a server and the server
+        fulfills the request and generally responds with some
+        kind of acknowledgement.</p>
         
+        <p>An application may use multiple clients and each client
+        will generally talk to different servers.</p>
+
+        <p>An Easy Py Messaging server can use multiple threads
+        for handling requests. Using multiple threads can provide
+        better performance.</p>
+
+        <p>Both clients and servers
+        have previosly agreed upon message structures.</p>
+
+        <p>An example of a client/server with the server
+        providing a response would be a node that request
+        instrument readings from a remote hardware box.
+        The client or requestor could be a desktop seeking
+        readings from a hydroponics controller in the backyard.
+        A single request on the desktop could cause the hydroponics
+        controller to response with all instrumentation sending
+        possibly multiple messages back to the desktop.</p>
+
+        <p>An example of a client using a resource without
+        a response would be the logging server. A client
+        simply calls the logger API with a message and the
+        logger silently records the log.</p>
+
+        <p>An example of a server initiating a discussion
+        could be the "ping" sometimes used to announce the
+        availability of the server's services. A "ping"
+        get broadcast on a known port with a known accouncement
+        structure. Interested processes would listen to this
+        port and record the existence of the service.</p>
+
     </body>
 
 </html>
