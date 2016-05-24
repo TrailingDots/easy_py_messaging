@@ -14,6 +14,8 @@ import logConfig
 import platform
 import apiLoggerInit
 
+import pdb
+
 # Default port
 PORT = 5590
 
@@ -112,6 +114,10 @@ def main():
     """
     Dummy mainline for simple testing.
     Simply send strings, print responses
+
+    This driver *must* be used with server_create_class.py
+    because the responses have been wired in and the
+    code below checks for responses.
     """
     global PORT
 
@@ -135,15 +141,22 @@ def main():
 
     response = client.send('type=client,greeting=Hello world')
     print response
+    if 'Hello world' not in response:
+        pdb.set_trace()
 
     response = client.send('type=client,greeting=Hello again')
     print response
+    if 'Hello again' not in response:
+        pdb.set_trace()
 
     # Get a timing
     iterations = 10000     # send/recv this many messages
     start_time = timeit.default_timer()
     for ndx in range(iterations):
-        client.send('ndx=%d' % ndx) # Ignore response
+        data = 'ndx=%d' % ndx
+        response = client.send(data)
+        if data not in response:
+            pdb.set_trace()
     elapsed = timeit.default_timer() - start_time
     sys.stdout.write('%d logs, elapsed time: %f\n' % (iterations, elapsed))
     sys.stdout.write('Timed at %d messages per second\n' %

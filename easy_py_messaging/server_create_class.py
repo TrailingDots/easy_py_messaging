@@ -5,6 +5,12 @@ import threading
 import time
 import signal
 
+import pdb
+
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
 
 class ServerCreateClass(threading.Thread):
     """
@@ -33,6 +39,7 @@ class ServerCreateClass(threading.Thread):
         threading.Thread.__init__(self)
         self.config = config
         self.workers = []   # Thread the workers are on.
+        self.is_noisy = self.config['noisy']
 
 
     def demandIntKey(self, key):
@@ -58,7 +65,7 @@ class ServerCreateClass(threading.Thread):
         frontend = context.socket(zmq.ROUTER)
         port = self.demandIntKey('port')
         endpoint = '%s://*:%s' % (self.config['scheme'], str(port))
-        print 'endpoint: "%s"\n' % endpoint
+        print 'endpoint: "%s" noisy=%s\n' % (endpoint, self.is_noisy)
         frontend.bind(endpoint)
 
         backend = context.socket(zmq.DEALER)
@@ -67,7 +74,7 @@ class ServerCreateClass(threading.Thread):
         self.config['context'] = context
 
         # Spawn some worker threads
-        for i in range(1):
+        for i in range(5):
             worker = ServerWorker(self.config)
             worker.start()
             self.workers.append(worker)
@@ -81,9 +88,6 @@ class ServerCreateClass(threading.Thread):
 class ExitException(Exception):
     pass
 
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-signal.signal(signal.SIGTERM, signal.SIG_DFL)
-
 is_alive = True
 
 class ServerWorker(threading.Thread):
@@ -92,6 +96,7 @@ class ServerWorker(threading.Thread):
         threading.Thread.__init__(self)
         self.context = config['context']
         self.config = config
+        self.is_noisy = self.config['noisy']
 
     def run(self):
         global is_alive
@@ -99,15 +104,16 @@ class ServerWorker(threading.Thread):
         worker.connect('inproc://backend')
         while is_alive:
             ident, msg = worker.recv_multipart()
+            if self.is_noisy: print 'recv ident: %s msg: %s' %(ident, msg)
             response = self.config['in_fcn'](ident, msg)
             ident, resp_msg = response
             worker.send_multipart([ident, resp_msg])
+            if self.is_noisy: print 'respond ident: %s msg: %s' %(ident, resp_msg)
             if '@EXIT' in resp_msg:
                 is_alive = False
                 break
 
         worker.close()
-        print 'worker closed'
         os.kill(os.getpid(), signal.SIGINT)
 
 
@@ -123,6 +129,52 @@ def handle_request(ident, msg):
     return ident, msg + '_resp'
 
 
+def usage():
+    """Print the usage blurb and exit."""
+    print 'server_create_class.py [--help] [--port]'
+    print '\t\t[--noisy]'
+    print '\t--help         = This blurb'
+    print '\t--port=aport   = Port to expect queries.'
+    print '\t--noisy        = Noisy reporting. Echo progress.'
+    print ''
+    sys.exit(1)
+
+
+def getopts(config):
+    """
+    Read runtime options. Override defaults as necessary.
+    """
+    import getopt
+    try:
+        opts, args = getopt.gnu_getopt(
+                sys.argv[1:], '',
+                ['port=',       # Port to expect messages
+                 'noisy',       # If present, noisy trail for debug
+                 'help',        # Help blurb
+                ])
+    except getopt.GetoptError as err:
+        print str(err)
+        usage()
+
+    for opt, arg in opts:
+        if opt in ['--help']:
+            usage()
+        elif opt in ['--noisy']:
+            config['noisy'] = True
+            continue
+        elif opt in ['--port']:
+            try:
+                # Insist on a valid integer for a port #
+                int_port = int(arg)
+            except ValueError as err:
+                sys.stdout.write(str(err) + '\n')
+                usage()
+            config['port'] = arg
+            continue
+
+    return config
+
+
 def main():
     """main function"""
     global is_alive
@@ -134,8 +186,12 @@ def main():
         'host': 'localhost',
         'port': port,
         'in_fcn': handle_request,
-        'id_name': platform.node()
+        'id_name': platform.node(),
+        'noisy': False,
     }
+
+    config = getopts(config)
+
     server = ServerCreateClass(config)
     server.start()
 

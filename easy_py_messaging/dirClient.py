@@ -156,7 +156,7 @@ def main():
             ]
         )
     except getopt.GetoptError as err:
-        print err
+        print str(err)
         usage()
 
     # Number leading args to shift out
