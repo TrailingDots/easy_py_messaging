@@ -88,7 +88,7 @@ class ClientCreateClass(threading.Thread):
         except Exception as err:
             sys.stdout.write('connect Exception: %s: %s\n' % (app_socket, str(err)))
             sys.exit(1)
-
+        sys.stdout.write('Connected: %s\n' % app_socket)
 
         self.poll = zmq.Poller()
         self.poll.register(self.socket, zmq.POLLIN)
@@ -176,14 +176,15 @@ def getopts(config):
 
     # Create a message out of remaining args
     for ndx in range(shift_out):
-        del sys.args[1]
+        del sys.argv[1]
     config['message'] = ' '.join(sys.argv[1:])
 
     return config
 
 
-def do_timings(config):
+def do_timings(client):
     """Perform timings test"""
+    import timeit
     iterations = 10000     # send/recv this many messages
     start_time = timeit.default_timer()
     for ndx in range(iterations):
@@ -215,7 +216,9 @@ def main():
     # =========================
     # Standard initialization
     # =========================
-    client = ClientCreateClass({
+
+    # Default values for configuration
+    config = getopts({
         'scheme': 'tcp',
         'node': 'localhost',
         'port': PORT,
@@ -224,6 +227,7 @@ def main():
         'id_name': platform.node(),
         'message': '',
     })
+    client = ClientCreateClass(config)
     if client is None:
         sys.stderr.write('Cannot create ClientClass!\n')
         sys.exit(1)
@@ -234,13 +238,8 @@ def main():
             (os.getpid(), str(config['port']), config['node']))
 
 
-    response = client.send('type=client,greeting=Hello world')
-    print response
-    if 'Hello world' not in response:
-        pdb.set_trace()
-
     if config['timing']:
-        do_timings(config)
+        do_timings(client)
     else:
         response = client.send(config['message'])
         sys.stdout.write(response + '\n')

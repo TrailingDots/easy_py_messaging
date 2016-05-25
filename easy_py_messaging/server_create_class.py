@@ -113,6 +113,7 @@ class ServerWorker(threading.Thread):
             if self.is_noisy: print 'respond ident: %s msg: %s' %(ident, resp_msg)
             if '@EXIT' in resp_msg:
                 is_alive = False
+                time.sleep(1)   # Some time to send response.
                 break
 
         worker.close()
