@@ -1,13 +1,10 @@
 #!/bin/env python
-
 import zmq
 import sys
 import os
 import threading
 import time
 import signal
-
-import pdb
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -26,7 +23,7 @@ class ServerCreateClass(threading.Thread):
         config as a dictionary describes the client configuration.
         All but id_name keywords are required.
 
-        id_name = These names appear in the log entry as 
+        id_name = These names appear in the log entry as
             an identifier of the source
             of the log entry.
 
@@ -35,10 +32,9 @@ class ServerCreateClass(threading.Thread):
         host = name of host. For servers, this may commonly be '*'
             For clients, this may be 'localhost' or a node name.
 
-        scheme = Typically 'tcp' or 'udp'.
         """
 
-        threading.Thread.__init__(self)
+        super(ServerCreateClass, self).__init__()
         self.config = config
         self.workers = []   # Thread the workers are on.
         self.is_noisy = self.config['noisy']
@@ -48,8 +44,7 @@ class ServerCreateClass(threading.Thread):
         """Insist that key be in the config dict.
         Return the valid in the config dict."""
         if self.config[key] is None:
-            sys.stdout.write('"%s" required, not found in ClientCreateClass.\n'
-                    % key)
+            sys.stdout.write('"%s" required, not found in ClientCreateClass.\n' % key)
             traceback.print_exc()
             sys.exit(1)
 
@@ -57,8 +52,8 @@ class ServerCreateClass(threading.Thread):
         try:
             port = int(self.config['port'])
         except ValueError as err:
-            sys.stdout.write('port "%s" must be an integer.\n' % 
-                    str(self.config['port']))
+            sys.stdout.write('port "%s" must be an integer. %s\n' %
+                    (str(self.config['port']), str(err)))
             sys.exit(1)
         return port
 
@@ -76,7 +71,7 @@ class ServerCreateClass(threading.Thread):
         self.config['context'] = context
 
         # Spawn some worker threads
-        for i in range(5):
+        for _ in range(5):
             worker = ServerWorker(self.config)
             worker.start()
             self.workers.append(worker)
@@ -87,15 +82,24 @@ class ServerCreateClass(threading.Thread):
         backend.close()
         context.term()
 
+
 class ExitException(Exception):
+    """Exception that indicates an exit."""
     pass
 
 is_alive = True
 
+
 class ServerWorker(threading.Thread):
     """ServerWorker"""
     def __init__(self, config):
-        threading.Thread.__init__(self)
+        super(ServerWorker, self).__init__()
+        from os import kill, getpid
+        from signal import SIGINT
+        self.kill = kill
+        self.getpid = getpid
+        self.SIGINT = SIGINT
+
         self.context = config['context']
         self.config = config
         self.is_noisy = self.config['noisy']
@@ -117,7 +121,7 @@ class ServerWorker(threading.Thread):
                 break
 
         worker.close()
-        os.kill(os.getpid(), signal.SIGINT)
+        self.kill(self.getpid(), self.SIGINT)
 
 
 # ============================================================
@@ -142,7 +146,7 @@ def handle_request(ident, msg):
 
 def usage():
     """Print the usage blurb and exit."""
-    print 'server_create_class.py [--help] [--port]'
+    print 'server_create_class.py [--help] [--port] \\'
     print '\t\t[--noisy]'
     print '\t--help         = This blurb'
     print '\t--port=aport   = Port to expect queries.'
@@ -164,7 +168,7 @@ def getopts(config):
                  'help',        # Help blurb
                 ])
     except getopt.GetoptError as err:
-        print str(err)
+        sys.stdout.write(str(err) + '\n')
         usage()
 
     for opt, arg in opts:
@@ -176,7 +180,7 @@ def getopts(config):
         elif opt in ['--port']:
             try:
                 # Insist on a valid integer for a port #
-                int_port = int(arg)
+                _ = int(arg)
             except ValueError as err:
                 sys.stdout.write(str(err) + '\n')
                 usage()

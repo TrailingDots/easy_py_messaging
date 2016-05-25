@@ -63,8 +63,9 @@ class DirClient(object):
         self.loggingClient.info('app=DirClient,status=starting')
 
     def logCollectorSetup(self):
+        """Perform operations to start logging."""
         global loggingClient
-        # Start the logger interface
+
         apiLoggerInit.loggerInit()
         loggingClient = loggingClientTask.LoggingClientClass(platform.node())
         if loggingClient is None:
@@ -145,7 +146,7 @@ def main():
 
     import getopt
     try:
-        opts, args = getopt.gnu_getopt(
+        opts, _ = getopt.gnu_getopt(
             sys.argv[1:], 'cpmnh',
             ['port=',           # Port # to expect messages
              'memory-file=',    # Which file to persist names
@@ -176,7 +177,7 @@ def main():
         elif opt in ['p', '--port']:
             try:
                 # Ensure a valid integer port
-                int_port = int(arg)
+                _ = int(arg)
             except Exception as err:
                 sys.stdout.write(str(err) + '\n')
                 usage()
@@ -192,7 +193,7 @@ def main():
             config['clear'] = True
             continue
     # pass the remaining args to the rest of the program.
-    for ndx in range(shift_out):
+    for _ in range(shift_out):
         del sys.argv[1]
 
     dir_client = DirClient(config)

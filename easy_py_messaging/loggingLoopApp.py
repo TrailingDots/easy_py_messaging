@@ -2,20 +2,19 @@
 """
     Sample code of an app logging data.
 """
-import zmq
 import os
 import sys
 import time
-import timeit
 import threading
 import logConfig
 import signal
 
+
 class ClientTask(threading.Thread):
     """ClientTask"""
     def __init__(self, id_name, iterations):
-        global zmq
-        global timeit
+        import timeit
+        import zmq
         self.context = None
         self.id_name = id_name
         self.iterations = int(iterations)
@@ -63,9 +62,8 @@ def main():
     # Unit tests must usually kill this process
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
-    
-    client = ClientTask(name, iterations)
 
+    client = ClientTask(name, iterations)
     client.start()
 
 

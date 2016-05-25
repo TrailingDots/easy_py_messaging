@@ -100,9 +100,9 @@ ECHO () {
 }
 
 # Run various python metric utilities
-#CMD "pyflakes *.py"
-#CMD "pep8 *.py"
-#CMD "pylint *.py"
+CMD "pyflakes *.py"
+CMD "pep8 *.py"
+CMD "pylint *.py"
 
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
@@ -171,7 +171,43 @@ CMD "$GEN_DATA >$DATA_LOG"
 $GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
 
-echo "=============== Run unit tests ================"
+ECHO "================= Run client/server create_class ============"
+ECHO "First - some errors with server_create_class"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --help"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --port=XYZ"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --noisy --port=XYZ"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --BogusOption"
+
+ECHO ""
+ECHO "Start server_create_class"
+ECHO "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py "
+coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py &
+ECHO "server_create_class should have port 5590, the default port for this app"
+sleep 1
+CMD "$LIB_DIR/listening 5590"
+
+ECHO "Send some messages to server_create_class"
+ECHO "Using defaults from command line"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py This is a test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py This is a test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 This is another test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --node=localhost This is another test"
+#CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --node=127.0.0.1 This is a localhost node"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --noisy This is a localhost node"
+ECHO "The timing - slow..."
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --noisy --timing This is a localhost node"
+
+ECHO " Some failures - non-numeric port"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=XYZ This is another test"
+ECHO " Some failures - invalid option"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --foobar=XYZ This is another test"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --help"
+
+# Stop that server_create_class
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py Get out of this program: @EXIT"
+
+
+ECHO "=============== Run unit tests ================"
 ECHO "logCollector still going before testLogging.py ...\?"
 CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py "
 

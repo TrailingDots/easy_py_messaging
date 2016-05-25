@@ -18,7 +18,7 @@ import logConfig
  The config parameters will look similar to:
     {
         append: True,    # Append logs to existing file. Creates if not existing.
-        log_file:"/home/me/simple/logs.log",  # Name of log file. 
+        log_file:"/home/me/simple/logs.log",  # Name of log file.
         noisy:  False,   # Echo all collected logs to console. Used in debugging.
         port:   5570,    # Port to listen for messages.
     }

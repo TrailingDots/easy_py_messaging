@@ -27,10 +27,12 @@ def usage():
 
 
 def parseOpts():
+    """Interpret command line options."""
+
     import getopt
 
     try:
-        opts, args = getopt.gnu_getopt(
+        opts, _ = getopt.gnu_getopt(
             sys.argv[1:], 'ahnqt',
             ['port=',     # Port # to send message
              'node=',     # Node to send message
@@ -67,7 +69,7 @@ def parseOpts():
             shift_out += 1
             logConfig.LOG_LEVEL = arg
             continue
-    for ndx in range(shift_out):
+    for _ in range(shift_out):
         del sys.argv[1]
 
 

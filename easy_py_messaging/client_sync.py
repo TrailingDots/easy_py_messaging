@@ -2,15 +2,9 @@
 #
 # Example of sending messages to server_sync and handling responses.
 #
-
-
 import sys
 import os
-import time
 import zmq
-import json
-import pickle
-import atexit
 
 import platform
 from server_create_class import ServerCreateClass

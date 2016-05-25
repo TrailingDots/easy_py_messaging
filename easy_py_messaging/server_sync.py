@@ -8,10 +8,6 @@ import sys
 import os
 import time
 import zmq
-import json
-import pickle
-import atexit
-
 import platform
 from send_recv_task import SendRecvTask
 

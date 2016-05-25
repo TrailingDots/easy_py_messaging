@@ -9,12 +9,12 @@ import timeit
 import loggingClientTask
 
 
-
 # Allow Ctrl-C to kill this program.
 import signal
 signal.signal(signal.SIGTERM, signal.SIG_DFL)
 signal.signal(signal.SIGHUP, signal.SIG_DFL)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 
 def main():
     """

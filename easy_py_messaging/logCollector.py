@@ -205,7 +205,7 @@ def main():
     atexit.register(exiting, 'Exiting logCollector')
 
     try:
-        opts, args = getopt.gnu_getopt(
+        opts, _ = getopt.gnu_getopt(
             sys.argv[1:], 'ahnqt',
             ['log-file=',   # output file instead of stdiout
              'port=',       # Port to listen for msgs. Default in logConfig.

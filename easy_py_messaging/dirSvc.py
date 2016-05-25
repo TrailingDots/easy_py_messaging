@@ -57,6 +57,8 @@ class DirOperations(object):
         # (Does it need saving?)
         self.set_clean()
 
+        self.is_dirty = False   
+
         # Time to persist dir. Seconds from epoch.
         self.is_dirty_persist = self.next_persist_time()
 
@@ -202,7 +204,7 @@ class DirOperations(object):
         if key[0] == '~':
             self.del_key(key)
             return True
-       
+
         # Handle meta query if requested.
         if key[0] == '@':
             return self.handle_meta(key)
@@ -213,8 +215,7 @@ class DirOperations(object):
             port = self.add_key_val(key, port)
         else:
             port = port.value
-        self.client.info('get_port_key=%s,port=%s' % \
-                (key, port))
+        self.client.info('get_port_key=%s,port=%s' % (key, port))
         if NOISY: print  'get_port(%s) = %s' % (key, port)
         return port
 
@@ -295,7 +296,7 @@ def parseOpts():
         elif opt in ['p', '--port']:
             try:
                 # Ensure a valid integer port
-                int_port = int(arg)
+                _ = int(arg)
             except Exception as err:
                 sys.stdout.write(str(err) + '\n')
                 usage()
@@ -312,7 +313,7 @@ def parseOpts():
             config['clear'] = True
             continue
     # pass the remaining args to the rest of the program.
-    for ndx in range(shift_out):
+    for _ in range(shift_out):
         del sys.argv[1]
 
     return config

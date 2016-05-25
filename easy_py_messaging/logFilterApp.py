@@ -122,7 +122,7 @@ def main():
     import getopt
 
     try:
-        opts, args = getopt.gnu_getopt(
+        opts, _ = getopt.gnu_getopt(
             sys.argv[1:], 'cioeslJCh',
             ['config=',     # config file
              'in-file=',    # input log file.

@@ -8,11 +8,9 @@ import sys
 import os
 import zmq
 import threading
-import time
 import traceback
 import logConfig
 import platform
-import apiLoggerInit
 
 import pdb
 
@@ -39,8 +37,6 @@ class ClientCreateClass(threading.Thread):
         node = name of node. For servers, this may commonly be '*'
                 For clients, this may be localhost or a node name.
 
-        scheme = Typically 'tcp' or 'udp'.
-
         """
 
         def demandKey(key):
@@ -54,18 +50,17 @@ class ClientCreateClass(threading.Thread):
             else:
                 return config[key]
 
-
         try:
             self.port = int(demandKey('port'))
         except ValueError as err:
-            sys.stdout.write('port "%s" must be an integer.\n' % 
-                    str(config['port']))
+            sys.stdout.write('port "%s" must be an integer. %s\n' % 
+                    (str(config['port']), str(err)))
             sys.exit(1)
 
         self.config = config
         self.id_name = demandKey('id_name')
         self.node = demandKey('node')
-        self.scheme = demandKey('scheme')
+        self.scheme = 'tcp'     # udp, etc. later
         self.node = demandKey('node')
 
         self.context = None
@@ -108,7 +103,7 @@ class ClientCreateClass(threading.Thread):
         return response
 
     def recv(self):
-        #response = self.socket.recv_multipart()
+        """Receive a message."""
         response = self.socket.recv()
         return response
 
@@ -134,7 +129,7 @@ def getopts(config):
     """
     import getopt
     try:
-        opts, args = getopt.gnu_getopt(
+        opts, _ = getopt.gnu_getopt(
                 sys.argv[1:], '',
                 ['port=',       # Port to expect messages
                  'noisy',       # If present, noisy trail for debug
@@ -158,7 +153,7 @@ def getopts(config):
         elif opt in ['--port']:
             try:
                 # Insist on a valid integer for a port #
-                int_port = int(arg)
+                _ = int(arg)
             except ValueError as err:
                 sys.stdout.write(str(err) + '\n')
                 usage()
@@ -211,15 +206,12 @@ def main():
     """
     global PORT
 
-    import timeit
-
     # =========================
     # Standard initialization
     # =========================
 
     # Default values for configuration
     config = getopts({
-        'scheme': 'tcp',
         'node': 'localhost',
         'port': PORT,
         'noisy': False,
@@ -236,7 +228,6 @@ def main():
 
     sys.stdout.write('Started client, pid %d port %s node %s\n' %
             (os.getpid(), str(config['port']), config['node']))
-
 
     if config['timing']:
         do_timings(client)

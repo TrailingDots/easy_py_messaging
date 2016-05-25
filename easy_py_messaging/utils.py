@@ -58,6 +58,7 @@ LOG_PRIORITY = {
 # Value = Name of level
 LOG_PRIORITY_BY_NDX = {value: key for key, value in LOG_PRIORITY.items()}
 
+
 def cycle_priority(cur_level):
     """
     Given the current log level such as WARNING,
