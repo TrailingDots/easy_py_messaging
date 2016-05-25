@@ -33,7 +33,7 @@ DEFAULTS={
 
 def main():
     try:
-        import easy_py_messaging.listeningPort as listeningPort
+        import easy_py_messaging.loggingSpeedTest as loggingSpeedTest
         
         loggingSpeedTest.main()
 

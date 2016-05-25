@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # From: /home/cecilm/github.com/jldzeromq/src/scripts/jld0sub
 """
-    The collector for all clients.
+    The directory naming service command line interface.
 """
 __version__="1.0.0"
 import os, sys, argparse

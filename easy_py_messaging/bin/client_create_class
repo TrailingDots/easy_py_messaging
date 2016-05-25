@@ -1,11 +1,6 @@
 #!/usr/bin/env python
-# From: /home/cecilm/github.com/jldzeromq/src/scripts/jld0sub
 """
-    An application that loops sending logs.
-    Used to debug configurations.
-    Start this on a command line and notice the
-    logs that get sent. If logCollector cannot
-    find the logs, a bug exists in your configuration.
+    The client_create_class example command line utility
 """
 __version__="1.0.0"
 import os, sys, argparse
@@ -20,14 +15,14 @@ except:
 
     lib_path = os_path.abspath(os_path.join(this_dir, ".."))
     sys.path.insert(0, lib_path)
-    
+
     top_path = os_path.abspath(os_path.join(lib_path, ".."))
     sys.path.insert(0, top_path)
 
     slm_path = os_path.abspath(os_path.join(this_dir, '../../easy_py_messaging'))
     sys.path.insert(0, slm_path)
 
-    import easy_py_messaging #@UnusedImport
+    import easy_py_messaging 
 
 ########################################################################
 
@@ -37,9 +32,9 @@ DEFAULTS={
 
 def main():
     try:
-        import easy_py_messaging.loggingLoopApp as loggingLoopApp
+        import easy_py_messaging.client_create_class  as client_create_class
         
-        loggingLoopApp.main()
+        client_create_class.main()
 
     except KeyboardInterrupt:
         logging.info("...exiting")

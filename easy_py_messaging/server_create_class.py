@@ -1,3 +1,5 @@
+#!/bin/env python
+
 import zmq
 import sys
 import os
@@ -117,13 +119,21 @@ class ServerWorker(threading.Thread):
         os.kill(os.getpid(), signal.SIGINT)
 
 
+# ============================================================
+# ============================================================
+# The code from here onward exists ONLY as a command line
+# driver to test for code coverage and as a convenience
+# in using this class as a command line utility.
+# ============================================================
+# ============================================================
+
 def handle_request(ident, msg):
     """
     Handler for incoming messages.
     This processes the client message and forms
     a response. In this test case, the response
     mostly echos the request.
-    ident must not be changed.
+    ident must *not* be changed.
     msg may become transformed into whatever.
     """
     return ident, msg + '_resp'

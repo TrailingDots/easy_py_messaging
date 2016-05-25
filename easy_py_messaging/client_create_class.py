@@ -36,7 +36,7 @@ class ClientCreateClass(threading.Thread):
 
         port = port to use for communications.
 
-        host = name of host. For servers, this may commonly be '*'
+        node = name of node. For servers, this may commonly be '*'
                 For clients, this may be localhost or a node name.
 
         scheme = Typically 'tcp' or 'udp'.
@@ -61,9 +61,12 @@ class ClientCreateClass(threading.Thread):
             sys.stdout.write('port "%s" must be an integer.\n' % 
                     str(config['port']))
             sys.exit(1)
+
+        self.config = config
         self.id_name = demandKey('id_name')
-        self.host = demandKey('host')
+        self.node = demandKey('node')
         self.scheme = demandKey('scheme')
+        self.node = demandKey('node')
 
         self.context = None
         self.socket = None
@@ -76,7 +79,7 @@ class ClientCreateClass(threading.Thread):
         self.socket = self.context.socket(zmq.DEALER)
         identity = u'%s' % str(self.id_name)
         self.socket.identity = identity.encode('ascii')
-        app_socket = '%s://%s:%d' % (self.scheme, self.host, self.port)
+        app_socket = '%s://%s:%d' % (self.scheme, self.node, self.port)
         try:
             self.socket.connect(app_socket)
         except zmq.ZMQError as err:
@@ -110,6 +113,92 @@ class ClientCreateClass(threading.Thread):
         return response
 
 
+def usage():
+    """Print the usage blurb and exit."""
+    print 'client_create_class.py [--help] [--port]'
+    print '\t\t[--noisy] [--timing] [arg1 arg2 arg3 ...]'
+    print '\t--help         = This blurb'
+    print '\t--port=aport   = Port to expect queries.'
+    print '\t--node=anode   = Node name or IP address of server_create_class.'
+    print '\t\tDefault is localhost'
+    print '\t--noisy        = Noisy reporting. Echo progress.'
+    print '\t--timing       = Run timing loop only.'
+    print '\targ1 ...       = Arbitrary message string'
+    print ''
+    sys.exit(1)
+
+
+def getopts(config):
+    """
+    Read runtime options. Override defaults as necessary.
+    """
+    import getopt
+    try:
+        opts, args = getopt.gnu_getopt(
+                sys.argv[1:], '',
+                ['port=',       # Port to expect messages
+                 'noisy',       # If present, noisy trail for debug
+                 'node=',       # Node name of server_create_class.
+                 'timing',      # Run timing loop only
+                 'help',        # Help blurb
+                ])
+    except getopt.GetoptError as err:
+        print str(err)
+        usage()
+
+    # Number of loading args to shift out
+    shift_out = 0
+    for opt, arg in opts:
+        if opt in ['--help']:
+            usage()
+        elif opt in ['--noisy']:
+            config['noisy'] = True
+            shift_out += 1
+            continue
+        elif opt in ['--port']:
+            try:
+                # Insist on a valid integer for a port #
+                int_port = int(arg)
+            except ValueError as err:
+                sys.stdout.write(str(err) + '\n')
+                usage()
+            config['port'] = arg
+            shift_out += 1
+            continue
+        elif opt in ['--node']:
+            config['node'] = arg
+            shift_out += 1
+            continue
+        elif opt in ['--timing']:
+            config['timing'] = True
+            shift_out += 1
+            continue
+
+    # Create a message out of remaining args
+    for ndx in range(shift_out):
+        del sys.args[1]
+    config['message'] = ' '.join(sys.argv[1:])
+
+    return config
+
+
+def do_timings(config):
+    """Perform timings test"""
+    iterations = 10000     # send/recv this many messages
+    start_time = timeit.default_timer()
+    for ndx in range(iterations):
+        data = 'ndx=%d' % ndx
+        response = client.send(data)
+        if data not in response:
+            pdb.set_trace()
+    elapsed = timeit.default_timer() - start_time
+    sys.stdout.write('%d logs, elapsed time: %f\n' % (iterations, elapsed))
+    sys.stdout.write('Timed at %d messages per second\n' %
+            int(iterations/elapsed))
+    print '%d logs, elapsed time: %f' % (iterations, elapsed)
+    print '%d messages per second' % int(iterations/elapsed)
+
+
 def main():
     """
     Dummy mainline for simple testing.
@@ -128,44 +217,33 @@ def main():
     # =========================
     client = ClientCreateClass({
         'scheme': 'tcp',
-        'host': 'localhost',
-        'port':PORT,
-        'id_name': platform.node()
+        'node': 'localhost',
+        'port': PORT,
+        'noisy': False,
+        'timing': False,
+        'id_name': platform.node(),
+        'message': '',
     })
     if client is None:
         sys.stderr.write('Cannot create ClientClass!\n')
         sys.exit(1)
+    config = client.config
     client.start()
 
-    print 'Started client, pid %d port %s' % (os.getpid(), PORT)
+    sys.stdout.write('Started client, pid %d port %s node %s\n' %
+            (os.getpid(), str(config['port']), config['node']))
+
 
     response = client.send('type=client,greeting=Hello world')
     print response
     if 'Hello world' not in response:
         pdb.set_trace()
 
-    response = client.send('type=client,greeting=Hello again')
-    print response
-    if 'Hello again' not in response:
-        pdb.set_trace()
-
-    # Get a timing
-    iterations = 10000     # send/recv this many messages
-    start_time = timeit.default_timer()
-    for ndx in range(iterations):
-        data = 'ndx=%d' % ndx
-        response = client.send(data)
-        if data not in response:
-            pdb.set_trace()
-    elapsed = timeit.default_timer() - start_time
-    sys.stdout.write('%d logs, elapsed time: %f\n' % (iterations, elapsed))
-    sys.stdout.write('Timed at %d messages per second\n' %
-            int(iterations/elapsed))
-    print '%d logs, elapsed time: %f' % (iterations, elapsed)
-    print '%d messages per second' % int(iterations/elapsed)
-
-    response = client.send('@EXIT') # kill the server
-    print response
+    if config['timing']:
+        do_timings(config)
+    else:
+        response = client.send(config['message'])
+        sys.stdout.write(response + '\n')
 
     client.join()
 
