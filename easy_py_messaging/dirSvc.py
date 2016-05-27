@@ -105,7 +105,10 @@ class DirOperations(object):
         else:
             self.client.critical('from_pickle=%s,status=not_found' %
                     self.pickle_filename)
-            return
+            sys.stderr.write('FATAL ERROR: Cannot process memory_file: "%s"\n' % 
+                    self.pickle_filename)
+            sys.exit(1)
+
         self.set_clean()
         self.client.debug('from_pickle=%s,status=OK' %
                 self.pickle_filename)

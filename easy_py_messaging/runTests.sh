@@ -5,39 +5,64 @@
 # operations of this script:
 #   pyflakes
 #   coverage
-# Install these python package in the normal way.
+#   lizard      # For cyclomatic complexity.
+#               # https://github.com/terryyin/lizard
 #
-
+# Install the above python packages in the normal way.
+#
 #
 # Recommended way to operate:
 #   script                  # Start collecting all output
 #   ./runTests.sh ; exit    # run this script then exit script shell
 #   vim typescript          # Default output of "script" goes into typescript
 #
-# Some errors are expected! However, there should be no tracebacks.
+# Errors are expected! The get noted as CMD_FAIL commands.
+# However, there should be no tracebacks.
 #
 # An unfortunate reason that this script runs so many test rests in the
 # inability of coverage to handle subprocesses properly!
 # Much time was spent attempting to encapsulate the repetitious
 # nature of these test into python scripts. 
 #
+# The fantastic coverage utility does not accurately catch all
+# coverage. In the output reports I can see some code noted as
+# not covered when in fact I do know for a fact the code
+# *was* covered. Thus, the coverage reports a lower value
+# that the actual coverge.
+#
+# The output uses the following bash functions to provide
+# feedback on progress:
+#   ECHO "..."  - The string simply gets echoed. Just a comment.
+#   CMD "..."   - The command gets run. The exit status does not matter.
+#   CMD_PASS "..." - A 0 status code indicates a successful execution.
+#   CMD_FAIL "..." - A non-zero status code indicates a successful execution.
+# On all these the line number provides a convenient link to where
+# the commands get executed.
+#
+# Notice that programs started in background do not get handled with
+# CMD-style tracking. This is OK.
+# All background processes get killed with an "@EXIT" from the processes
+# that send messages.
+#
 # TODO:
 #   Provide stricter checking of these commands!
+#   Just because a zero status indicates success does NOT mean
+#   the output was correct. LOTS more validation work for this
+#   to become really solid.
 #
 
 # Uncomment next two lines for debugging and tracing of this script.
 #set -x
 #PS4='$LINENO: '
 
-# Start a timer for this entire script.
+# Start a timer for this entire script. The end produces a duration.
 SECONDS=0
 
-
-# Future versions may use python3
+# Future versions may use python3?
 alias python=/usr/bin/python2.7
 export PYTHON=/usr/bin/python2.7
 
-# function to echo command and then execute it.
+# Function to echo a command and then execute it.
 # Do NOT try to start backgrounded commands with this function.
 CMD () {
     # BASH_LINENO is an array. Use the top of the stack == 0
@@ -103,6 +128,7 @@ ECHO () {
 CMD "pyflakes *.py"
 CMD "pep8 *.py"
 CMD "pylint *.py"
+CMD "lizard ."
 
 # Env var for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
@@ -171,40 +197,41 @@ CMD "$GEN_DATA >$DATA_LOG"
 $GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
 
-ECHO "================= Run client/server create_class ============"
-ECHO "First - some errors with server_create_class"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --help"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --port=XYZ"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --noisy --port=XYZ"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py --BogusOption"
+ECHO "================= Run client/server create_test ============"
+ECHO "First - some errors with server_create_test"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --help"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --port=XYZ"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --noisy --port=XYZ"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --BogusOption"
 
 ECHO ""
-ECHO "Start server_create_class"
-ECHO "coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py "
-coverage run --branch --parallel-mode $LIB_DIR/server_create_class.py &
-ECHO "server_create_class should have port 5590, the default port for this app"
+ECHO "Start server_create_test"
+ECHO "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py "
+coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py &
+ECHO "server_create_test should have port 5590, the default port for this app"
 sleep 1
 CMD "$LIB_DIR/listening 5590"
 
-ECHO "Send some messages to server_create_class"
+ECHO "Send some messages to server_create_test"
 ECHO "Using defaults from command line"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py This is a test"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py This is a test"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 This is another test"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --node=localhost This is another test"
-#CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --node=127.0.0.1 This is a localhost node"
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --noisy This is a localhost node"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py This is a test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py This is a test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --port=5590 This is another test"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --port=5590 --node=localhost This is another test"
+# Is the following node 127.0.0.1 important?
+#CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --port=5590 --node=127.0.0.1 This is a localhost node"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --port=5590 This is a localhost node"
 ECHO "The timing - slow..."
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=5590 --noisy --timing This is a localhost node"
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --port=5590 --timing This is a localhost node"
 
 ECHO " Some failures - non-numeric port"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --port=XYZ This is another test"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --port=XYZ This is another test"
 ECHO " Some failures - invalid option"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --foobar=XYZ This is another test"
-CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py --help"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --foobar=XYZ This is another test"
+CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --help"
 
-# Stop that server_create_class
-CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_class.py Get out of this program: @EXIT"
+# Stop that server_create_test
+CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py Get out of this program: @EXIT"
 
 
 ECHO "=============== Run unit tests ================"
@@ -616,5 +643,5 @@ echo
 echo =================================================
 
 duration=$SECONDS
-echo "$(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed."
+echo "Total elapsed time: $(($duration / 60)) minutes and $(($duration % 60)) seconds."
 

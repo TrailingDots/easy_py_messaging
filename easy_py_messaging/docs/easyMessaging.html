@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Easy Py Messaging</title>
+        <script src="./javascript/toc.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="css/article.css" type="text/css" />
+    </head>
+
+    <body onload="generateTOC(document.getElementById('toc'));">
+
+        <h1>Easy Py Messaging</h1>
+
+        <div id="toc"></div>
+
+        <p>This section provides a cookbook approach to
+        incorporating messaging into your code. </p>
+
+        <div class="info">The user written examples in this secrion do not
+        get installed. They are meant to be run from the distribution
+        directories. This simple, basic code may, however, become an
+        integral part of you applications.</div>
+            
+        <p>The target audience is noobies on RaspberryPi hardware with a
+        Raspian OS. Other platforms such as arduino, ubuntu, debian, OSX
+        should run fine as well. Most linux systems should work as well.
+        Thus, the terminology hopefully provides an easy, simple way to
+        program your messaging.</p>
+
+        <p>The user must write code to connect the
+        message sender and the message receiver. The commonly
+        used name of client and server specify who sends and
+        who receives.</p>
+
+        <p>In this system when a client sends a message,
+        the client must wait for a response from the server.
+        This is called "lockstep" because a client becomes
+        "locked" (or "blocked") waiting for a response. </p>
+
+        <p><center><img src="./images/client_server_basic.png"></center></p>
+
+        <p>The above diagram displays the major components
+        of message transactions. The dashed boxes highlight
+        the two parts of code that a user must write. The
+        two boxes with solid lines supply the lower level
+        logic that performs the actual messaging.</p>
+
+        <p>The message flow from the above diagram:</p>
+
+        <ol>
+
+            <li>The client has a message to send.</li>
+
+            <li>The internal client_create_class uses the
+            configuation supplied by client_create_basic.
+            ZeroMQ sends the message over the configured port
+            to the use configured server, server_create_basic.</li>
+
+            <li>server_creat_basic has ZeroMQ running through
+            server_create_class</li>
+
+            <li>The received message gets processed by
+            the user defined function.</li>
+
+            <li>The response message then gets sent back to
+            client_create_class using ZeroMQ code.</li>
+
+            <li>client_create_basic gets the response.</li>
+
+        </ol>
+
+        <p>Internally server_create_basic calls a user
+        defined function to actually do something with
+        the message and form a response. More on this later.</p>
+
+        <h2>Minimal Client Logic</h2>
+
+        <p>Writing the user client code takes only a few
+        lines of code.</p>
+
+        <pre>
+#!/usr/bin/env python
+import client_create_class
+
+if __name__ == '__main__':
+    # Default values for configuration.
+    config = {
+        #'node': 'localhost',
+        #'port': 5590,
+    }
+    client = client_create_class.ClientCreateClass(config)
+    client.start()
+
+    msg1 = 'Hello world!'
+    msg2 = 'The second message'
+    msg3 = 'abcdefghijklmnopqrstuvwxyz'
+    msg4 = 'numbers: 0123456789'
+    msg5 = 'qwerty keyboard'
+    for msg in [msg1, msg2, msg3, msg4, msg5]:
+        print 'Sending : "%s"' % msg
+        response = client.send(msg)
+        print 'Response: "%s"\n' % response
+    client.join()
+        </pre>
+
+        <p>The initial line permits execution of this
+        code as a command line. For this to work the
+        execute permissions must exist on this file:<br/>
+        <code class="indent">chmod a+x client_create_skeleton.py</code><br/>
+        </p>
+
+        <p>This code must know about the code that actually
+        connects to the messaging system:<br/>
+        <code class="indent">import client_create_class</code><br/>
+        This <code>import</code> loads the easy messaging
+        interface to the lower level ZeroMQ code - but these
+        details have been encapsulated for ease of use.</p>
+
+        <p>The <code>config</code> dictionary allows user
+        configuration for the communications to the server.
+        In more real-life messaging a user will likely
+        change the port and node to match the server's
+        location and port. For example, if the server
+        lives on a system called <code>"hammer"</code>, change the
+        <code>node</code> value to <code>"hammer"</code>.</p>
+
+        <p>Most realistic system use multiple communications
+        channels. The communcations connect by using
+        different ports. The default port for client/server
+        communications in the Easy Py Messaging system
+        uses port 5590. As long as the server port
+        matches, almost any port will work.</p>
+
+        <p>Creating the connection and opening communications
+        channels happens by:<br/>
+        <code class="indent">client = client_create_class.ClientCreateClass(config)</code><br/><code class="indent">client.start()</code><br/>
+
+        <p>Sending and receiving responses can now commence.</p>
+
+        <p>A few silly message get sent and responses printed
+        in the <code>for</code> loop. The actual sending and
+        receiving of a response happens at:<br/>
+        <code class="indent">response = client.send(msg)</code><br/>
+
+        <p>The simple client example then exits.</p>
+
+        <h2>Minimal Server Logic</h2>
+
+        <p>The above client sends messages to a server.
+        The server receives a message and produces a response.
+        The response get returned to the client and the client
+        does whatever with the returned message.</p>
+
+        <p>The Easy Pi Messaging server has simple logic
+        comparable to the client logic. The code:</p>
+
+        <pre>
+#!/bin/env python
+import server_create_class
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
+def handle_request(ident, msg):
+    return ident, msg + '_resp'
+
+if __name__ == "__main__":
+    config = {
+        #'port': 5590,
+        'noisy': True,
+        'in_fcn': handle_request,
+    }
+
+    server = server_create_class.ServerCreateClass(config)
+    server.start()
+
+    while True:
+        server.join(1)
+        </pre>
+
+        <p>Once again, the initial line permits execution of
+        this python script as a command line utlity if
+        execution permissions are set:<br/>
+        <code class="indent">chmod a+x server_create_basic.py</code><br/>
+
+        <p>The connection between the lower level logic that actually
+        performs the messaging and our code happens with:<br/>
+        <code class="indent">import server_create_class</code><br/>
+
+        <p>The next few lines setup a response so the server
+        may become sensitive to Ctrl-C for program termination.
+        Without this use interface feature stopping the server
+        could be cumbersome and confusing.</p>
+
+        <p>The <code>config</code> provides configuration information
+        the underlying logic. These configuration options are:</p>
+
+        <table>
+
+            <tr>
+                <td><b>Name</b></td>
+                <td><b>Default Value</b></td>
+                <td><b>Definition</b></td>
+            </tr>
+
+            <tr>
+                <td>'port'</td>
+                <td>5590</td>
+                <td>The port number for this server. In normal
+                    use this port number will almost always <i>not</i>
+                    use 5590, but something different. Both client
+                    and server <i>must</i> have matching port number
+                    for proper communications.</td>
+            </tr>
+
+            <tr>
+                <td>'noisy'</td>
+                <td>False</td>
+                <td>This setting answers the question, "Does the
+                    server echo traffic to the console?" Except
+                    for debugging, the "noisy" configuration
+                    should always be False. For out example
+                    code, setting this to True allows us to
+                    view traffic on the console.</td>
+            </tr>
+
+            <tr>
+                <td>'in_fcn'</td>
+                <td><i id="shout">NONE!</i></td>
+                <td><code id="shout">in_fcn</code> specfies the function
+                    that handles incoming messages for this
+                    communications channel. The message
+                    gets sent to this function, a response
+                    gets created, and the response gets
+                    communicated back to the client.</td>
+            </tr>
+
+        </table>
+
+        <p>The key to processing incoming messages rests in
+        the <code>in_fcn</code> function. <code>in_fcn</code>
+        <i>must</i> have a user implementation. For this
+        simple example, the string <code>'_resp'</code> gets
+        appended to the input message and returned to the
+        client.</br>
+
+        <pre>
+def handle_request(ident, msg):
+    return ident, msg + '_resp'
+        </pre>
+
+        <p>In the call, <code>ident</code> identifies the source
+        of the message by the client name. This may be useful
+        depending upon message significance.</p>
+
+        <p><code>msg</code> provides the actual message as
+        received by the server. In our vastly simplified example
+        the only handling concatenates <code>'_resp'</code>
+        to the message.</p>
+
+        <p>After processing, the ident and modified message get
+        returned. The user code does not have to worry beyond
+        creating a proper <code>handle_request()</code> function.
+        Internal processing manages receiving, calling
+        <code>handle_request()</code> and responding to the
+        client with the modified message. Simple, right?</p>
+
+
+        <h2>Normal Operation</h2>
+
+        <p>To run the above example, first start the server that
+        responds to our messages:<br/>
+        <code class="indent">python server_create_test.py</code><br/>
+        </p>
+        
+        <p>Then, in a different terminal in the same directory
+        as server_create_test.py, run the above sample:<br/>
+        <code class="indent">python client_create_skeleton.py</code><br/>
+        </p>
+
+        <p>The output should be:</p>
+
+        <pre>
+Connected: tcp://localhost:5590
+Sending : "Hello world!"
+Response: "Hello world!_resp"
+
+Sending : "The seond message"
+Response: "The seond message_resp"
+
+Sending : "abcdefghijklmnopqrstuvwxyz"
+Response: "abcdefghijklmnopqrstuvwxyz_resp"
+
+Sending : "numbers: 0123456789"
+Response: "numbers: 0123456789_resp"
+
+Sending : "qwerty"
+Response: "qwerty_resp"
+        </pre>
+
+        <p> The response has a suffix of <code>_resp</code>
+        appended to each response string. This appended string
+        was supplied by server_client_test.py that indicates
+        it received the message and supplied a distinct
+        response.</p>
+
+        <p>In actual situations a response would become
+        something much different. Perhaps a response of
+        <code>OK</code> or <code>temp=81.5</code> would
+        be more appropriate.</p>
+
+        <h1>Troubleshooting</h1>
+
+        <p>Under normal operations a client becomes locked
+        for only a short time. This time may range from
+        nearly instantaneous to a few seconds. This upon
+        exactly the purpose of the message. If the message
+        simply required a status of something, the response
+        should be very quick. A more complicated message
+        that required something like starting a pump and
+        reporting when it has started could take a few
+        seconds.</p>
+
+        <p>Some reasons a client can get locked:</p>
+
+        <ul>
+
+            <li>The client or server was incorrectly configured. This should
+            happen only during debugging. Check that both client and server
+            use the same port. Use the <code>listening</code> utility to
+            verify that the port has no listeners before staring
+            the example run.</li>
+
+            <li>Did you start the server? The client will wait
+            indefinitely until it can connect. Run the listening
+            utility to verify the server is running:<br/>
+            <code id="indent">listening 5590</code><br/>
+            One instance of the server should appear as output.</li>
+
+            <li>The server has crashed or otherwise can no
+            longer response. In other words, nothing can
+            answer that message.</li>
+
+            <li>The application is in the process of starting
+            and the server has not yet begun to process messages.</li>
+
+            <li>The server is too busy to respond. Hopefully it
+            will respond shortly.</li>
+
+            <li>The system of the client or server is crashing
+            and processes exhibit erratic behavior.</li>
+
+            <li>If you wish to test messaging with another
+            hardware box, the "node" option must be properly
+            configured. Either a name or IP address suffices
+            for the "node" value.</li>
+
+        </ul>
+
+        <h1>"Hardened" Client/Server Examples</h1>
+
+        <p>The client and server examples above provide an
+        introductory toy example of how to write messaging
+        connections. Hardening them into a resonable utility
+        involves a bit more. These "hardened" utilities
+        can serve as debugging aids as you develop your
+        own versions.</p>
+
+        <h2>server_create_test.py Utility</h2>
+
+        <p>This utility acts as a server for a single communications
+        channel. The runtime options:</p>
+
+        <pre>
+python server_create_test.py --help
+server_create_class.py [--help] [--port] [--noisy]
+	--help         = This blurb
+	--port=aport   = Port to expect queries.
+	--noisy        = Noisy reporting. Echo progress.
+        </pre>
+
+        <p>Nothing complicated; this can be useful.</p>
+
+        <h2>client_create_test.py Utility</h2>
+
+        <p>As your server becomes more complicated, sending
+        messages with the client can ease development pains
+        and provide a debugging aid.</p>
+
+        <pre>
+python client_create_test.py --help
+client_create_test.py [--help] [--port] \
+		[--timing] [arg1 arg2 arg3 ...]
+	--help         = This blurb
+	--port=aport   = Port to expect queries.
+	--node=anode   = Node name or IP address of server_create_class.
+		Default is localhost
+	--timing       = Run timing loop only.
+	arg1 ...       = Arbitrary message string
+        </pre>
+
+        <p>This utility sends messages to the server and prints
+        the response. It runs as a command line utlity and send
+        all the args as a single space separated message.</p>
+
+        <p>The "--timing" option sends 1,000 messages to the
+        server for performance timing. This should provide an idea
+        of your application efficiency. This may or may not
+        be an important part of your project. Using this
+        option definitely implies that the server does
+        <i>not</i> use the <code>--noisy</code>; otherwise
+        a lot of printouts will kill any timings!</p>
+
+        <p>As an example of using this utility:<br/>
+        <code class="indent">python client_create_test.py Hello world</code>
+        <br/>results in:<br/>
+        <code class="indent">Hello world_resp</code><br>
+        because the default message processing function simply
+        append "_resp" to a message.</p>
+
+        <h1>More than one messaging requirement per app?</h1>
+
+        <p>Many applications require additional messaging
+        channels. One desktop system that monitors
+        multiple external hardware boxes can send/receive
+        messages from each of the external boxes. Any
+        hardware box can use multiple messaging channels.</p>
+
+        <p>A simple solution exists: implement your own
+        specialized client_create_basic.py and server_create_basic.py
+        for each channel. In the server, you also need to
+        implement your own version of <code>handle_request()</code>.</p>
+
+
+    </body>
+
+</html>
+

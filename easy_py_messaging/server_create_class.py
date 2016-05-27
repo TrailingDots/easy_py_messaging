@@ -1,14 +1,8 @@
 #!/bin/env python
 import zmq
 import sys
-import os
 import threading
 import time
-import signal
-
-
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 
 class ServerCreateClass(threading.Thread):
@@ -28,41 +22,35 @@ class ServerCreateClass(threading.Thread):
             of the log entry.
 
         port = port to use for communications.
-
-        host = name of host. For servers, this may commonly be '*'
-            For clients, this may be 'localhost' or a node name.
-
         """
 
         super(ServerCreateClass, self).__init__()
         self.config = config
         self.workers = []   # Thread the workers are on.
-        self.is_noisy = self.config['noisy']
+        self.is_noisy = self.config.get('noisy', False)
 
 
-    def demandIntKey(self, key):
+    def demandIntPort(self):
         """Insist that key be in the config dict.
         Return the valid in the config dict."""
-        if self.config[key] is None:
-            sys.stdout.write('"%s" required, not found in ClientCreateClass.\n' % key)
-            traceback.print_exc()
-            sys.exit(1)
+        port = self.config.get('port', 5590)
 
         # Insist the key is an integer
         try:
-            port = int(self.config['port'])
+            port = int(port)
         except ValueError as err:
             sys.stdout.write('port "%s" must be an integer. %s\n' %
-                    (str(self.config['port']), str(err)))
+                    (str(port), str(err)))
             sys.exit(1)
         return port
 
     def run(self):
         context = zmq.Context()
         frontend = context.socket(zmq.ROUTER)
-        port = self.demandIntKey('port')
-        endpoint = '%s://*:%s' % (self.config['scheme'], str(port))
-        print 'endpoint: "%s" noisy=%s\n' % (endpoint, self.is_noisy)
+        port = self.demandIntPort()
+        scheme = self.config.get('scheme', 'tcp')
+        endpoint = '%s://*:%s' % (scheme, str(port))
+        sys.stdout.write('endpoint: "%s" noisy=%s\n' % (endpoint, self.is_noisy))
         frontend.bind(endpoint)
 
         backend = context.socket(zmq.DEALER)
@@ -123,96 +111,3 @@ class ServerWorker(threading.Thread):
         worker.close()
         self.kill(self.getpid(), self.SIGINT)
 
-
-# ============================================================
-# ============================================================
-# The code from here onward exists ONLY as a command line
-# driver to test for code coverage and as a convenience
-# in using this class as a command line utility.
-# ============================================================
-# ============================================================
-
-def handle_request(ident, msg):
-    """
-    Handler for incoming messages.
-    This processes the client message and forms
-    a response. In this test case, the response
-    mostly echos the request.
-    ident must *not* be changed.
-    msg may become transformed into whatever.
-    """
-    return ident, msg + '_resp'
-
-
-def usage():
-    """Print the usage blurb and exit."""
-    print 'server_create_class.py [--help] [--port] \\'
-    print '\t\t[--noisy]'
-    print '\t--help         = This blurb'
-    print '\t--port=aport   = Port to expect queries.'
-    print '\t--noisy        = Noisy reporting. Echo progress.'
-    print ''
-    sys.exit(1)
-
-
-def getopts(config):
-    """
-    Read runtime options. Override defaults as necessary.
-    """
-    import getopt
-    try:
-        opts, args = getopt.gnu_getopt(
-                sys.argv[1:], '',
-                ['port=',       # Port to expect messages
-                 'noisy',       # If present, noisy trail for debug
-                 'help',        # Help blurb
-                ])
-    except getopt.GetoptError as err:
-        sys.stdout.write(str(err) + '\n')
-        usage()
-
-    for opt, arg in opts:
-        if opt in ['--help']:
-            usage()
-        elif opt in ['--noisy']:
-            config['noisy'] = True
-            continue
-        elif opt in ['--port']:
-            try:
-                # Insist on a valid integer for a port #
-                _ = int(arg)
-            except ValueError as err:
-                sys.stdout.write(str(err) + '\n')
-                usage()
-            config['port'] = arg
-            continue
-
-    return config
-
-
-def main():
-    """main function"""
-    global is_alive
-    import platform
-    # Default port for this dummy test.
-    port = 5590
-    config = {
-        'scheme': 'tcp',
-        'host': 'localhost',
-        'port': port,
-        'in_fcn': handle_request,
-        'id_name': platform.node(),
-        'noisy': False,
-    }
-
-    config = getopts(config)
-
-    server = ServerCreateClass(config)
-    server.start()
-
-    while is_alive:
-        server.join(1)
-
-
-if __name__ == "__main__":
-    main()
