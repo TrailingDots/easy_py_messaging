@@ -1,26 +1,28 @@
 
 # easy_py_messaging - version 1.0.0
-A simple to use python wrapper around ZeroMQ for distributed systems to use for logging. Especially targeted to Raspberry Pi systems.
+A simple to use python wrapper around ZeroMQ for distributed systems to use for messaging and logging. Especially targeted to Raspberry Pi systems.
 
 ## Welcome
 
-The Easy Py Messaging system provides lightweight messaging in a library which
-implements a ZeroMQ based messaging to privde logging facilities for
-distributed systems.  This robust library extends the ZeroMQ messaging system
-to allow easy interfaces to distributed systems.  While specifically developed
-for distributed Raspberry Pis and similar systems, it is easily installed in
-almost any Linux system. Additionaly, this code seamlessly when all processes
-exist on the same node.
+The Easy Py Messaging system provides lightweight messaging in a library
+which implements a ZeroMQ based messaging to privde logging facilities for
+distributed systems.  This robust library uses the excellent ZeroMQ messaging
+system to allow easy interfacing with distributed systems.  While
+specifically developed for distributed Raspberry Pis and similar systems, it
+is easily installed in almost any Linux system. Additionaly, this code works
+seamlessly when all processes exist on the same node.
 
-This code contains a messaging API, a log collector to receive and store logs,
-a log filter application to receive, store and filter logs. Additional
-support utilities enhance and support this product.
+This code contains a synchronous messaging API, a log collector to receive
+and store logs, a log filter application to receive, store and filter logs.
+Additional support utilities enhance and support this product.
 
 The library contains easy-to-use python classes for interfacing with the lower
 level ZeroMQ messaging system. Users will enjoy the simplicity of interfacing
-these classes with their own applications. Now sending log messages eases the
-problems associated with monitoring and debugging problems with distributed
-systems.
+these classes with their own applications. 
+
+The logging system can easily collect logs from remote systems and store
+them. Now consolidated log messages eases the problems associated with
+monitoring and debugging problems with distributed systems.
 
 
 ## Building and installation
