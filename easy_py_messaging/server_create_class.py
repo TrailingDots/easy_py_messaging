@@ -80,6 +80,7 @@ is_alive = True
 
 class ServerWorker(threading.Thread):
     """ServerWorker"""
+
     def __init__(self, config):
         super(ServerWorker, self).__init__()
         from os import kill, getpid
@@ -90,7 +91,7 @@ class ServerWorker(threading.Thread):
 
         self.context = config['context']
         self.config = config
-        self.is_noisy = self.config['noisy']
+        self.is_noisy = self.config.get('noisy', False)
 
     def run(self):
         global is_alive

@@ -27,18 +27,23 @@ monitoring and debugging problems with distributed systems.
 
 ## Building and installation
 
-See the [INSTALL](./easy_py_messaging/docs/easy_py_messaging.html)
-file included with the distribution.
+Installation consists of the normal:
+``` bash
+git clone https://github.com/TrailingDots/easy_py_messaging.git
+python setup.py install
+```
+"sudo" may or may not be required depending upon your particular
+system configuration.
 
-Installation consists of the normal "sudo python setup.py install"
-process.
+## Documentation and Utilities
 
-## Resources
-
-Extensive documentation is provided with the distribution. Refer to
+The distribution provides extensive documentation. Refer to
 [Easy Py Messaging](./easy_py_messaging/docs/easy_py_messaging.html).
 
-Git repository: [Easy Py Messaging](http://github.com/trailingdots/easy_py_messaging).
+
+## Tutorial
+A tutorial: [Easy Py Messaging Tutorial](./easy_py_messaging/docs/easyMessagingTutorial.html).
+
 
 ## License
 

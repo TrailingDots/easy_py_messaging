@@ -2,14 +2,14 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>Easy Py Messaging</title>
+        <title>Easy Py Messaging Tutorial</title>
         <script src="./javascript/toc.js" type="text/javascript"></script>
         <link rel="stylesheet" href="css/article.css" type="text/css" />
     </head>
 
     <body onload="generateTOC(document.getElementById('toc'));">
 
-        <h1>Easy Py Messaging</h1>
+        <h1>Easy Py Messaging Tutorial</h1>
 
         <div id="toc"></div>
 
@@ -237,6 +237,8 @@ if __name__ == "__main__":
 
         </table>
 
+        <h3 id="handle_request">Process the Incoming Request</h3>
+
         <p>The key to processing incoming messages rests in
         the <code>in_fcn</code> function. <code>in_fcn</code>
         <i>must</i> have a user implementation. For this
@@ -249,7 +251,7 @@ def handle_request(ident, msg):
     return ident, msg + '_resp'
         </pre>
 
-        <p>In the call, <code>ident</code> identifies the source
+        <p>In this call, <code>ident</code> identifies the source
         of the message by the client name. This may be useful
         depending upon message significance.</p>
 
@@ -418,18 +420,66 @@ client_create_test.py [--help] [--port] \
         because the default message processing function simply
         append "_resp" to a message.</p>
 
+        <h1>Absolute Minimal Code Example</h1>
+
+        <p>To demonstrate the absolute minimal code necessary
+        to create and use a messaging channel, the "nano"
+        versions illustrate the ease of using this package.</>
+
+        <p>client_create_nano.py</p>
+
+        <pre class="indent">
+import client_create_class
+client = client_create_class.ClientCreateClass({})
+client.start()
+msg = 'Hello world!'
+print 'Sending : "%s"' % msg
+response = client.send(msg)
+print 'Response: "%s"\n' % response
+client.join()
+        </pre>
+
+        <p>server_create_nano.py</p>
+
+        <pre class="indent">
+import server_create_class
+def handle_request(ident, msg):
+    return ident, msg + '_resp'
+config = { 'in_fcn': handle_request }
+server = server_create_class.ServerCreateClass(config)
+server.start()
+while True:
+    server.join(1)
+        </pre>
+
+        <p>As before, execute the server in one window,<br/><code class="indent">
+            python server_create_nano.py</code><br/>
+        and execute the client in another window:<br/>
+        <code class="indent">python client_create_nano.py</code><br/></p>
+
+        <p>That's 8 lines for the client and 9 lines for the server.
+        Pretty slick, right?</p>
+
+        <p>(Kill the server by sending it into the background: Ctrl-Z
+        and then "kill %1". Getting it to recognize Ctrl-C was the
+        purpose of the signal calls in the more expansive version.)</p>
+
         <h1>More than one messaging requirement per app?</h1>
 
-        <p>Many applications require additional messaging
+        <p>Many applications require multiple messaging
         channels. One desktop system that monitors
         multiple external hardware boxes can send/receive
         messages from each of the external boxes. Any
-        hardware box can use multiple messaging channels.</p>
+        hardware box can use multiple messaging channels.
+        This package recommends using the centralized logging
+        code as one messaging channel.</p>
 
         <p>A simple solution exists: implement your own
         specialized client_create_basic.py and server_create_basic.py
-        for each channel. In the server, you also need to
-        implement your own version of <code>handle_request()</code>.</p>
+        for each channel. In your server code, you also need to
+        implement your own version of <code>handle_request()</code>.
+        See <a href="./easyMessagingTutorial.html#handle_request">
+            handle_request</a> and the surrounding discussion for details.</p>
 
 
     </body>
