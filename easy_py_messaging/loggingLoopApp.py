@@ -30,7 +30,7 @@ class ClientTask(threading.Thread):
         identity = u'worker-%s' % self.id_name
         socket.identity = identity.encode('ascii')
         socket.connect(logConfig.getAppSocket())
-        print('loggingApp: Client %s started' % (identity))
+        print('loggingLoopApp: Client %s started' % (identity))
         poll = self.zmq.Poller()
         poll.register(socket, self.zmq.POLLIN)
 
@@ -51,7 +51,7 @@ class ClientTask(threading.Thread):
 
 
 def main():
-    print '>>> loggingApp: pid %d' % os.getpid()
+    print '>>> loggingLoopApp: pid %d' % os.getpid()
     name = 'RaspPi' + str(os.getpid())
 
     # How many messages to output. If not provided, then

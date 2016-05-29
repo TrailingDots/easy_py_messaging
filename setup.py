@@ -27,6 +27,7 @@ setup_args = dict(
         'easy_py_messaging/bin/logCollector',
         'easy_py_messaging/bin/logCmd',
         'easy_py_messaging/bin/listeningPort',
+        'easy_py_messaging/bin/listening',
         'easy_py_messaging/bin/logFilterApp',
         'easy_py_messaging/bin/loggingLoopApp',
         'easy_py_messaging/bin/loggingSpeedTest',

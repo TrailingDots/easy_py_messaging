@@ -453,7 +453,7 @@ operate and send logs. The last two lines in the file
 create a logging application and start sending logs.
 
 The relevant lines that perform sending logs:
-```
+``` python
     socket.send_string(u'request #%d' % (reqs))
     print('Request #%d sent..' % (reqs))
     time.sleep(1)   # Slow the log stream down!
@@ -468,6 +468,6 @@ The `sleep(1)` slows the logs down to once per second.
 Comment out this line and notice how fast logs get
 printed from `logCollector`!
 
-On my system I have send 100,000 logs in 1.3 seconds.
+On my system I have sent 100,000 logs in 1.3 seconds.
 This is likely fast enough for most applications!
 
