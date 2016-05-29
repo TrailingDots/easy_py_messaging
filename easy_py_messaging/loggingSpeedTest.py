@@ -30,7 +30,7 @@ def main():
     # Send the messages
     iterations = 100000
     for ndx in range(iterations):
-        client.info('ndx=%d' % ndx)
+        client.warning('ndx:%d' % ndx)
 
     elapsed = timeit.default_timer() - startTime
     client.info('%d logs, elapsed time: %f' % (iterations, elapsed))

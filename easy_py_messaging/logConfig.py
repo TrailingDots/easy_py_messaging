@@ -23,7 +23,7 @@ LOG_FILENAME = None
 #    Set level to debug and above for development:
 #        logger.basicConfig(level=logging.WARNING)
 #
-LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'DEBUG'
 
 #
 # -------------------------------

@@ -95,7 +95,7 @@ def main():
     client.start()
 
     msg = ' '.join(sys.argv[1:])
-    return level_name_to_fcn(client)(msg)
+    return level_name_to_fcn(client, logConfig.LOG_LEVEL)(msg)
 
 if __name__ == '__main__':
     sys.exit(main())
