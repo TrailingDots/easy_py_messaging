@@ -5,178 +5,80 @@
         <title>Easy Raspberry Pi Messaging</title>
     </head>
 
-    <h1>Easy Py Messaging Messaging</h1>
+    <h1>Easy Py Messaging</h1>
 
-    <p>The advent of inexpensive but powerful single
-    board computers such as Raspberry Pi, Arduino
-    and others opens the possibly of connecting
-    many of these boards to perform tasks cheaply
-    and conveniently.</p>
+    <p>The advent of inexpensive but powerful single board computers such as Raspberry Pi, Arduino and others opens the possibly of connecting many of these boards to perform tasks cheaply and conveniently.</p>
 
-    <p>Traditionally clusters and grids of computers
-    were relegated to tasks such as  big data,
-    heavy science applications and web services.
-    While clusters and grids of these boards
-    certainly has an appeal, the "normal"
-    Maker can use networked boards as an
-    everyday convenience.</p>
+    <p>Traditionally clusters and grids of computers were relegated to tasks such as  big data, heavy science applications and web services.  While clusters and grids of these boards certainly has an appeal, the "normal" Maker can use networked boards as an everyday convenience.</p>
 
-    <p>Applications around the house that include
-    such mundane tasks as lighting controls, yard
-    monitoring, security concerns, media servers,
-    and more could be connected together to create
-    an easier interface for monitoring and control.</p>
+    <p>Applications around the house that include such mundane tasks as lighting controls, yard monitoring, security concerns, media servers, and more could be connected together to create an easier interface for monitoring and control.</p>
 
     <h2>Does it make sense for your system?</h2>
 
-    <p>Using two or more of these boards suggests
-    that they could communicate. These boards can
-    use wifi to eliminate wiring problems. Wifi
-    USB plugins creates these possiblities. Does
-    it make sense to connect lighting controls with
-    gardening monitors? Perhaps or perhaps not.<p>
+    <p>Using two or more of these boards suggests that they could communicate. These boards can use wifi to eliminate wiring problems. Wifi USB plugins creates these possiblities. Does it make sense to connect lighting controls with gardening monitors? Perhaps or perhaps not.<p>
 
-    <p>Suppose these systems had a central connection
-    such as a desktop or even to another single board
-    computer that collected information on all
-    your boards? How would that help? What about
-    a central repository collecting logs of
-    events in one location?</p>
+    <p>Suppose these systems had a central connection such as a desktop or even to another single board computer that collected information on all your boards? How would that help? What about a central repository collecting logs of events in one location?</p>
 
-    <p>A possible home system:<br/><center><img src="./blog.png"/>
-    </center></p>
+    <p>A possible home system:<br/><center><img src="./easyMessagingBlog.png"/></center></p>
 
-    <p>But you respond, "Networking can be
-    tricky and cumbersome." True, but only if you
-    are not using proper tools. Working with raw
-    sockets is indeed tricky and troublesome.
-    And many of the existing networking packages
-    such as AMQ provide heavy-weight solutions
-    that take lots of time to assimilate.</p>
+    <p>But you respond, "Networking can be tricky and cumbersome." True, but only if you are not using proper tools. Working with raw sockets is indeed tricky and troublesome.  And many of the existing networking packages such as AMQ provide heavy-weight solutions that take lots of time to assimilate.</p>
 
-    <p>Most of us program in python on the boards.
-    Why? Because python allows for simpler solutions.
-    Python has many other reasons for its use.
-    It should be no surprise that easy networking
-    tools are one of these.</p>
+    <p>Most of us program in python on the boards.  Why? Because python allows for simpler solutions.  Python has many other reasons for its use.  It should be no surprise that easy networking tools are one of these.</p> 
 
-    <p>The newly released <a href="https://github.com/TrailingDots/easy_py_messaging.git">
-        Easy Py Messaging</a> provides a comfortable
-    networking solutions to common problems.
-    The target audience of noobies on single board
-    computers should attract the interest of
-    Makers everywhere.</p>
+    <p>The newly released <a href="https://github.com/TrailingDots/easy_py_messaging.git"> Easy Py Messaging</a> provides a comfortable networking solutions to common problems.  The target audience of noobies on single board computers should attract the interest of Makers everywhere.</p>
 
     <p>Specifically, this toolbox provides:</p>
 
     <ul>
 
-        <li>Messaging between different processes whether
-        on the same hardware board or on a remote board.</li>
+        <li>Messaging between different processes whether on the same hardware board or on a remote board.</li>
 
         <li>An incredible logging system.</li>
 
-        <li>Command line utilities that interface
-        with bash scripting. You can now control your apps from bash.</li>
+        <li>Command line utilities that interface with bash scripting. You can now control your apps from bash.</li>
 
-        <li>Comprehensive documentation: "If you can't
-        explain your product to a customer, you
-        don't have a product."</li>
+        <li>Comprehensive documentation: "If you can't explain your product to a customer, you don't have a product."</li>
 
-        <li>A great tutorial. This starts off by
-        running demonstrating that using these
-        tools can take only a few lines of code.</li>
+        <li>A great tutorial. This starts off by running demonstrating that using these tools can take only a few lines of code.</li>
 
-        <li>More extensive examples. Implementing
-        code into real-life programs is not the
-        same as toy demos. Using these tools in
-        <i>your</i> code eases the learning curve
-        associated with new software packages.</li>
+        <li>More extensive examples. Implementing code into real-life programs is not the same as toy demos. Using these tools in <i>your</i> code eases the learning curve associated with new software packages.</li>
 
-        <li>Did I say coded in python? More adventurous
-        Makers have code to examine and possibly hack.</li>
+        <li>Did I say coded in python? More adventurous Makers have code to examine and possibly hack.</li>
 
-        <li>Based on the industry standard for lightning
-        fast messaging: <a href="http://zeromq.org/">ZeroMQ</a>.
-        ZeroMQ provides an intelligent transport layer
-        for your distributeds apps. On my desktop I can get
-        70,000 messages/second; on my Raspberry Pi
-        the same code yields 12,800 messages/second.</li>
+        <li>Based on the industry standard for lightning fast messaging: <a href="http://zeromq.org/">ZeroMQ</a>.  ZeroMQ provides an intelligent transport layer for your distributeds apps. On my desktop I can get 70,000 messages/second; on my Raspberry Pi the same code yields 12,800 messages/second.</li>
 
     </ul>
 
     <h1>The need for client/server</h1>
 
-    <p>In messaging systems one end gets named the
-    server and the other end the client. As an abstract
-    definition, a client relies on a server to provide
-    a resource. More concretely, a client needs information
-    such as a temperature. The server has that temperature
-    reading installed as a peripheral device and sends that
-    reading to the client.</p>
+    <p>In messaging systems one end gets named the server and the other end the client. As an abstract definition, a client relies on a server to provide a resource. More concretely, a client needs information such as a temperature. The server has that temperature reading installed as a peripheral device and sends that reading to the client.</p>
 
-    <p>Servers may manage a wide variety of resources:
-    media such as tunes, external peripherals such as
-    printers, logging files, tons of Raspberry Pi 
-    instrumentation, etc.</p>
+    <p>Servers may manage a wide variety of resources: media such as tunes, external peripherals such as printers, logging files, tons of Raspberry Pi instrumentation, etc.</p>
 
-    <p>Clients send request to the server for
-    use of its resources.</p>
+    <p>Clients send request to the server for use of its resources.</p>
 
-    <p>A single hardware board may exist both as
-    a client and as a server. A raspbian system
-    in your backyard may, as a client, send
-    logs to a central logger. It may, as a server,
-    provide the various reading of connected instrumentation.</p>
+    <p>A single hardware board may exist both as a client and as a server. A raspbian system in your backyard may, as a client, send logs to a central logger. It may, as a server, provide the various reading of connected instrumentation.</p>
 
     <h1>Synchronous Messaging - "Wait for me!"</h1>
 
-    <p>The <a href="https://github.com/TrailingDots/easy_py_messaging.git"> Easy Py Messaging</a> toolbox uses
-    synchronous messaging.</p>
+    <p>The <a href="https://github.com/TrailingDots/easy_py_messaging.git"> Easy Py Messaging</a> toolbox uses synchronous messaging.</p>
 
-    <p>Synchronous messages describe communications
-    between two places where the sender places a
-    message in the sending queue and then waits for
-    a response from the receiver.</p>
+    <p>Synchronous messages describe communications between two places where the sender places a message in the sending queue and then waits for a response from the receiver.</p>
 
-    <p>The sender waits until the receiver responds.
-    Then, and only then, does the send continue
-    processing. The sender and receiver thus
-    work in lockstep: one waits for the other.</p>
+    <p>The sender waits until the receiver responds.  Then, and only then, does the send continue processing. The sender and receiver thus work in lockstep: one waits for the other.</p>
 
 
-    <p>Ease of programming is the <i>major</i> 
-    advantage to sending and receiving messages in lockstep.
-    Writing code with messages in lockstep uses
-    the existing thought patterns of most noobies
-    and intermediate developers. Sending and receiving
-    a message looks similar to calling a routine.</p>
+    <p>Ease of programming is the <i>major</i> advantage to sending and receiving messages in lockstep.  Writing code with messages in lockstep uses the existing thought patterns of most noobies and intermediate developers. Sending and receiving a message looks similar to calling a routine.</p>
 
     <h2>A Note on Asynchronous Messaging</h2>
 
-    <p>Asynchronous messaging can becomes considerably more convoluted than
-    synchronous messaging.  When a message gets placed into a queue, the
-    messaging library returns immediately and the application code
-    continues to execute.  Later, the executing code checks for a response
-    to the message. Sending and receiving become "disconnected".</p>
+    <p>Asynchronous messaging can becomes considerably more convoluted than synchronous messaging.  When a message gets placed into a queue, the messaging library returns immediately and the application code continues to execute.  Later, the executing code checks for a response to the message. Sending and receiving become "disconnected".</p>
     
-    <p>By sending the message and then continuing,
-    the application has the freedom to perform other
-    tasks. <i>BUT</i> it must check on the message
-    response and know how to process that response
-    in the context of the original message.</p>
+    <p>By sending the message and then continuing, the application has the freedom to perform other tasks. <i>BUT</i> it must check on the message response and know how to process that response in the context of the original message.</p>
 
-    <p>By not waiting, asynchronous messaging provides
-    a more responsive system at the expense
-    of added complexity. A web page is a common example
-    of asynchronous code. While a user interacts with the
-    page, behind the scenes the browser may load
-    various files, scripts, etc.</p>
+    <p>By not waiting, asynchronous messaging provides a more responsive system at the expense of added complexity. A web page is a common example of asynchronous code. While a user interacts with the page, behind the scenes the browser may load various files, scripts, etc.</p>
 
-    <p>The general handling of asynchronous code
-    complexity is beyond the scope of the
-    Easy Py Messaging toolbox. (Perhaps later if
-    enough requests?)</p>
+    <p>The general handling of asynchronous code complexity is beyond the scope of the Easy Py Messaging toolbox. (Perhaps later if enough requests?)</p>
 
     <h1>Examples of Code</h1>
 
@@ -200,36 +102,19 @@ if __name__ == "__main__":
         server.join(1)
 </pre>
 
-    <p>The server class gets imported to provide the
-    necessary API.</p>
+    <p>The server class gets imported to provide the necessary API.</p>
 
-    <p>A configuration dictionary <code>config</code>
-    defines a few keywords that configure the underlying
-    server code. "<code>noisy</code>" tells the
-    server to echo input and responses. This aids
-    in visualizing the process of the server
-    transactions.</p>
+    <p>A configuration dictionary <code>config</code> defines a few keywords that configure the underlying server code. "<code>noisy</code>" tells the server to echo input and responses. This aids in visualizing the process of the server transactions.</p>
 
-    <p>The interesting setting of "<code>in_fcn</code>"
-    pass a function to the server. This function,
-    <code>handle_request()</code>,
-    processes the input message into an output response.
-    This response gets send back to the calling client.</p>
+    <p>The interesting setting of "<code>in_fcn</code>" pass a function to the server. This function, <code>handle_request()</code>, processes the input message into an output response. This response gets send back to the calling client.</p>
 
-    <p>In this simple demo, the string <code>"_resp"</code>
-    gets appended to the input. This modified string
-    become the response that the client receives from
-    the server.</p>
+    <p>In this simple demo, the string <code>"_resp"</code> gets appended to the input. This modified string become the response that the client receives from the server.</p>
 
-    <p>In a real application, <code>handle_request()</code>
-    would contain more reasonable logic. <code>handle_request()</code>
-    could read value, start/stop flows, start/stop an arbitrary
-    number of events.</p>
+    <p>In a real application, <code>handle_request()</code> would contain more reasonable logic. <code>handle_request()</code> could read value, start/stop flows, start/stop an arbitrary number of events.</p>
 
     <h2>A Simple Client</h2>
 
-    <p>To access the above server as a client, use the following code for
-    the client.</p>
+    <p>To access the above server as a client, use the following code for the client.</p>
 
     <p>client_create_nano.py</p>
 
@@ -244,38 +129,27 @@ print 'Response: "%s"\n' % response
 client.join()
     </pre>
 
-    <p>The client sends a preset message to the server.
-    The server returns the processed message in <code>response</code>.
+    <p>The client sends a preset message to the server.  The server returns the processed message in <code>response</code>.
 
-    <p>To run these examples, save the above client and 
-    server code in the same directory. Now, open
-    two terminal windows and <code>cd</code> to the
-    directory with the code. </p>
+    <p>To run these examples, save the above client and server code in the same directory. Now, open two terminal windows and <code>cd</code> to the directory with the code. </p>
     
     <p>In one window, start the server: <code>python server_create_nano.py</code></p>
 
     <p>In the other window, start the client: <code>python  client_create_nano.py</code></p>
 
-    <p>The server window will display both input and
-    response.<p>
+    <p>The server window will display both input and response.<p>
 
     <p>The client window will display similar messages.</p>
 
     <p>Congratulations, you have just send messages!</p>
 
-    <p>That's 8 lines for the client and 9 lines for the server.
-    Pretty slick, right?</p>
+    <p>That's 8 lines for the client and 9 lines for the server.  Pretty slick, right?</p>
 
     <h1>Links</h1>
 
-    <p><a href="http://zeromq.org/">ZeroMQ</a>: A lightweight,
-    very fast messaging system. This package uses only a small
-    portion of the potential of ZeroMQ. But notice what powerful
-    results arise from this toolkit.</p>
+    <p><a href="http://zeromq.org/">ZeroMQ</a>: A lightweight, very fast messaging system. This package uses only a small portion of the potential of ZeroMQ. But notice what powerful results arise from this toolkit.</p>
 
-    <p><a href="https://github.com/TrailingDots/easy_py_messaging.git"> Easy Py Messaging</a>: An easy to use toolbox developed for noobies and
-    intermediate developers desiring to communicate using single
-    board computers such as Raspberry Pi and Arduino.</p>
+    <p><a href="https://github.com/TrailingDots/easy_py_messaging.git"> Easy Py Messaging</a>: An easy to use toolbox developed for noobies and intermediate developers desiring to communicate using single board computers such as Raspberry Pi and Arduino.</p>
 
     </body>
 
