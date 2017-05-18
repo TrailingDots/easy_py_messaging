@@ -1,4 +1,7 @@
-
+#!/usr/bin/env python
+#
+# Example of a simpl log collector.
+#
 import zmq
 import sys
 import threading
@@ -27,8 +30,8 @@ class ServerTask(threading.Thread):
 
 class ServerCollector(threading.Thread):
     """
-    Class that collects the logs.
-    For now, only print to the console.
+    Class that collects logs.
+    For now, only print to the terminal.
     """
     def __init__(self, context):
         threading.Thread.__init__ (self)

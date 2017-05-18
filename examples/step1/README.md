@@ -3,7 +3,7 @@
 This code provides a fast demonstration of the power of our
 logging model.
 
-Installing PyZMQ is a prerequesite.
+Installing PyZMQ and ZeroMQ is a prerequesite.
 
 To run this demo, open three terminals.
 

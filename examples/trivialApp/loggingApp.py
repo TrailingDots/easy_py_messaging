@@ -11,13 +11,13 @@ import platform
 
 # The final app will not have this sys.path line.
 # It must be here for demo purposes only!
-sys.path.append('../../lib')
+sys.path.append('../../easy_py_messaging')
 
 import loggingClientTask
 import apiLoggerInit
 
 # "Standard" initialization sequence.
-apiLoggerInit.loggerInit('step2:loggingApp')
+apiLoggerInit.loggerInit()
 logging.basicConfig(level=logging.NOTSET)   # Log everything
 appLog = loggingClientTask.LoggingClientClass(platform.node())
 appLog.start()

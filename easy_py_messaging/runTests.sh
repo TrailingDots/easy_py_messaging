@@ -125,12 +125,14 @@ ECHO () {
 }
 
 # Run various python metric utilities
+# Comment out any utilities not wanted
 CMD "pyflakes *.py"
 CMD "pep8 *.py"
 CMD "pylint *.py"
 CMD "lizard ."
+# End of utilities that examine the source code.
 
-# Env var for tracking subprocesses
+# Environmental varable for tracking subprocesses
 # Ref: http://coverage.readthedocs.org/en/coverage-4.0.3/subprocess.html
 export COVERAGE_PROCESS_START=$PWD/.coveragerc
 ECHO " export COVERAGE_PROCESS_START=$COVERAGE_PROCESS_START"

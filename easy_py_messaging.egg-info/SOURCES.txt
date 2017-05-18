@@ -5,10 +5,12 @@ Makefile
 README.md
 setup.cfg
 setup.py
+whereIsImport.py
 ./easy_py_messaging/__init__.py
 ./easy_py_messaging/apiLoggerInit.py
 ./easy_py_messaging/client_create_basic.py
 ./easy_py_messaging/client_create_class.py
+./easy_py_messaging/client_create_nano.py
 ./easy_py_messaging/client_create_skeleton.py
 ./easy_py_messaging/client_create_test.py
 ./easy_py_messaging/client_sync.py
@@ -27,6 +29,7 @@ setup.py
 ./easy_py_messaging/loggingSpeedTest.py
 ./easy_py_messaging/server_create_basic.py
 ./easy_py_messaging/server_create_class.py
+./easy_py_messaging/server_create_nano.py
 ./easy_py_messaging/server_create_test.py
 ./easy_py_messaging/utils.py
 ./easy_py_messaging.egg-info/SOURCES.txt
@@ -41,6 +44,7 @@ easy_py_messaging/__init__.py
 easy_py_messaging/apiLoggerInit.py
 easy_py_messaging/client_create_basic.py
 easy_py_messaging/client_create_class.py
+easy_py_messaging/client_create_nano.py
 easy_py_messaging/client_create_skeleton.py
 easy_py_messaging/client_create_test.py
 easy_py_messaging/client_sync.py
@@ -59,12 +63,14 @@ easy_py_messaging/loggingLoopApp.py
 easy_py_messaging/loggingSpeedTest.py
 easy_py_messaging/server_create_basic.py
 easy_py_messaging/server_create_class.py
+easy_py_messaging/server_create_nano.py
 easy_py_messaging/server_create_test.py
 easy_py_messaging/utils.py
 easy_py_messaging/bin/__init__.py
 easy_py_messaging/bin/client_create_class
 easy_py_messaging/bin/dirClient
 easy_py_messaging/bin/dirSvc
+easy_py_messaging/bin/listening
 easy_py_messaging/bin/listeningPort
 easy_py_messaging/bin/logCmd
 easy_py_messaging/bin/logCollector
@@ -72,7 +78,6 @@ easy_py_messaging/bin/logFilterApp
 easy_py_messaging/bin/loggingLoopApp
 easy_py_messaging/bin/loggingSpeedTest
 easy_py_messaging/bin/server_create_class
-easy_py_messaging/data/abc.log
 easy_py_messaging/data/bad.conf
 easy_py_messaging/data/bad2.conf
 easy_py_messaging/data/bad3.conf
@@ -96,7 +101,10 @@ easy_py_messaging/data/no_start.conf
 easy_py_messaging/data/no_start1.conf
 easy_py_messaging/docs/LoggingTips.html
 easy_py_messaging/docs/__init__.py
-easy_py_messaging/docs/easyMessaging.html
+easy_py_messaging/docs/easyMessagingBlog.html
+easy_py_messaging/docs/easyMessagingBlog.odg
+easy_py_messaging/docs/easyMessagingBlog.png
+easy_py_messaging/docs/easyMessagingTutorial.html
 easy_py_messaging/docs/easy_py_messaging.html
 easy_py_messaging/docs/examples_messaging.html
 easy_py_messaging/docs/logCollector.html
@@ -132,10 +140,7 @@ easy_py_messaging/docs/images/flowRoot10835.png
 easy_py_messaging/docs/javascript/__init__.py
 easy_py_messaging/docs/javascript/toc.css
 easy_py_messaging/docs/javascript/toc.js
-easy_py_messaging/examples/client_sync.py
-easy_py_messaging/examples/server_sync.py
-easy_py_messaging/examples/bak/asyncclient.py
-easy_py_messaging/examples/bak/asyncsrv.py
+easy_py_messaging/docs/slides/BlazinglyFast.jpg
 easy_py_messaging/test/__init__.py
 easy_py_messaging/test/genData.py
 easy_py_messaging/test/testLogging.py

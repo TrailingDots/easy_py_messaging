@@ -35,6 +35,50 @@ python setup.py install
 "sudo" may or may not be required depending upon your particular
 system configuration.
 
+### Dependencies
+
+Your system may or may not require additional dependencies.
+The project has been careful to provide clean code as determined
+by pyflakes, unit test, python lint, etc.
+
+#### Python pip and setup tools
+
+You might need these tools. Mos python developers have these
+already installed. See <a href="https://packaging.python.org/install_requirements_linux/">Installing pip/setuptools/wheel with Linux Package Managers</a>.
+Windows and OSX are on sister pages.
+
+#### Pyflakes - The passive checker of Python programs
+
+Pyflakes is a code analysis tool for Python. Pyflakes
+does not execute code, but rather analyzes the code.
+See <a href="https://launchpad.net/pyflakes">pyflakes</a> or
+<a href="https://www.blog.pythonlibrary.org/2012/06/13/pyflakes-the-passive-checker-of-python-programs/">pyflakes</a> and follow the
+installation instructions.
+
+#### Lizard - for cyclomatic complexity
+
+Cyclomatic complexity determines the complexity of Python
+code. Reducing the complexity allows code to usually be
+more readable, testable and maintainable.
+
+This may be ignored by commenting out the lizard
+command in runTests.sh.
+
+To install lizard, see <a href="https://github.com/terryyin/lizard">lizard</a>.
+
+#### pep8 - Style Guile for Python Coding
+
+pep8 checks Python code against the recommended style conventions.
+See <a href="https://pypi.python.org/pypi/pep8">pep8 - Python style guide checker</a>.
+
+If desired, comment out the line in runTest.sh to ignore this.
+
+#### Python bindings for ZeroMQ
+
+The Python bindings for Zero MQ are <b>required</b> since the
+intent of the package drives an easy Zero MQ interface.
+
+
 ## Documentation and Utilities
 
 The distribution provides extensive documentation. Refer to

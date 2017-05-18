@@ -1,61 +1,43 @@
 """
+    Execute as:
+        python loggingApp.py 123
+    The "123" is a unique identifier that should
+    be distinct for each logging app.
+    Use a different number for each logging device.
+
     A common application requiring logging.
     The logs are, of course, fabricated.
-    
-    This code illustrates typical usage.
+
+
 """
 import sys
 import time
-import logging
-import platform
-
-# The final app will not have this sys.path line.
-# It must be here for demo purposes only!
-sys.path.append('../../src/lib')
-
 import loggingClientTask
-import apiLoggerInit
 
 # ============================================================
-# "Standard" initialization sequence.
+# Standard initialization sequence.
 # ============================================================
-apiLoggerInit.loggerInit('step1:loggingApp')
-logging.basicConfig(level=logging.NOTSET)   # Log everything
-appLog = loggingClientTask.LoggingClientClass(platform.node())
+appLog = loggingClientTask.LoggingClientClass();
 appLog.start()
 
-# ============================================================
-# A user application may use appLog anywhere to produce
-# logs that get sent to the logCollector process
-# either locally or remotely.
-# ============================================================
-#
-# The following illustrates the use of appLog:
-appLog.info('Starting examples of simple, unstructured logs')
-appLog.debug('Use me when debugging')
-appLog.info('Just a minor note')
-appLog.warning('Start of user logging')
-appLog.debug('A debug message')
-appLog.error('An error has occurred!')
-appLog.critical('Something critical happened')
-
-# Dump mulitple logs all at once.
-for ndx in range(10):
-    appLog.info('type=temperature&ndx=%d' % ndx)
-
-# Start ending a log entry once a second until interupted
+# Start sending a log entry once a second until interupted
 appLog.info('Starting endless logs. Ctl-C to stop this')
 ndx = 0
+
+# If user does not enter a site, supply the site as "123"
+site = "123"
+if len(sys.argv) > 1:
+    site = sys.argv[1]
+
+# Loop once a second to send messages
 while True:
     ndx += 1
-    msg = 'ndx=%d' % ndx
+    msg = 'ndx=%d %s' % (ndx, site)
     print msg
-    appLog.info(msg)
-    time.sleep(1)   # Don't flood the logging service
+    appLog.info(msg)    # Send info only messages for now.
+    time.sleep(1)       # Don't flood the logging service. 1 per second.
 
 # Should never get here
 print 'done'
 
-# Allow a little time to flush the logs.
-time.sleep(1)
 

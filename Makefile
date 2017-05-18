@@ -1,5 +1,5 @@
 DESTDIR=/
-PROJECT=simple_log_messaging
+PROJECT=easy_py_messaging
 BUILDDIR=$(CURDIR)/$(PROJECT)
 LIBDIR=$(CURDIR)/$(PROJECT)
 TOOLSDIR=$(CURDIR)/$(PROJECT)
