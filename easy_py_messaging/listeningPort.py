@@ -21,9 +21,9 @@ def is_listening(port):
 
 
 def listening(port,
-        shortened=False,
-        pid_only=False,
-        proc_only=False):
+              shortened=False,
+              pid_only=False,
+              proc_only=False):
     """
     The return code seems to be reversed, but
     it exists for the common command line version:
@@ -35,10 +35,10 @@ def listening(port,
         sys.exit(127)
 
     proc = subprocess.Popen('/usr/sbin/fuser %s/tcp' %
-            str(port),
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
+                            str(port),
+                            shell=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT)
     line = proc.stdout.readline()
     items = line.split()
     if len(items) == 0:
@@ -64,14 +64,15 @@ def listening(port,
             continue
         # Branch on requested output
         if shortened:
-            sys.stdout.write('%s %s %s\n' % (str(port), pid, ' '.join(items[5:])))
+            sys.stdout.write('%s %s %s\n' % (str(port), 
+                             pid, ' '.join(items[5:])))
         elif pid_only:
             sys.stdout.write('%s\n' % pid)
         elif proc_only:
             sys.stdout.write('%s\n' % ' '.join(items[4:]))
         else:
             sys.stdout.write('Port %s : listening thru pid %s named %s\n' %
-                    (str(port), pid, ' '.join(items[5:])))
+                             (str(port), pid, ' '.join(items[5:])))
         status += 1    # Indicate a found listener
 
     return status
@@ -161,13 +162,13 @@ def main():
     try:
         if len(remainder):
             for aport in remainder:
-                port_int = int(aport)
+                int(aport)  # Insist on a valid integer.
         else:
             remainder = []
             remainder.append(PORT)
     except ValueError as err:
         sys.stderr.write('port number must be all numeric:%s\n' %
-                str(remainder))
+                         str(remainder))
         return 100
     ret_code = 0
     for aport in remainder:

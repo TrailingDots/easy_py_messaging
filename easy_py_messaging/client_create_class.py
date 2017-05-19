@@ -7,7 +7,6 @@
 import sys
 import zmq
 import threading
-import traceback
 import platform
 
 
@@ -22,7 +21,7 @@ class ClientCreateClass(threading.Thread):
         config as a dictionary describes the client configuration.
         All but id_name keywords are required.
 
-        id_name = These names appear in the log entry as the 
+        id_name = These names appear in the log entry as the
                 identifier of the source of the log entry.
 
         port = port to use for communications.
@@ -42,8 +41,8 @@ class ClientCreateClass(threading.Thread):
         try:
             self.port = int(demandKey('port', 5590))
         except ValueError as err:
-            sys.stdout.write('port "%s" must be an integer. %s\n' % 
-                    (str(config['port']), str(err)))
+            sys.stdout.write('port "%s" must be an integer. %s\n' %
+                             (str(config['port']), str(err)))
             sys.exit(1)     # No real way to recover!
 
         self.config = config
@@ -66,10 +65,12 @@ class ClientCreateClass(threading.Thread):
         try:
             self.socket.connect(app_socket)
         except zmq.ZMQError as err:
-            sys.stdout.write('connect ZMQError: "%s": %s\n' % (app_socket, str(err)))
+            sys.stdout.write('connect ZMQError: "%s": %s\n' %
+                             (app_socket, str(err)))
             sys.exit(1)
         except Exception as err:
-            sys.stdout.write('connect Exception: %s: %s\n' % (app_socket, str(err)))
+            sys.stdout.write('connect Exception: %s: %s\n' %
+                             (app_socket, str(err))) 
             sys.exit(1)
         sys.stdout.write('Connected: %s\n' % app_socket)
 

@@ -12,6 +12,7 @@ import platform
 
 import client_create_class
 
+
 def main():
     """
     Basic mainline for basic demo of messaging..
@@ -38,7 +39,7 @@ def main():
     client.start()
 
     sys.stdout.write('Started client, pid %d port %s node %s\n' %
-            (os.getpid(), str(config['port']), config['node']))
+                     (os.getpid(), str(config['port']), config['node']))
 
     # A list of messages that get sent and responses logged.
     msg1 = 'Hello world!'

@@ -46,6 +46,8 @@ if [ x$1 == x ]
 then
     echo "Usage: $0 <port#> [<port2> <port3> ...]"
     echo "No ports suppied, cannot continue"
+    echo "For a range of ports:   $0  `seq 5570 5590`"
+    echo "to get the range of 4470 through and including 5590"
     exit 127  # User must accept this as an error
 fi
 
