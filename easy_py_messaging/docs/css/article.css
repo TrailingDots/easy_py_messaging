@@ -5,6 +5,8 @@ a img {
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 th, td {
@@ -110,6 +112,11 @@ pre {
 	background-color: whitesmoke;
 	border: 1px solid #aaa;
 	padding: 1em;
+}
+
+pre.indent {
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 ul.references {

@@ -76,7 +76,9 @@
         <h2>Minimal Client Logic</h2>
 
         <p>Writing the user client code takes only a few
-        lines of code.</p>
+        lines of code. Place this code in 
+        <code>client_create_skeleton.py</code> and start it
+        in a terminal window:</p>
 
         <pre>
 #!/usr/bin/env python
@@ -152,7 +154,9 @@ if __name__ == '__main__':
         does whatever with the returned message.</p>
 
         <p>The Easy Pi Messaging server has simple logic
-        comparable to the client logic. The code:</p>
+        comparable to the client logic. The code for 
+        <code>server_create_basic.py</code> must be started
+        in another terminal:</p>
 
         <pre>
 #!/bin/env python
@@ -237,7 +241,8 @@ if __name__ == "__main__":
 
         </table>
 
-        <h3 id="handle_request">Process the Incoming Request</h3>
+        <a name="handle_request"></a>
+        <h3>Process the Incoming Request: handle_request</h3>
 
         <p>The key to processing incoming messages rests in
         the <code>in_fcn</code> function. <code>in_fcn</code>
@@ -306,10 +311,16 @@ Response: "qwerty_resp"
         it received the message and supplied a distinct
         response.</p>
 
+        <p>For this tutorial examples, the messages have been
+        hard-coded in to the program. This simplifies the
+        example.</p>
+
         <p>In actual situations a response would become
         something much different. Perhaps a response of
         <code>OK</code> or <code>temp=81.5</code> would
-        be more appropriate.</p>
+        be more appropriate. And, or course, messages
+        would get created from programatic sources
+        instead of hard-coded messages.</p>
 
         <h1>Troubleshooting</h1>
 
@@ -478,7 +489,7 @@ while True:
         specialized client_create_basic.py and server_create_basic.py
         for each channel. In your server code, you also need to
         implement your own version of <code>handle_request()</code>.
-        See <a href="./easyMessagingTutorial.html#handle_request">
+        See <a href="#handle_request">
             handle_request</a> and the surrounding discussion for details.</p>
 
 

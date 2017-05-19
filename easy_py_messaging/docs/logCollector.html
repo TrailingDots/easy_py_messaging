@@ -276,9 +276,9 @@
         <p>ZeroMQ should exist and python code should work with ZeroMQ,
         Test this by:</p>
 
-        <pre >
-        python
-        import zmq</pre>
+        <pre class="indent">
+python
+import zmq</pre>
 
         <p>If errors appear, please refer to the web for workarounds.</p>
 
@@ -330,9 +330,8 @@
         <p>A single log as implemented by this application consists of three
         fields separated by a tab:</p>
 
-        <pre>
-        timestamp \t level \t payload
-        </pre>
+        <pre class="indent">
+timestamp \t level \t payload </pre>
 
         <p>Each log entry saved in the text file has the following
         tab sepatated field:</p>
@@ -418,7 +417,7 @@
             processes or nodes. Logs currently get saved in simple text
             files.</p>
 
-            <pre>
+            <pre class="indent">
 logCollector --help
 logCollector [--log-file=logFilename] [port=&lt;port#&gt;] [-a] [-t]
      [--noisy] [--config=&lt;config-filename&gt;]
@@ -445,8 +444,7 @@ To toggle "noisy" printing of messages received:
 
 To cycle through levels of messages retained:
     kill -USR2 &lt;pid&gt;
-logCollector: exiting:Exiting logCollector
-            </pre>
+logCollector: exiting:Exiting logCollector </pre>
 
             <ul>
 
@@ -498,14 +496,13 @@ logCollector: exiting:Exiting logCollector
 
             <p>The default contents of <code>.logcollectorrc</code>:</p>
 
-            <pre>
+            <pre class="indent">
 {
     "append":   True,
     "out_file": './logs.log',
     "noisy":    False,
     "port":     5570,
-}
-            </pre>
+} </pre>
 
             <ul>
 
@@ -559,7 +556,7 @@ logCollector: exiting:Exiting logCollector
             most modern programming languages: python, NodeJS, JavaScript,
             etc.</p>
 
-            <pre>
+            <pre class="indent">
 logFilterApp [--out-file=outfile] [--in-file=infile]
     [--start=&lt;ISO8601 start date&gt;] 
     [--end=&gt;iso8601 end date&gt;]
@@ -576,8 +573,7 @@ logFilterApp [--out-file=outfile] [--in-file=infile]
  DEBUG,CMD,INFO,WARNING,ERROR,CRITICAL are the levels.
 --JSON          # output format is JSON (default)
 --CSV           # Output format is CSV
---help          # This message
-            </pre>
+--help          # This message </pre>
 
             <ul>
 
@@ -659,13 +655,12 @@ logFilterApp [--out-file=outfile] [--in-file=infile]
         <p>A sample configuration file to read every log entry
         for all times with a level of <code>CMD</code> and above:</p>
 
-        <pre>
+        <pre class="indent">
 cat $HOME/cmd.conf  # List the config file.
 {
 'in_file': 'data/base.data',
 'level': 'CMD',
-}
-        </pre>
+} </pre>
 
         <p>Notice the absense of start and end times. The default
         start time means the start of the Linux epoch. The default
@@ -679,9 +674,8 @@ cat $HOME/cmd.conf  # List the config file.
         you could use this configuration file to read data only for
         Apr 15, 2016:</p>
 
-        <pre>
-logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-05-15T23:59:59.000
-        </pre>
+        <pre class="indent">
+logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-05-15T23:59:59.000 </pre>
 
         <h3>Supplying your own log filters</h3>
 
@@ -750,7 +744,7 @@ logFilterApp --config=$HOME/cmd.conf --start=2016-04-15T00:00:00.000 --end=2016-
         <p>Do not rely on a single timing, but run multiple times and get an
         average:</p>
 
-        <pre>
+        <pre class="indent">
 for ndx in $(seq 10)
 &gt; do
 &gt;    python loggingSpeedTest.py
@@ -774,8 +768,7 @@ for ndx in $(seq 10)
 100000 logs, elapsed time: 1.385899
 72155 messages per second
 100000 logs, elapsed time: 1.273577
-78519 messages per second
-        </pre>
+78519 messages per second </pre>
 
         <h2 id="loggingLoopApp">loggingLoopApp - For debugging your logging system</h2>
 
@@ -799,22 +792,20 @@ for ndx in $(seq 10)
         <p>The terminal running loggingLoopApp will list something similar
         to:</p>
 
-        <pre>
+        <pre class="indent">
 python loggingLoopApp.py
 &gt;&gt;&gt; loggingLoopApp: pid 5413
 loggingLoopApp: Client worker-RaspPi5413 started
 Req #0 sent "request #0"
 Req #1 sent "request #1"
-Req #2 sent "request #2"
-        </pre>
+Req #2 sent "request #2" </pre>
 
         <p>And the console where logCollector reports:</p>
 
-        <pre>
+        <pre class="indent">
 2016-04-20T11:07:21.180	DEBUG	request #0,host=worker-RaspPi5413
 2016-04-20T11:07:22.181	DEBUG	request #1,host=worker-RaspPi5413
-2016-04-20T11:07:23.183	DEBUG	request #2,host=worker-RaspPi5413
-        </pre>
+2016-04-20T11:07:23.183	DEBUG	request #2,host=worker-RaspPi5413 </pre>
 
         <p>The timestamp and worker ID will, of course, be different.</p>
 
@@ -833,7 +824,7 @@ Req #2 sent "request #2"
         <p>This utility must be run on the same node that logCollector
         runs.</p>
 
-        <pre>
+        <pre class="indent">
 listening --help
 
 Give a port that defaults to ZeroMQ port 5570,
@@ -847,8 +838,7 @@ e.g.:
 Return codes:
   0 = Nobody listening to &lt;port&gt;
   127 = Error in port number input.
-  &gt;0 = Number of processing listening to desired port.
-        </pre>
+  &gt;0 = Number of processing listening to desired port. </pre>
 
         <ul>
 
@@ -865,28 +855,48 @@ Return codes:
         with multiple ports, the return code reflects only the state
         of the last port on the command line.</p>
 
-        <pre>
-        listening 5570 5571 5572 5573 5574
-        Port 5570 : listening thru pid 7647 named /usr/lib/...
-        Port 5571 : listening thru pid 7653 named /home/...
-        Port 5573 : Nobody listening
-        Port 5574 : Nobody listening
-        </pre>
+        <pre class="indent">
+listening 5570 5571 5572 5573 5574
+Port 5570 : listening thru pid 7647 named /usr/lib/...
+Port 5571 : listening thru pid 7653 named /home/...
+Port 5573 : Nobody listening
+Port 5574 : Nobody listening </pre>
 
         <p>Start <code>listening</code> on some terminal. The response will be
         one of two possible output: (Of course, your pids will differ)</p>
 
-        <pre>
+        <pre class="indent">
 # logCollector is running
 listeningPort
-Port 5570 : listening thru pid 5933 named /home/trailingdots/.local/bin/logCollector
-        </pre>
+Port 5570 : listening thru pid 5933 named /home/trailingdots/.local/bin/logCollector </pre>
 
-        <pre>
+        <pre class="indent">
 # logCollector is not running, or it may be running on a different port.
 listeningPort
-Port 5570 : Nobody listening
-        </pre>
+Port 5570 : Nobody listening </pre>
+
+        <p>Tip: When dealing with multiple ports, the port numbers
+        will almost always fall within a range. To interrogate this
+        range, use the linux <code>seq</code> command:</p>
+
+        <pre class="indent">
+listening $(seq 5570 5580)
+Port 5570 : listening thru pid 7647 named /usr/lib/...
+Port 5571 : listening thru pid 7653 named /home/...
+Port 5573 : Nobody listening
+Port 5574 : Nobody listening
+        ... </pre>
+
+        <p>Not familiar with the <code>seq</code>
+        command? Try the following at any terminal:</p>
+
+        <pre class="indent">
+seq 5
+seq 5 10
+seq 10 -1 5
+seq --help </pre>
+
+
 
         <p><b>Exercise:</b> Extend listeningPort to use a different node.
         Currently it detects port usage <i>only</i> on the same node as invoked.</p>
@@ -918,7 +928,7 @@ Port 5570 : Nobody listening
 
     <p>The code that implements <code>logCmd</code>:</p>
 
-    <pre>
+    <pre class="indent">
 import sys
 import platform
 import loggingClientTask
@@ -928,8 +938,7 @@ def main():
     client.start()
 
 msg = ' '.join(sys.argv[1:])
-client.info(msg)
-    </pre>
+client.info(msg) </pre>
 
     <p>The two lines of <code>main()</code> contain all needed information to
     send a log to the collector with a level of <code>INFO</code>.  These two
@@ -1029,16 +1038,14 @@ client.info(msg)
     level:</p>
 
     <pre>
-    # In file logConfig.py:
-    LOG_LEVEL = 'WARNING'
-    </pre>
+# In file logConfig.py:
+LOG_LEVEL = 'WARNING' </pre>
 
     <p>To include everything:</p>
 
     <pre>
-    # In file logConfig.py:
-    LOG_LEVEL = 'NOTSET'
-    </pre>
+# In file logConfig.py:
+LOG_LEVEL = 'NOTSET' </pre>
 
     <p>In particular, the <code>CMD</code> level is above <code>WARNING</code>
     and before <code>ERROR</code> priority. This ordering ensures that
@@ -1124,31 +1131,30 @@ client.info(msg)
         logs.)</p>
 
         <pre>
-    # A periodic reading of water and temperature from several instruments
-    2016-03-14T08:00:00.000    INFO    device=water01&amp;state=OFF&amp;host=hydro1
-    2016-03-14T08:00:00.000    INFO    device=tempIN&amp;temp=72.3&amp;host=hydro1
-    2016-03-14T08:00:00.000    INFO    device=tempOUT&amp;temp=69.2&amp;host=hydro1
-    # Water level has gone too low
-    2016-03-14T08:00:07.325    ERROR    device=water01&amp;state=LOW&amp;host=hydro1
-    # Pump started to raise water level. A command was sent
-    # pump01 request to start.
-    2016-03-14T08:00:09.876    INFO    cmd=req&amp;tag=xyz&amp;device=pump01&amp;state=ON&amp;host=hydro1
-    # Command started, remote sends reply. Note use of "tag"
-    2016-03-14T08:00:09.876    INFO    cmd=rep&amp;tag=xyz&amp;host=hydro1
-    # Water level back to normal and turn pump1 off.
-    2016-03-14T08:05:05.325    INFO    device=water01&amp;state=OK&amp;host=hydro1
-    # Command to turn pump01 off.
-    2016-03-14T08:05:15.876    INFO    cmd=req&amp;tag=abc&amp;device=pump01&amp;state=OFF&amp;host=hydro1
-    # Response: Pump01 starting to off state.
-    2016-03-14T08:05:15.876    INFO    cmd=rep&amp;tag=abc&amp;host=hydro1
-    # Periodic readings
-    # One reading per device.
-    2016-03-14T08:10:00.000    INFO    device=water01&amp;temp=71.2&amp;host=hydro1
-    2016-03-14T08:10:00.000    INFO    device=pump01&amp;state=OFF&amp;host=hydro1
-    2016-03-14T08:10:00.000    INFO    device=fan02&amp;state=OFF&amp;host=hydro1
-    2016-03-14T08:10:00.000    INFO    device=temp04&amp;temp=71.1&amp;host=hydro1
-    2016-03-14T08:10:00.000    INFO    device=temp03&amp;temp=70.5&amp;host=hydro1
-        </pre>
+# A periodic reading of water and temperature from several instruments
+2016-03-14T08:00:00.000    INFO    device=water01&amp;state=OFF&amp;host=hydro1
+2016-03-14T08:00:00.000    INFO    device=tempIN&amp;temp=72.3&amp;host=hydro1
+2016-03-14T08:00:00.000    INFO    device=tempOUT&amp;temp=69.2&amp;host=hydro1
+# Water level has gone too low
+2016-03-14T08:00:07.325    ERROR    device=water01&amp;state=LOW&amp;host=hydro1
+# Pump started to raise water level. A command was sent
+# pump01 request to start.
+2016-03-14T08:00:09.876    INFO    cmd=req&amp;tag=xyz&amp;device=pump01&amp;state=ON&amp;host=hydro1
+# Command started, remote sends reply. Note use of "tag"
+2016-03-14T08:00:09.876    INFO    cmd=rep&amp;tag=xyz&amp;host=hydro1
+# Water level back to normal and turn pump1 off.
+2016-03-14T08:05:05.325    INFO    device=water01&amp;state=OK&amp;host=hydro1
+# Command to turn pump01 off.
+2016-03-14T08:05:15.876    INFO    cmd=req&amp;tag=abc&amp;device=pump01&amp;state=OFF&amp;host=hydro1
+# Response: Pump01 starting to off state.
+2016-03-14T08:05:15.876    INFO    cmd=rep&amp;tag=abc&amp;host=hydro1
+# Periodic readings
+# One reading per device.
+2016-03-14T08:10:00.000    INFO    device=water01&amp;temp=71.2&amp;host=hydro1
+2016-03-14T08:10:00.000    INFO    device=pump01&amp;state=OFF&amp;host=hydro1
+2016-03-14T08:10:00.000    INFO    device=fan02&amp;state=OFF&amp;host=hydro1
+2016-03-14T08:10:00.000    INFO    device=temp04&amp;temp=71.1&amp;host=hydro1
+2016-03-14T08:10:00.000    INFO    device=temp03&amp;temp=70.5&amp;host=hydro1 </pre>
 
         <p>Notice the uniformity of the above logs.</p>
 
@@ -1198,9 +1204,8 @@ client.info(msg)
         different python versions due to $PATH. Run this:<p>
 
         <pre>
-        python -c 'import zmq; print(zmq)'
-        sudo python -c 'import zmq; print(zmq)'
-        </pre>
+python -c 'import zmq; print(zmq)'
+sudo python -c 'import zmq; print(zmq)' </pre>
 
         <p>If the <code>import zmq</code> fails, please refer to
         the web. This happened to me and it took a while to straighten
@@ -1280,8 +1285,7 @@ print 'nowTuple:' + str(nowTuple)
 # Convert from the tuple to seconds from the unix epoch.
 secEpoch = time.mktime(nowTuple.timetuple()) + \
             1.0e-6*nowTuple.microsecond
-print 'secEpoch: %s' % secEpoch
-        </pre>
+print 'secEpoch: %s' % secEpoch </pre>
 
         <p>With output: (Obviously this is my current time)</p>
 
@@ -1291,8 +1295,7 @@ unix now:1461605636.495767
 now=2016-04-25 10:33:56.495767
 now8601 = 2016-04-25T10:33:56.495767
 nowTuple:2016-04-25 10:33:56.495767
-secEpoch: 1461605636.5
-        </pre>
+secEpoch: 1461605636.5 </pre>
 
         <h3>To get a now ISO8601 local time string</h3>
         
@@ -1311,8 +1314,7 @@ print 'nowTuple:' + str(nowTuple)
 
 msSinceEpoch = time.mktime(nowTuple.timetuple()) + \
                 1.0e-6*nowTuple.microsecond
-print 'msSinceEpoch:' + str(msSinceEpoch)
-        </pre>
+print 'msSinceEpoch:' + str(msSinceEpoch) </pre>
 
         <h3>Some linux date/time commands</h3>
 
@@ -1343,8 +1345,7 @@ to a more readable form, use a command like this:
 
 Often it is better to output UTC-relative date and time: 
     date -u -d '1970-01-01 946684800 seconds' +"%Y-%m-%d %T %z"
-    2000-01-01 00:00:00 +0000
-</pre>
+    2000-01-01 00:00:00 +0000 </pre>
 
 
         <h1>Original Ideas: ZeroMQ</h1>
@@ -1512,6 +1513,23 @@ app uses the direction only from processes to the loggerControler.</p>
             does not handle multi-line messages intelligently.
             How should a stack-trace become encapsulated as a log?
             What is a good API?</li>
+
+            <li>A port server. This program provides a central
+            repository that associates a symbolic port name with
+            a numeric port. Depending upon use, the port number
+            may be unique within the application, or it may be
+            shared. Clients know about the port server node name
+            and port number from their configuration file. A client
+            queries the port server and uses the return. The port
+            server persists port numbers between program invocations.
+            The start of this utility is in <code>dirClient.py</code>
+            and <code>dirSvc.py</code> but is not yet complete.</li>
+
+            <li>Versioning checks. In a production system with multiple
+            nodes, one or more software versions may exist. Due to
+            programming changes, the messaging may or may not result
+            in inconsistencies that could crash the messaging system.</li>
+
         </ul>
 
 
