@@ -1,6 +1,6 @@
 #!/bin/env python
 
-# Documentation: Please see the usage() function!
+# Documentation: Please see the usage() function below!
 
 import sys
 import subprocess
@@ -27,7 +27,7 @@ def listening(port,
               proc_only=False,
               kill=False):
     """
-    The return code seems to be reversed, but
+    The return code may seem to be reversed, but
     it exists for the common command line version:
     return N    # Indicate found N listeners
     return 0    # Indicates nobody listening
