@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: easy-py-messaging
-Version: 1.0.0
+Version: 1.1.0
 Summary: A simple python-based ZeroMQ based logger for distributed Raspberry Pi systems
 Home-page: http://github.com/trailingdots/easy_py_messaging
 Author: Trailing Dots

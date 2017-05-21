@@ -14,7 +14,7 @@ whereIsImport.py
 ./easy_py_messaging/client_create_skeleton.py
 ./easy_py_messaging/client_create_test.py
 ./easy_py_messaging/client_sync.py
-./easy_py_messaging/dec.py
+./easy_py_messaging/demoSocket.py
 ./easy_py_messaging/dirClient.py
 ./easy_py_messaging/dirSvc.py
 ./easy_py_messaging/listeningPort.py
@@ -48,7 +48,7 @@ easy_py_messaging/client_create_nano.py
 easy_py_messaging/client_create_skeleton.py
 easy_py_messaging/client_create_test.py
 easy_py_messaging/client_sync.py
-easy_py_messaging/dec.py
+easy_py_messaging/demoSocket.py
 easy_py_messaging/dirClient.py
 easy_py_messaging/dirSvc.py
 easy_py_messaging/listeningPort.py
@@ -78,6 +78,7 @@ easy_py_messaging/bin/logFilterApp
 easy_py_messaging/bin/loggingLoopApp
 easy_py_messaging/bin/loggingSpeedTest
 easy_py_messaging/bin/server_create_class
+easy_py_messaging/data/abc.log
 easy_py_messaging/data/bad.conf
 easy_py_messaging/data/bad2.conf
 easy_py_messaging/data/bad3.conf
