@@ -57,7 +57,7 @@ class DirOperations(object):
         # (Does it need saving?)
         self.set_clean()
 
-        self.is_dirty = False
+        self.is_dirty = False   
 
         # Time to persist dir. Seconds from epoch.
         self.is_dirty_persist = self.next_persist_time()
@@ -83,7 +83,7 @@ class DirOperations(object):
         This may be due to a persist command."""
         try:
             pickle.dump(self.directory,
-                        open(self.pickle_filename, 'wb'))
+                    open(self.pickle_filename, 'wb'))
         except Exception as err:
             err_str = 'to_pickle=cannot_open,file=%s,err=%s' % \
                     (self.pickle_filename, str(err))
@@ -104,14 +104,14 @@ class DirOperations(object):
                 pass    # Ignore empty file
         else:
             self.client.critical('from_pickle=%s,status=not_found' %
-                                 self.pickle_filename)
-            sys.stderr.write('FATAL ERROR: Cannot process memory_file:"%s"\n' %
-                             self.pickle_filename)
+                    self.pickle_filename)
+            sys.stderr.write('FATAL ERROR: Cannot process memory_file: "%s"\n' % 
+                    self.pickle_filename)
             sys.exit(1)
 
         self.set_clean()
         self.client.debug('from_pickle=%s,status=OK' %
-                          self.pickle_filename)
+                self.pickle_filename)
 
     def persist_timeout_check(self):
         """On a time out, conditionally persist the dictionary
@@ -136,8 +136,7 @@ class DirOperations(object):
         associated with this object and this makes
         extensions much easier.  (We'll see...)
         """
-        if NOISY:
-            print 'add_key_val(%s, %s)' % (str(key), str(value))
+        if NOISY: print 'add_key_val(%s, %s)' % (str(key), str(value))
         if key not in self.directory:
             self.set_dirty()
         dir_entry = DirEntry(key, value)
@@ -220,8 +219,7 @@ class DirOperations(object):
         else:
             port = port.value
         self.client.info('get_port_key=%s,port=%s' % (key, port))
-        if NOISY:
-            print  'get_port(%s) = %s' % (key, port)
+        if NOISY: print  'get_port(%s) = %s' % (key, port)
         return port
 
     def del_key(self, key):
@@ -339,11 +337,11 @@ def main():
         sys.stderr.write('ZMQError: %s\n' % err)
         sys.stderr.write('Please kill other instances of this program.\n')
         sys.stderr.write('Or: another program may be using port %s\n' %
-                         str(port))
+            str(port))
         sys.exit(1)
 
     sys.stdout.write('dirSvc started. pid %s port %s\n' %
-                     (str(os.getpid()), str(port)))
+        (str(os.getpid()), str(port)))
 
     dir_ops = DirOperations(config)
 
@@ -355,13 +353,11 @@ def main():
         # Notice this recv waits forever. This implies
         # a dirty directory will not get cleared.
         # Should a timeout change this logic?
-        if NOISY:
-            print("I: Normal receive port: %s)" % port)
+        if NOISY: print("I: Normal receive port: %s)" % port)
         request = server.recv()
 
         port = dir_ops.get_port(request)
-        if NOISY:
-            print("I: Normal request (%s:%s)" % (request, str(port)))
+        if NOISY: print("I: Normal request (%s:%s)" % (request, str(port)))
         server.send(str(port))
         if str(port) == '@EXIT':
             break

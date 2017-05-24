@@ -51,15 +51,14 @@ class DirClient(object):
             self.client.connect(self.server_endpoint)
         except zmq.ZMQError as err:
             sys.stderr.write('Server endpoint: %s  Error:%s\n' %
-                             (self.server_endpoint, str(err)))
+                    (self.server_endpoint, str(err)))
             sys.stderr.write('Likely an invalid node designation\n')
             sys.exit(1)     # Cannot continue  - invalid endpoint!
 
         self.poll = self.zmq.Poller()
         self.poll.register(self.client, self.zmq.POLLIN)
-        if self.config['noisy']:
-            print("I: Connecting to server... port %s" %
-                  str(self.config['port']))
+        if self.config['noisy']: print("I: Connecting to server... port %s" %
+            str(self.config['port']))
         self.loggingClient = self.logCollectorSetup()
         self.loggingClient.info('app=DirClient,status=starting')
 
@@ -86,8 +85,7 @@ class DirClient(object):
         retries_left = self.request_retries
         while retries_left:
             request = str(name)
-            if self.config['noisy']:
-                print("I: Sending (%s)" % request)
+            if self.config['noisy']: print("I: Sending (%s)" % request)
             self.loggingClient.debug('app=dirClient,request=%s' % name)
             self.client.send(request)
 
@@ -98,27 +96,22 @@ class DirClient(object):
                     reply = self.client.recv()
                     if not reply:
                         break
-                    if self.config['noisy']:
-                        print("I: Server replied (%s)" % reply)
+                    if self.config['noisy']: print("I: Server replied (%s)" % reply)
                     self.loggingClient.debug('app=dirClient,request=%s,reply=%s' %
                             (str(request), str(reply)))
                     return reply
 
                 else:
-                    if self.config['noisy']:
-                        print("W: No response from server, retrying...")
+                    if self.config['noisy']: print("W: No response from server, retrying...")
                     # Socket is confused. Close and remove it.
                     self.client.setsockopt(self.zmq.LINGER, 0)
                     self.client.close()
                     self.poll.unregister(self.client)
                     retries_left -= 1
                     if retries_left == 0:
-                        if self.config['noisy']:
-                            print("E: Server seems to be offline, abandoning")
+                        if self.config['noisy']: print("E: Server seems to be offline, abandoning")
                         break
-                    if self.config['noisy']:
-                        print("I: Reconnecting and resending (%s)" %
-                              request)
+                    if self.config['noisy']: print("I: Reconnecting and resending (%s)" % request)
                     # Create new connection
                     self.client = self.context.socket(self.zmq.REQ)
                     self.client.connect(self.server_endpoint)

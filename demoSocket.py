@@ -27,8 +27,6 @@ def usage():
 
 def main():
     port = DEFAULT_PORT
-    print "sys.argv:" + str(sys.argv)
-    print 'len(sys.argv):' + str(len(sys.argv))
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     print 'Listening on port ' + str(port)
@@ -36,12 +34,14 @@ def main():
     # Create an INET, STREAMing socket
     serversocket = socket.socket(
         socket.AF_INET, socket.SOCK_STREAM)
+
     # bind the socket to a public host,
     # and a well-known port
-    serversocket.bind((socket.gethostname(), port))
+    status = serversocket.bind((socket.gethostname(), port))
+
     # Become a server socket.
     # Allow up to 5 connections.
-    serversocket.listen(5)
+    status = serversocket.listen(5)
 
     # Now that we have a "server" socket, listening on 
     # a port, we can enter the mainloop:

@@ -31,10 +31,6 @@ setup_args = dict(
         'easy_py_messaging/bin/logFilterApp',
         'easy_py_messaging/bin/loggingLoopApp',
         'easy_py_messaging/bin/loggingSpeedTest',
-        'easy_py_messaging/bin/dirClient',
-        'easy_py_messaging/bin/dirSvc',
-        'easy_py_messaging/bin/client_create_class',
-        'easy_py_messaging/bin/server_create_class',
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',

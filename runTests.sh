@@ -154,12 +154,23 @@ ECHO () {
     echo "ECHO ${BASH_LINENO[0]}: $*"
 }
 
+LISTENING=\"$(/usr/bin/env listening)\"
+if [ -z $LISTENING ] ; then
+    echo Cannot find the listening utility.
+    echo "listening" must be installed as a prerequesite.
+    echo clone https://github.com/TrailingDots/ListeningPort
+    echo and copy listeningPort.py to somewhere in your $PATH.
+    echo  A common location is in $HOME/bin
+    exit 1
+fi
+ECHO "LISTENING found at $(which listening)"
+
 # Run various python metric utilities
 # Comment out any utilities not wanted
-CMD "pyflakes *.py"
-CMD "pep8 *.py"
-#CMD "pylint *.py"        # pylint gets "Inconsistent hierarchy"
-CMD "lizard -l python ."
+#CMD "pyflakes *.py "
+#CMD "pep8 *.py "
+#CMD "pylint *.py "        # pylint gets "Inconsistent hierarchy"
+#CMD "lizard -l python . "
 # End of utilities that examine the source code.
 
 # Environmental varable for tracking subprocesses
@@ -202,8 +213,8 @@ ECHO Remove all .coverage.*
 ECHO Remove .coverage_html/*
 CMD "rm -rf .coverage_html"
 
-ECHO "Before starting, make sure the logCollector exists."
-CMD "$TOOLS_DIR/listeningPort.py --kill $(seq -s ' ' 5570 5580)"
+ECHO "Before starting, make sure the logCollector.py exists."
+CMD "listening --kill $(seq -s ' ' 5570 5580)"
 
 #
 export COVERAGE=1 
@@ -216,21 +227,21 @@ $GEN_DATA >$DATA_LOG    # CMD does not handle redirection properly.
 
 
 ECHO "================= Run client/server create_test ============"
-ECHO "First - some errors with server_create_test"
+ECHO "First - some errors with server_create_test.py"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --help"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --port=XYZ"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --noisy --port=XYZ"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py --BogusOption"
 
 ECHO ""
-ECHO "Start server_create_test"
+ECHO "Start server_create_test.py"
 ECHO "coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py "
 coverage run --branch --parallel-mode $LIB_DIR/server_create_test.py &
-ECHO "server_create_test should have port 5590, the default port for this app"
+ECHO "server_create_test.py should have port 5590, the default port for this app"
 sleep 1
-CMD "$LIB_DIR/listeningPort.py 5590"
+CMD "listening 5590"
 
-ECHO "Send some messages to server_create_test"
+ECHO "Send some messages to server_create_test.py"
 ECHO "Using defaults from command line"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py This is a test"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py This is a test"
@@ -248,32 +259,21 @@ ECHO " Some failures - invalid option"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --foobar=XYZ This is another test"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py --help"
 
-# Stop that server_create_test
+# Stop that server_create_test.py
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/client_create_test.py Get out of this program: @EXIT"
 
 
-#######################################################################
-########### FIXME! Not a cool unit test!!!!
-#######################################################################
-#ECHO "=============== Run unit tests ================"
-#ECHO "logCollector still going before testLogging.py ...\?"
-#CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py "
-#
-#CMD_PASS "coverage run --branch --parallel-mode $TEST_DIR/testLogging.py "
-#
-#ECHO "logCollector still going after testLogging.py  ...\?"
-#CMD_PASS "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5590)"
-#echo "=============== End of unit tests ================"
-
 
 ECHO "Need to get a timed alarm in case the collector does not start."
-ECHO "echo ====starting logCollector===="
+ECHO "echo ====starting logCollector.py===="
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py &
 COL_PID=$!
-ps x | grep logCollector
+ECHO "Allow the logCollector time to start"
+CMD_PASS "sleep 2"
+ps x | grep logCollector.py
 
-ECHO "The logCollector must be running in port 5570"
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short 5570"
+ECHO "The logCollector.py must be running in port 5570"
+CMD_RC 1 "listening --short 5570"
 
 ECHO Dos not actually kill, just sends a signal.
 ECHO "Test the operations of 'kill -USR[12] <pid>"
@@ -285,29 +285,13 @@ CMD_PASS "kill -USR2 $COL_PID"
 CMD_PASS "kill -USR2 $COL_PID"
 CMD_PASS "kill -USR2 $COL_PID"
 
-ECHO "Run a few simple logs to the logCollector"
+ECHO "Run a few simple logs to the logCollector.py"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingClientTask.py "
 
 # Expect return code of 1 because only port 5570 should be running.
-CMD_RC 1 "$TOOLS_DIR/listeningPort.py 5570"
+CMD_RC 1 "listening 5570"
 
-ECHO "Test the listening port utility"
-ECHO "HELP always return status code 1"
-CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --help "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py 5570 "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short 5570 "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short  "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --pid 5570 "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --pid  "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --proc  "
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --proc 5570 "
-CMD_RC 0 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --proc 6666 "
-ECHO "Invalid run-time switch"
-CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --bogus 6666 "
-ECHO "Invalid command line argument"
-CMD_FAIL "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py bogus-port "
-
-ECHO "kill logCollector and restart with output to /dev/null for Speed test"
+ECHO "kill logCollector.py and restart with output to /dev/null for Speed test"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
 ECHO " coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --log-file=/dev/null  " 
 # Need to start background tasks easily and manageable.
@@ -315,22 +299,22 @@ $LIB_DIR/logCollector.py --log-file=/dev/null &
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingSpeedTest.py "
 
-ECHO "Stop logCollector with /dev/null output, open again with echo"
+ECHO "Stop logCollector.py with /dev/null output, open again with echo"
 coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT
 CMD "/usr/bin/sleep 2"
 
-ECHO "logCollector still going...\? Should have been killed."
-CMD_RC 1 "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5590)"
-CMD "ps aux | grep logCollector"
+ECHO "logCollector.py still going... Should have been killed."
+CMD_RC 1 "listening --short $(seq -s ' '  5570 5590)"
+CMD "ps aux | grep logCollector.py"
 
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py &
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/loggingLoopApp.py 5   "
 
-ECHO "Passing logCmd"
+ECHO "Passing logCmd.py"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py Testing a new log config option." 
 
-ECHO Misc logCmd testing
+ECHO Misc logCmd.py testing
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --help"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --xxx stuff"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --port=XYZ stuff"
@@ -349,13 +333,13 @@ CMD_FAIL "coverage run --branch --parallel-mode $GEN_DATA --config=bogusFilter "
 ECHO An invalid filter
 CMD_FAIL "coverage run --branch --parallel-mode $GEN_DATA ----config=bogusFilter "    # An invalid filter
 
-ECHO Coverage for apiLoggerInit
+ECHO Coverage for apiLoggerInit.py
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/apiLoggerInit.py "
 
-ECHO "logCollector still going...\?"
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short 5570"
+ECHO "logCollector.py still going...\?"
+CMD_RC 1 "listening --short 5570"
 ECHO Multiple runs passing various flags both valid and bogus.
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON "
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --level=ERROR "
@@ -427,7 +411,7 @@ CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-fi
 ECHO start and end dates
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logFilterApp.py --in-file=$DATA_LOG --JSON --start=2016-03-14T08:00:00.000 end=2016-03-14T08:05:15.876 "
 
-ECHO "Work with dirSvc - Directory Service"
+ECHO "Work with dirSvc.py - Directory Service"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --help"
 ECHO Pass invalid run time option
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --FooBar"
@@ -435,18 +419,19 @@ ECHO Pass invalid port number
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --clear --port=XYZ"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --noisy --memory-file=/ --port=1234"
 
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short 5570"
+# Expect port 5570 is in use
+CMD_RC 1 "listening --short 5570"
 
 # Start the directory server in the background.
 ECHO coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py 
 coverage run --branch --parallel-mode $LIB_DIR/dirSvc.py --noisy &
 
-# Start a logCollector in the background as well
+# Start a logCollector.py in the background as well
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --noisy &
 
-CMD_RC 1 "coverage run --branch --parallel-mode $TOOLS_DIR/listeningPort.py --short 5570"
+CMD_RC 1 "listening --short 5570"
 
-echo " If dirClient passes, it means it could send the params to dirSvc."
+echo " If dirClient.py passes, it means it could send the params to dirSvc.py."
 echo " Passing does not mean the parameter is valid!"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy foobar"
@@ -481,21 +466,21 @@ ECHO "Try to delete a bogus name from the directory"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py ~bogusName"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @DIR"
 
-ECHO "Various commands to the driver dirClient for coverage purposes."
+ECHO "Various commands to the driver dirClient.py for coverage purposes."
 ECHO "A request for help is considered a failure"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --help abc def"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --port=XYZ"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy --clear"
 CMD_FAIL "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --bogusArg"
 
-CMD "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5580)"
+CMD "listening --short $(seq -s ' '  5570 5580)"
 
 # An orderly exit so coverage can collect the runs.
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/dirClient.py --noisy @EXIT"
-CMD "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5580)"
+CMD "listening --short $(seq -s ' '  5570 5580)"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT"
 
-CMD "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5580)"
+CMD "listening --short $(seq -s ' '  5570 5580)"
 
 
 ECHO Log Filter with configuration file. Notice in-file override
@@ -524,7 +509,7 @@ iszero=$?
 if [ $iszero -eq 1 ]
 then
     echo '==============================================================================='
-    echo logFilterApp with in-file and in-file should have produced output, but did not.
+    echo logFilterApp.py with in-file and in-file should have produced output, but did not.
     echo '==============================================================================='
 fi
 rm $TMP     # Clean up tmp file.
@@ -538,13 +523,13 @@ iszero=$?
 if [ $iszero -eq 1 ]
 then
     echo '==============================================================================='
-    echo logFilterApp with in-file and in-file should have produced output, but did not.
+    echo logFilterApp.py with in-file and in-file should have produced output, but did not.
     echo '==============================================================================='
 fi
 CMD "rm $TMP"     # Clean up tmp file.
     
 
-ECHO "Test various command line options for the logCollector"
+ECHO "Test various command line options for the logCollector.py"
 ECHO "Set log file to ./abc.log"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --config=$DATA_DIR/logRC.conf --log-file=$DATA_DIR/abc.log --trunc &
 CMD_PASS "$LIB_DIR/logCmd.py Testing a new log config option." 
@@ -558,7 +543,7 @@ fi
 
 export TMP_CONF=/tmp/$$.conf    # Work configuration file
 export TMP_LOG=./zzz.log        # Test log file in local dir.
-ECHO  " Create a logCollector config file in $TMP_CONF "
+ECHO  " Create a logCollector.py config file in $TMP_CONF "
 cat >$TMP_CONF <<EOF
 {
     "append":   True,
@@ -592,16 +577,16 @@ fi
 CMD "rm $TMP_CONF"
 CMD "rm $TMP_LOG"
 
-CMD "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5580)"
+CMD "listening --short $(seq -s ' '  5570 5580)"
 
 ECHO ""
-ECHO "Cover signal interrupt handlers in logCollector"
+ECHO "Cover signal interrupt handlers in logCollector.py"
 ECHO ""
 ECHO "Use kill -INT pid"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py&
 PID=$!
 CMD_PASS "sleep 2"  # Let the log collector start
-ECHO PID logCollector=$PID
+ECHO PID logCollector.py=$PID
 CMD_PASS "kill -INT $PID"
 
 
@@ -609,7 +594,7 @@ ECHO "Use kill -TERM pid"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py&
 PID=$!
 CMD_PASS "sleep 2"  # Let the log collector start
-ECHO PID logCollector=$PID
+ECHO PID logCollector.py=$PID
 CMD_PASS "kill -TERM $PID"
 
 
@@ -617,20 +602,20 @@ ECHO "Use kill -USR1 pid"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py&
 PID=$!
 CMD_PASS "sleep 2"  # Let the log collector start
-ECHO PID logCollector=$PID
+ECHO PID logCollector.py=$PID
 CMD_PASS "kill -USR1 $PID"
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
 
-CMD "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5580)"
+CMD "listening --short $(seq -s ' '  5570 5580)"
 
-ECHO "Various options to logCollector"
+ECHO "Various options to logCollector.py"
 ECHO "help option passed"
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --help
 
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py -a &
 PID=$!
 CMD_PASS "sleep 1"  # Let the log collector start
-ECHO PID logCollector=$PID
+ECHO PID logCollector.py=$PID
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
 
 ECHO "Non-numeric port test"
@@ -646,17 +631,17 @@ PID=$!
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --quiet &
 PID=$!
 CMD_PASS "sleep 1"  # Let the log collector start
-ECHO PID logCollector=$PID
+ECHO PID logCollector.py=$PID
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py @EXIT "
 
 
 coverage run --branch --parallel-mode $LIB_DIR/logCollector.py --port=5572 &
 PID=$!
 CMD_PASS "sleep 1"  # Let the log collector start
-ECHO PID logCollector=$PID
+ECHO PID logCollector.py=$PID
 CMD_PASS "coverage run --branch --parallel-mode $LIB_DIR/logCmd.py --port=5572 @EXIT "
 
-CMD "$TOOLS_DIR/listeningPort.py --short $(seq -s ' '  5570 5580)"
+CMD "listening --short $(seq -s ' '  5570 5580)"
 
 
 CMD "coverage combine  "
