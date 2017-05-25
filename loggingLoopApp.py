@@ -6,7 +6,6 @@ import os
 import sys
 import time
 import threading
-import logConfig
 import signal
 
 

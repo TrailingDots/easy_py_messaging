@@ -167,10 +167,10 @@ ECHO "LISTENING found at $(which listening)"
 
 # Run various python metric utilities
 # Comment out any utilities not wanted
-#CMD "pyflakes *.py "
-#CMD "pep8 *.py "
+CMD "pyflakes *.py "
+CMD "pep8 *.py "
 #CMD "pylint *.py "        # pylint gets "Inconsistent hierarchy"
-#CMD "lizard -l python . "
+CMD "lizard -l python . "
 # End of utilities that examine the source code.
 
 # Environmental varable for tracking subprocesses

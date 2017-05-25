@@ -14,8 +14,6 @@
 import sys
 import socket
 
-import pdb
-
 DEFAULT_PORT = 5570
 
 def usage():
@@ -37,11 +35,11 @@ def main():
 
     # bind the socket to a public host,
     # and a well-known port
-    status = serversocket.bind((socket.gethostname(), port))
+    serversocket.bind((socket.gethostname(), port))
 
     # Become a server socket.
     # Allow up to 5 connections.
-    status = serversocket.listen(5)
+    serversocket.listen(5)
 
     # Now that we have a "server" socket, listening on 
     # a port, we can enter the mainloop:
