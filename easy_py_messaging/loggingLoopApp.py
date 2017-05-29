@@ -6,7 +6,6 @@ import os
 import sys
 import time
 import threading
-import logConfig
 import signal
 
 
@@ -29,6 +28,7 @@ class ClientTask(threading.Thread):
         socket = self.context.socket(self.zmq.DEALER)
         identity = u'worker-%s' % self.id_name
         socket.identity = identity.encode('ascii')
+        import logConfig
         socket.connect(logConfig.getAppSocket())
         print('loggingLoopApp: Client %s started' % (identity))
         poll = self.zmq.Poller()

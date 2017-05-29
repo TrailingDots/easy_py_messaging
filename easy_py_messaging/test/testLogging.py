@@ -17,6 +17,8 @@ abs_dir = os.path.dirname(abs_file)
 
 sys.path.append(abs_dir + '/..')
 sys.path.append(abs_dir + '/../../')
+HOME_BIN = os.getenv('HOME') + '/bin'
+sys.path.append(HOME_BIN)
 
 from easy_py_messaging import apiLoggerInit
 from easy_py_messaging.utils import bcolors
@@ -27,7 +29,7 @@ from easy_py_messaging import utils
 from easy_py_messaging import logCollector
 from easy_py_messaging import loggingSpeedTest
 from easy_py_messaging import loggingClientTask
-from easy_py_messaging import listeningPort
+import listening
 
 # Name/Directory service - both client and server
 from easy_py_messaging import dirSvc
@@ -845,7 +847,7 @@ class TestDirectoryService(unittest.TestCase):
                 TestDirectoryService.LOG_PORT
         self.log_client.info(log_entry)
 
-        if listeningPort.is_listening(TestDirectoryService.LOG_PORT):
+        if listening.is_listening(TestDirectoryService.LOG_PORT):
             sys.stdout.write('logCollector already running.\n')
         else:
             sys.stdout.write('--- TestDirectoryService: setUp() port %s\n' %
@@ -854,7 +856,7 @@ class TestDirectoryService(unittest.TestCase):
             sys.stdout.write('--- TestDirectoryService: logCollector setUp()\n')
             time.sleep(1)
 
-        if listeningPort.is_listening(TestDirectoryService.DIR_SVC_PORT):
+        if listening.is_listening(TestDirectoryService.DIR_SVC_PORT):
             sys.stdout.write('dirSvc already running.\n')
         else:
             sys.stdout.write('--- TestDirectoryService: dirSvc setUp() port %s\n' %

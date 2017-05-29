@@ -1,5 +1,4 @@
 #!/bin/env python
-import zmq
 import sys
 import signal
 import server_create_class
@@ -56,7 +55,7 @@ def getopts(config):
         elif opt in ['--port']:
             try:
                 # Insist on a valid integer for a port #
-                _ = int(arg)
+                int(arg)
             except ValueError as err:
                 sys.stdout.write(str(err) + '\n')
                 usage()

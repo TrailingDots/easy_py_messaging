@@ -1,0 +1,34 @@
+Simple Log Messaging Change Log
+===================================
+
+Version 1.1.0 - May 25, 2017
+------------------------------
+* Significant re-org due to installation issues.
+  Python REALLY need a new philosophy for 
+  installing.
+
+  Moved the socket utility listeningPort.py
+  into its own github at:
+  https://github.com/TrailingDots/ListeningPort.git
+  The blog is at:
+  https://CraftsmanshipForSoftware.com
+
+  Updated the runTests.sh to better control
+  the test environment. The only outstanding
+  feature I want to add is the poor interaction
+  with background processes.
+
+  Need to review and re-org the documentation.
+  The number of html docs, 5, produces a sense
+  of confusion in user - my mind reading.
+  Consolidate this into a fewer number:
+  a tutorial and in depth docs.
+
+  The Makefile targeting installation needs
+  serious work. One user rightfully complained
+  about this.
+
+
+Version 1.0.0 - April 21, 2016
+------------------------------
+* Initial public release.

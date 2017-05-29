@@ -33,7 +33,7 @@ def main():
         sys.stderr.write('ZMQError: %s\n' % err)
         sys.stderr.write('Please kill other instances of this program.\n')
         sys.stderr.write('Or: another program may be using port %s\n' %
-            str(port))
+                         str(port))
         sys.exit(1)
 
     sys.stdout.write('client_sync started. pid %s port %s\n' %
@@ -51,10 +51,12 @@ def main():
         # Notice this recv waits forever. This implies
         # a dirty directory will not get cleared.
         # Should a timeout change this logic?
-        if NOISY: print("I: Normal send/recv port: %s)" % port)
+        if NOISY: 
+            print("I: Normal send/recv port: %s)" % port)
         request = 'Msg %d' % sequence
         response = send_recv.send(request)
-        if NOISY: print("I: Normal response (%s:%s)" % (request, response))
+        if NOISY: 
+            print("I: Normal response (%s:%s)" % (request, response))
         if str(response) == '@EXIT':
             break
         sequence += 1

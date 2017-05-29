@@ -16,23 +16,24 @@
         <p>This section provides a cookbook approach to
         incorporating messaging into your code. </p>
 
-        <div class="info">The user written examples in this secrion do not
+        <div class="info">The user written examples in this section do not
         get installed. They are meant to be run from the distribution
         directories. This simple, basic code may, however, become an
         integral part of you applications.</div>
             
-        <p>The target audience is noobies on RaspberryPi hardware with a
+        <p>The target audience is noobies using RaspberryPi hardware with a
         Raspian OS. Other platforms such as arduino, ubuntu, debian, OSX
         should run fine as well. Most linux systems should work as well.
         Thus, the terminology hopefully provides an easy, simple way to
-        program your messaging.</p>
+        program your messaging requirements.</p>
 
         <p>The user must write code to connect the
         message sender and the message receiver. The commonly
         used name of client and server specify who sends and
-        who receives.</p>
+        who receives. for many applications user written code
+        can be minimal.</p>
 
-        <p>In this system when a client sends a message,
+        <p>In this system when a client sends a message to a server,
         the client must wait for a response from the server.
         This is called "lockstep" because a client becomes
         "locked" (or "blocked") waiting for a response. </p>
@@ -52,15 +53,16 @@
             <li>The client has a message to send.</li>
 
             <li>The internal client_create_class uses the
-            configuation supplied by client_create_basic.
-            ZeroMQ sends the message over the configured port
+            configuation supplied by client_create_basic.</li>
+
+            <li>ZeroMQ sends the message over the configured port
             to the use configured server, server_create_basic.</li>
 
             <li>server_create_basic has ZeroMQ running through
             server_create_class</li>
 
             <li>The received message gets processed by
-            the user defined function.</li>
+            the user defined function, <code>server_create_class</code></li>
 
             <li>The response message then gets sent back to
             client_create_class using ZeroMQ code.</li>
@@ -76,7 +78,9 @@
         <h2>Minimal Client Logic</h2>
 
         <p>Writing the user client code takes only a few
-        lines of code.</p>
+        lines of code. Place this code in 
+        <code>client_create_skeleton.py</code> and start it
+        in a terminal window:</p>
 
         <pre>
 #!/usr/bin/env python
@@ -116,6 +120,9 @@ if __name__ == '__main__':
         interface to the lower level ZeroMQ code - but these
         details have been encapsulated for ease of use.</p>
 
+        <p>The commented out values of #node and #port indicate the 
+        default values will be used.</p>
+
         <p>The <code>config</code> dictionary allows user
         configuration for the communications to the server.
         In more real-life messaging a user will likely
@@ -148,11 +155,13 @@ if __name__ == '__main__':
 
         <p>The above client sends messages to a server.
         The server receives a message and produces a response.
-        The response get returned to the client and the client
+        The response gets returned to the client and the client
         does whatever with the returned message.</p>
 
         <p>The Easy Pi Messaging server has simple logic
-        comparable to the client logic. The code:</p>
+        comparable to the client logic. The code for 
+        <code>server_create_basic.py</code> must be started
+        in another terminal:</p>
 
         <pre>
 #!/bin/env python
@@ -189,7 +198,7 @@ if __name__ == "__main__":
 
         <p>The next few lines setup a response so the server
         may become sensitive to Ctrl-C for program termination.
-        Without this use interface feature stopping the server
+        Without this user interface feature stopping the server
         could be cumbersome and confusing.</p>
 
         <p>The <code>config</code> provides configuration information
@@ -237,7 +246,8 @@ if __name__ == "__main__":
 
         </table>
 
-        <h3 id="handle_request">Process the Incoming Request</h3>
+        <a name="handle_request"></a>
+        <h3>Process the Incoming Request: handle_request</h3>
 
         <p>The key to processing incoming messages rests in
         the <code>in_fcn</code> function. <code>in_fcn</code>
@@ -306,17 +316,22 @@ Response: "qwerty_resp"
         it received the message and supplied a distinct
         response.</p>
 
+        <p>For this tutorial examples, the messages have been
+        hard-coded in to the program. This simplifies the
+        example.</p>
+
         <p>In actual situations a response would become
         something much different. Perhaps a response of
         <code>OK</code> or <code>temp=81.5</code> would
-        be more appropriate.</p>
+        be more appropriate. And, or course, messages
+        would get created from programatic sources
+        instead of hard-coded messages.</p>
 
         <h1>Troubleshooting</h1>
 
         <p>Under normal operations a client becomes locked
         for only a short time. This time may range from
-        nearly instantaneous to a few seconds. This upon
-        exactly the purpose of the message. If the message
+        nearly instantaneous to a few seconds.  If the message
         simply required a status of something, the response
         should be very quick. A more complicated message
         that required something like starting a pump and
@@ -478,7 +493,7 @@ while True:
         specialized client_create_basic.py and server_create_basic.py
         for each channel. In your server code, you also need to
         implement your own version of <code>handle_request()</code>.
-        See <a href="./easyMessagingTutorial.html#handle_request">
+        See <a href="#handle_request">
             handle_request</a> and the surrounding discussion for details.</p>
 
 
