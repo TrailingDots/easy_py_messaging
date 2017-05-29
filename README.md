@@ -1,6 +1,18 @@
+easy\_py\_messaging - version 1.2.0
+=================================
 
-# easy_py_messaging - version 1.0.0
-A simple to use python wrapper around ZeroMQ for distributed systems to use for messaging and logging. Especially targeted to Raspberry Pi systems.
+easy\_py\_messaging is a simple to use python wrapper around ZeroMQ for distributed 
+systems to use for messaging. For illustration purposes, a non-trivial logging application
+is presented. 
+
+This package runs on most linux systems: Centos, Ubunty, Debian,
+Raspberry Py and like most other linux offerings. It does not run
+on Windows.
+
+A logging application demonstrates the power of ZeroMQ and the
+implemented wrapper. This serves to use ZeroMQ in a non-trivial
+manners and to show how flexible python can be in messaging 
+applications.
 
 ## Welcome
 
@@ -38,20 +50,38 @@ system configuration.
 ### Dependencies
 
 Your system may or may not require additional dependencies.
-The project has been careful to provide clean code as determined
-by pyflakes, unit test, python lint, etc.
+
+#### ZeroMQ
+
+The backbone of this offering uses [ZeroMQ](http://zeromq.org/) for
+low level, fast message handling.
+
+Install ZeroMQ from the above site. The instructions are straightforward
+and should present no problems.
 
 #### Python pip and setup tools
-
-You might need these tools. Mos python developers have these
-already installed. See <a href="https://packaging.python.org/install_requirements_linux/">Installing pip/setuptools/wheel with Linux Package Managers</a>.
+You might need these tools. Most python developers have these
+already installed. See <a href="https://packaging.python.org/install\_requirements\_linux/">Installing pip/setuptools/wheel with Linux Package Managers</a>.
 Windows and OSX are on sister pages.
+
+#### Developer tools
+If you choose to develop with code from this package, the
+runTests.sh script includes a somewhat exhaustive suite
+of testing that includes timing, unit tests and clean code
+checking.
+
+This project has been careful to provide clean code as determined
+by pyflakes, unit test, python lint, etc.
+
+To eliminate the static checkers, examing the section
+executing pyflakes, lizard, pep8, etc. and comment out
+these lines.
 
 #### Pyflakes - The passive checker of Python programs
 
 Pyflakes is a code analysis tool for Python. Pyflakes
 does not execute code, but rather analyzes the code.
-See <a href="https://launchpad.net/pyflakes">pyflakes</a> or
+See <a href="https://launchpad.net/pyflakes">pyflakes</a> or this
 <a href="https://www.blog.pythonlibrary.org/2012/06/13/pyflakes-the-passive-checker-of-python-programs/">pyflakes</a> and follow the
 installation instructions.
 
@@ -83,11 +113,24 @@ intent of the package drives an easy Zero MQ interface.
 
 The distribution provides extensive documentation. Refer to
 [Easy Py Messaging](./easy_py_messaging/docs/easy_py_messaging.html).
+Developers should start here.
 
 
 ## Tutorial
 A tutorial: [Easy Py Messaging Tutorial](./easy_py_messaging/docs/easyMessagingTutorial.html).
 
+This tutorial presents minimal logic for client and server code as well
+as tourbleshooting guidelines.
+
+## Details: The Log Collection Application
+
+[Easy Log Collection by Messaging](./easy_py_messaging/docs/logCollector.html) represents
+a significant application using the messaging concepts implemented for
+this package. A log collector repsents a utility that most applications
+could use. Logging has been underrated in every site I have worked.
+Yet logging remains the primary debugging source of live systems.
+Without proper logging, knowledge of your working system will
+remain elusive and mysterious.
 
 ## License
 
