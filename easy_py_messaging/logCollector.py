@@ -176,7 +176,7 @@ def usage():
     print '     --log-file=logFilename = name of file to place logs'
     print '         The default file if logs.log in the current dir'
     print '     --port=<port#> = port to listen for incoming logs'
-    print '     --noisy  = Logs echo to stdout. Normall not echoed.'
+    print '     --noisy  = Logs echo to stdout.'
     print '     -a  Logs will be appended to logFilename. Default'
     print '     -t  logFilename will be truncated before writing logs.'
     print ''

@@ -21,13 +21,13 @@
         single desktop for multiple processes or just within a single process.
         Just send a message and the API delivers your message.</p>
 
-        <p>Easy Py Messaging provides a wrapper around <a href="http://zeromq.org">ZeroMQ</a>
-        to implement a logger and an API for messaging.
+        <p>Easy Py Messaging implements a wrapper around <a href="http://zeromq.org">ZeroMQ</a>
+        to implement messaging. The release featuers a logger and an API for messaging.
         Multiple additional utilites support the code.</p>
 
         <p>With the use of this toolkit, developers can easily communicate
         between threads in their code, between different processes and
-        even between different nodes on their network.</p>
+        even between different nodes on a network.</p>
 
         <p>While this code was originally developed for the Raspberry Pi
         running the Raspian OS, it has worked successfully on Mac OSX and
@@ -43,12 +43,12 @@
             delivery and a robust API.</li>
 
             <li>Asynchronous handling. Messages queues provide the ability to
-            fire-and-forget. For input, quering a messages queue may either
+            fire-and-forget. For input, querying a message queue may either
             await a message or continue processing.</li>
 
             <li>Robust messaging. ZeroMQ permits various processes to
             go down while supplying recovery connections when the
-            processes restarts. Sorry, persistence is not currently
+            processes restarts. Persistence is not currently
             implemented.</li>
 
             <li>Symmetrical connections. Messages use TCP for
@@ -111,14 +111,14 @@
         <h3><a href="./logCollector.html#loggingLoopApp">LoggingLoopApp</a> - loop testing configurations</h3>
 
         <p>The loggingLoopApp gets used while developing applications.
-        It sends logs to the logger once per second and provides
-        feedback that the system for logs has a proper configuration.</p>
+        It sends logs to the logger once per second, configurable, and provides
+        feedback that the system for logs has a reasonable configuration.</p>
 
         <h3><a href="./logCollector.html#loggingSpeedTest">loggingSpeedTest</a> - how fast can you communicate?</h3>
 
         <p>How fast is your system? While speeds depend primarily
-        upon your network, this utility will send 100,000 logs
-        and report the time. What is yout timing for internal
+        upon your network, this utility can send 100,000 logs
+        and report the time. What is your timing for internal
         only, connected with ethernet cables, wireless
         connection?</p>
 
@@ -166,8 +166,8 @@
 
         <p>In the process of developing and debugging your
         systems, processes frequently continue to run while
-        listening to a port. Unless a utility such as
-        <a href="./logCollector.html#listening">listening</a> provides
+        listening to a port. See the <a href="https://craftsmanshipforsoftware.com/2017/05/23/linux-sockets-which-process-listens-to-a-port/">Linux Sockets: which process listens to a port?</a> 
+        utility. This tools provides
         a mapping between the port number and the process,
         interpreting the "Address already in use" error message can prove
         tricky.</p>
@@ -188,6 +188,9 @@
         <p>In the Easy Py Messaging systems the use of client
         and server does not necessarily hint at power, but of
         sources and consumers of information.</p>
+
+        <p>Sending messages eliminates the need for troublesome locking
+        and synchronization issues and thusly improves system robustness.</p>
 
         <h3>Servers as Resource Providers</h3>
 
@@ -228,7 +231,9 @@
         better performance.</p>
 
         <p>Both clients and servers
-        have previosly agreed upon message structures.</p>
+        have previously agreed upon message structures.
+        Users who desire more flexible data structures can implement
+        these with concepts such as JSON or S-expressions.</p>
 
         <p>An example of a client/server with the server
         providing a response would be a node that request

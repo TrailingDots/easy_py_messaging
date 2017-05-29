@@ -169,6 +169,8 @@ body{
     padding:15px 10px 15px 50px;
     background-repeat: no-repeat;
     background-position: 10px center;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 .info {
     color: #00529B;
